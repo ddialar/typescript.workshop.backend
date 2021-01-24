@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  ts_course_db:
+    image: mongo:latest
+    container_name: ${CONTAINER_NAME}
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${ROOT_DATABASE}
+    ports:
+      - ${EXTERNAL_PORT}:${INTERNAL_PORT}
+    volumes:
+      - data_volume:/data/db
+      - ${CONFIGURATION_PATH}:/docker-entrypoint-initdb.d:rw
+
+volumes:
+  data_volume:
+    name: ${VOLUME_NAME}

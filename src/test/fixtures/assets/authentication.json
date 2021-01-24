@@ -1,0 +1,34 @@
+{
+  "validHashedPassword": {
+    "value": "$2b$04$BCFnw0TXw7cGHvk8VuCkMOZw28YjlpInsuSwMaLN83N.ZgnPKHbP2",
+    "comments": {
+      "plainPasswd": "123456",
+      "hashedWith": "bcrypt",
+      "saltValue": 3
+    }
+  },
+  "validPlainPassword": {
+    "value": "123456",
+    "comments": {}
+  },
+  "wrongPlainPassword": {
+    "value": "wrongpassword",
+    "comments": {}
+  },
+  "validJwtTokenForNonPersistedUser": {
+    "value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzZXJuYW1lIjoibm9uLnBlcnNpc3RlZEBtYWlsLmNvbSIsImlhdCI6MTYxMTQwMjEwNSwiZXhwIjo2MzcxMjA1ODk0fQ.O8knUlm8mqR5a9yHJkfDfIhPQO4jrnUt6da8rX15hhsquhZAYVxKzTlyKTBoYdaIOhUAOEp6w-RJBrA6wNhuiw",
+    "comments": {
+      "username": "non.persisted@mail.com",
+      "algorithm": "HS512",
+      "expiresAt": "2120-10-31T07:43:09.000Z"
+    }
+  },
+  "expiredJwtToken": {
+    "value": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsInVzZXJuYW1lIjoidGVzdEBtYWlsLmNvbSIsImlhdCI6MTYxMTQwMjEwNSwiZXhwIjoxNjExNDAyMTA2fQ.F-208NpmIa0175rD4kbjUW5YjLpXizaO4iF1ACdWn0lWf3XBCI0t09KIJAYbeFgpWb5gRRLGj6Vgd3g8NtHoDA",
+    "comments": {
+      "username": "test@mail.com",
+      "algorithm": "HS512",
+      "expiresAt": "2021-01-23T11:41:46.200Z"
+    }
+  }
+}
