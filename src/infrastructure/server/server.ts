@@ -1,31 +1,20 @@
 import { createServer } from 'http'
-import express, { Request, Response, NextFunction } from 'express'
+import express from 'express'
 import bodyParser from 'body-parser'
 
-import { serve as swaggerServe, setup as swaggerSetup } from 'swagger-ui-express'
-import { swaggerDocument, swaggerOptions } from './apidoc'
-
-import { ApiError } from '@errors'
-import { authenticationRoutes, userRoutes, postRoutes } from './routes'
-
-import { handleHttpError } from './middlewares'
-
-import { createLogger } from '@common'
+import { createLogger } from '../../common'
 const logger = createLogger('server')
 
 const app = express()
-const port: number = parseInt(process.env.SERVER_PORT ?? '3000', 10)
+const port = parseInt(process.env.SERVER_PORT ?? '3000', 10)
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
-app.use('/__/apidoc', swaggerServe, swaggerSetup(swaggerDocument, swaggerOptions))
-
-app.use(authenticationRoutes)
-app.use(userRoutes)
-app.use(postRoutes)
-
-app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => handleHttpError(err, res))
+// REFACTOR Remove this endpoint.
+app.get('/hello', (req, res) => {
+  res.send('Welcome to the TS backend workshop!!!')
+})
 
 const server = createServer(app)
 
