@@ -19,5 +19,4 @@ const closeApplication = async () => {
 process.on('SIGINT', async () => closeApplication())
 process.on('SIGTERM', async () => closeApplication())
 
-// startApplication()
 if (process.env.NODE_ENV !== 'test') { startApplication() }
