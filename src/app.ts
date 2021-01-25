@@ -1,6 +1,6 @@
-import { createLogger } from './common'
+import { createLogger } from '@common'
 
-import { runServer, stopServer } from './infrastructure/server'
+import { runServer, stopServer } from '@infrastructure/server'
 
 const logger = createLogger('app')
 
