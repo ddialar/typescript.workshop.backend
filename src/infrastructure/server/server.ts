@@ -14,7 +14,7 @@ import { createLogger } from '@common'
 const logger = createLogger('server')
 
 const app = express()
-const port: number = parseInt(process.env.SERVER_PORT ?? '3000', 10)
+const port = parseInt(process.env.SERVER_PORT ?? '3000', 10)
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
