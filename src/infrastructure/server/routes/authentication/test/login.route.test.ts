@@ -1,11 +1,15 @@
+import { verify, Secret } from 'jsonwebtoken'
 import supertest, { SuperTest, Test } from 'supertest'
 
 import { server } from '@infrastructure/server'
 
-import { testingUsers, testingValidPlainPassword } from '../../../../../test/fixtures'
+import { LoginInputParams, DecodedJwtToken } from '@infrastructure/types'
+
+import { testingUsers, testingValidPlainPassword } from '@testingFixtures'
 
 const [{ username: testingUsername }] = testingUsers
 
+const secret: Secret = process.env.JWT_KEY!
 const LOGIN_PATH = '/login'
 
 describe('[API] - Authentication endpoints', () => {
@@ -17,8 +21,7 @@ describe('[API] - Authentication endpoints', () => {
     })
 
     it('must return a 200 (OK) and the user authentication data', async (done) => {
-      // TODO Type the login data with the LoginInputParams interface
-      const loginData = {
+      const loginData: LoginInputParams = {
         username: testingUsername,
         password: testingValidPlainPassword
       }
@@ -33,7 +36,15 @@ describe('[API] - Authentication endpoints', () => {
 
           expect(body.token).not.toBe('')
 
-          expect(body.token).toBe(`This is your token for '${loginData.username}' and '${loginData.password}'.`)
+          const verifiedToken = verify(body.token as string, secret) as DecodedJwtToken
+          const expectedTokenFields = ['exp', 'iat', 'sub', 'username']
+          const retrievedTokenFields = Object.keys(verifiedToken).sort()
+          expect(retrievedTokenFields.sort()).toEqual(expectedTokenFields.sort())
+
+          expect(verifiedToken.exp).toBeGreaterThan(0)
+          expect(verifiedToken.iat).toBeGreaterThan(0)
+          // expect(verifiedToken.sub).toBe(userId) // Implement the ORM in order to access this information.
+          expect(verifiedToken.username).toBe(loginData.username)
         })
 
       done()

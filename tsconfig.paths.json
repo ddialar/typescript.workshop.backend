@@ -5,8 +5,17 @@
       "@common": [
         "src/common"
       ],
+      "@domainModels": [
+        "src/domain/models"
+      ],
+      "@domainServices": [
+        "src/domain/services"
+      ],
       "@infrastructure/*": [
         "src/infrastructure/*"
+      ],
+      "@testingFixtures": [
+        "src/test/fixtures"
       ]
     }
   }
