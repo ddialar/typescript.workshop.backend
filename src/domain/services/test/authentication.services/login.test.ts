@@ -1,19 +1,26 @@
+import { NewUserDatabaseDto } from '@infrastructure/dtos'
+import { verify, Secret } from 'jsonwebtoken'
+
 import { userDataSource } from '@infrastructure/dataSources'
 import { mongodb } from '@infrastructure/orm'
 import * as token from '@infrastructure/authentication/token'
 import { GettingTokenError, GettingUserError, WrongPasswordError, WrongUsernameError, UpdatingUserError, CheckingPasswordError } from '@errors'
-import { NewUserDomainModel } from '@domainModels'
+// import { NewUserDomainModel } from '@domainModels'
 import { testingUsers, testingValidPlainPassword, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
 
 import { login } from '@domainServices'
 import * as hashServices from '../../hash.services' // Just for mocking purposes
+import { DecodedJwtToken } from '@infrastructure/types'
 
-const [{ username, password, email, name, surname, avatar }] = testingUsers
+const secret: Secret = process.env.JWT_KEY!
+
+const [{ id: userId, username, password, email, name, surname, avatar }] = testingUsers
 
 describe('[SERVICES] Authentication - login', () => {
   const { connect, disconnect } = mongodb
   const plainPassword = testingValidPlainPassword
-  const mockedUserData: NewUserDomainModel = {
+  const mockedUserData: NewUserDatabaseDto & { _id: string } = {
+    _id: userId,
     username,
     password,
     email,
@@ -57,6 +64,16 @@ describe('[SERVICES] Authentication - login', () => {
 
     expect(authenticatedUser.token).toBe(authenticationData.token)
     expect(authenticatedUser.lastLoginAt).not.toBe('')
+
+    const verifiedToken = verify(authenticationData.token as string, secret) as DecodedJwtToken
+    const expectedFields = ['exp', 'iat', 'sub', 'username']
+    const retrievedTokenFields = Object.keys(verifiedToken).sort()
+    expect(retrievedTokenFields.sort()).toEqual(expectedFields.sort())
+
+    expect(verifiedToken.exp).toBeGreaterThan(0)
+    expect(verifiedToken.iat).toBeGreaterThan(0)
+    expect(verifiedToken.sub).toBe(userId)
+    expect(verifiedToken.username).toBe(username)
 
     done()
   })
