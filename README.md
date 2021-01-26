@@ -25,6 +25,7 @@
 -   [API REST documentation](apidoc)
 -   [Credits and thanks](credits-and-thanks)
 -   [TODO list](todo-list)
+-   [Researching list](research-list)
 
 ## <a id="description"></a>🔍 Description
 
@@ -354,3 +355,7 @@ Thanks a lot for a so incredible support to:
 -   Include Postman requests to test the API.
 -   Include Insomnia requests to test the API.
 -   Include the `manifest.json` file.
+
+## <a id="research-list"></a>🔬 Researching list
+
+-   Investigate the use of [esbuild-loader](https://github.com/privatenumber/esbuild-loader).
