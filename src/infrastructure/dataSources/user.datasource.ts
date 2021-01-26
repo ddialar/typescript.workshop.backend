@@ -1,14 +1,7 @@
 import { UserDomainModel } from '@domainModels'
 
-import { testingUsers } from '@testingFixtures'
+import { mapUserFromDtoToDomainModel } from '@infrastructure/mappers'
+import { mongodb } from '@infrastructure/orm'
 
-// TODO Request user data to the database.
-export const getUserByUsername = async (username: string): Promise<UserDomainModel> => {
-  const selectedUser = testingUsers.find(user => user.username === username)!
-
-  return await Promise.resolve({
-    ...selectedUser,
-    createdAt: (new Date()).toISOString(),
-    updatedAt: (new Date()).toISOString()
-  })
-}
+export const getUserByUsername = async (username: string): Promise<UserDomainModel | null> =>
+  mapUserFromDtoToDomainModel(await mongodb.requests.user.getByUsername(username))

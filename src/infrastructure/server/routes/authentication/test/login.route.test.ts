@@ -2,22 +2,47 @@ import { verify, Secret } from 'jsonwebtoken'
 import supertest, { SuperTest, Test } from 'supertest'
 
 import { server } from '@infrastructure/server'
+import { mongodb } from '@infrastructure/orm'
 
+import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { LoginInputParams, DecodedJwtToken } from '@infrastructure/types'
 
-import { testingUsers, testingValidPlainPassword } from '@testingFixtures'
+import { cleanUsersCollection, saveUser, testingUsers, testingValidPlainPassword } from '@testingFixtures'
 
-const [{ username: testingUsername }] = testingUsers
+const [{ id: userId, username: testingUsername, password, email, name, surname, avatar }] = testingUsers
 
 const secret: Secret = process.env.JWT_KEY!
 const LOGIN_PATH = '/login'
 
 describe('[API] - Authentication endpoints', () => {
   describe(`[POST] ${LOGIN_PATH}`, () => {
+    const { connect, disconnect } = mongodb
+
+    const mockedUserData: NewUserDatabaseDto & { _id: string } = {
+      _id: userId,
+      username: testingUsername,
+      password,
+      email,
+      name,
+      surname,
+      avatar
+    }
+
     let request: SuperTest<Test>
 
     beforeAll(async () => {
       request = supertest(server)
+      await connect()
+    })
+
+    beforeEach(async () => {
+      await cleanUsersCollection()
+      await saveUser(mockedUserData)
+    })
+
+    afterAll(async () => {
+      await cleanUsersCollection()
+      await disconnect()
     })
 
     it('must return a 200 (OK) and the user authentication data', async (done) => {
@@ -43,7 +68,7 @@ describe('[API] - Authentication endpoints', () => {
 
           expect(verifiedToken.exp).toBeGreaterThan(0)
           expect(verifiedToken.iat).toBeGreaterThan(0)
-          // expect(verifiedToken.sub).toBe(userId) // Implement the ORM in order to access this information.
+          expect(verifiedToken.sub).toBe(userId) // Implement the ORM in order to access this information.
           expect(verifiedToken.username).toBe(loginData.username)
         })
 
