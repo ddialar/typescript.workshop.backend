@@ -5,6 +5,7 @@ import { login } from '@domainServices'
 import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { DecodedJwtToken } from '@infrastructure/types'
 import { mongodb } from '@infrastructure/orm'
+import { WrongUsernameError } from '@errors'
 
 const secret: Secret = process.env.JWT_KEY!
 
@@ -62,6 +63,15 @@ describe('[SERVICES] Authentication - login', () => {
     expect(verifiedToken.iat).toBeGreaterThan(0)
     expect(verifiedToken.sub).toBe(userId)
     expect(verifiedToken.username).toBe(username)
+
+    done()
+  })
+
+  it('must throw an UNAUTHORIZED (401) error when we use a non persisted username', async (done) => {
+    const username = 'user@test.com'
+    const password = testingValidPlainPassword
+
+    await expect(login(username, password)).rejects.toThrowError(new WrongUsernameError(`User with username '${username}' doesn't exist in login process.`))
 
     done()
   })

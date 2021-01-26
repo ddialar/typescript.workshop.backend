@@ -8,6 +8,7 @@ import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { LoginInputParams, DecodedJwtToken } from '@infrastructure/types'
 
 import { cleanUsersCollection, saveUser, testingUsers, testingValidPlainPassword } from '@testingFixtures'
+import { UNAUTHORIZED } from '@errors'
 
 const [{ id: userId, username: testingUsername, password, email, name, surname, avatar }] = testingUsers
 
@@ -70,6 +71,24 @@ describe('[API] - Authentication endpoints', () => {
           expect(verifiedToken.iat).toBeGreaterThan(0)
           expect(verifiedToken.sub).toBe(userId) // Implement the ORM in order to access this information.
           expect(verifiedToken.username).toBe(loginData.username)
+        })
+
+      done()
+    })
+
+    it('must throw an UNAUTHORIZED (401) error when we use a non persisted username', async (done) => {
+      const loginData: LoginInputParams = {
+        username: 'user@test.com',
+        password: testingValidPlainPassword
+      }
+      const errorMessage = 'Username not valid'
+
+      await request
+        .post(LOGIN_PATH)
+        .send(loginData)
+        .expect(UNAUTHORIZED)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
         })
 
       done()
