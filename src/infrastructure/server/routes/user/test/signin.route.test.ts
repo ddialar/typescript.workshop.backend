@@ -10,7 +10,7 @@ import { userDataSource } from '@infrastructure/dataSources'
 
 import { testingUsers, cleanUsersCollection, getUserByUsername, saveUser } from '@testingFixtures'
 
-const { email, password, name, surname, avatar } = testingUsers[0]
+const [{ email, password, name, surname, avatar }] = testingUsers
 
 const SIGIN_PATH = '/signin'
 

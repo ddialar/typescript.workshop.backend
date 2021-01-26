@@ -5,7 +5,7 @@ import { testingUsers, cleanUsersCollection, getUserByUsername } from '@testingF
 
 import { create } from '../../user.mongodb.requests'
 
-const { username, password, email, name, surname, avatar } = testingUsers[0]
+const [{ username, password, email, name, surname, avatar }] = testingUsers
 
 describe('[ORM] MongoDB - create', () => {
   const mockedUserData: NewUserDatabaseDto = {

@@ -10,7 +10,7 @@ import { UserProfileDto } from '@infrastructure/dtos'
 
 import { testingUsers, testingValidJwtTokenForNonPersistedUser, testingExpiredJwtToken, cleanUsersCollection, saveUser } from '@testingFixtures'
 
-const { username, password, email, avatar, name, surname, token: validToken } = testingUsers[0]
+const [{ username, password, email, avatar, name, surname, token: validToken }] = testingUsers
 
 interface TestingProfileDto extends UserProfileDto {
   password: string

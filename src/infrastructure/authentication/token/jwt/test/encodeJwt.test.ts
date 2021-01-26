@@ -4,7 +4,7 @@ import { DecodedJwtToken } from '@infrastructure/types'
 
 import { testingUsers } from '@testingFixtures'
 
-const { id: userId, username: testingUsername } = testingUsers[0]
+const [{ id: userId, username: testingUsername }] = testingUsers
 
 describe('[AUTHENTICATION] Token - JWT', () => {
   describe('encodeJwt', () => {

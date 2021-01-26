@@ -4,7 +4,7 @@ import { UserProfileDto } from '@infrastructure/dtos'
 import { getProfileById } from '../../user.mongodb.requests'
 import { testingUsers, testingNonValidUserId, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
 
-const { username, password, email, avatar, name, surname } = testingUsers[0]
+const [{ username, password, email, avatar, name, surname }] = testingUsers
 
 interface TestingProfileDto extends UserProfileDto {
   password: string

@@ -5,7 +5,7 @@ import { testingUsers } from '@testingFixtures'
 
 import { mapNewUserFromDtoToDomainModel } from '@infrastructure/mappers'
 
-const { email, password, name, surname, avatar } = testingUsers[0]
+const [{ email, password, name, surname, avatar }] = testingUsers
 
 describe('[MAPPERS] User mapper - mapNewUserFromDtoToDomainModel', () => {
   it('maps successfully from DTO to Domain', () => {

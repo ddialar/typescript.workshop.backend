@@ -6,7 +6,7 @@ import { testingUsers, cleanUsersCollection, saveUser, getUserByUsername } from 
 
 import { updateUserLogoutData } from '@domainServices'
 
-const { username, password, email, token } = testingUsers[0]
+const [{ username, password, email, token }] = testingUsers
 
 describe('[SERVICES] User - updateUserLogoutData', () => {
   const { connect, disconnect, models: { User } } = mongodb

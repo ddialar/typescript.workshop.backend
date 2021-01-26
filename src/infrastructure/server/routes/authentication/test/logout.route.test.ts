@@ -9,7 +9,7 @@ import { userDataSource } from '@infrastructure/dataSources'
 
 import { testingUsers, testingExpiredJwtToken, testingValidJwtTokenForNonPersistedUser, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
 
-const { username, password, email, token } = testingUsers[0]
+const [{ username, password, email, token }] = testingUsers
 
 const LOGOUT_PATH = '/logout'
 

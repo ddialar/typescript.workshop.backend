@@ -4,7 +4,7 @@ import { JwtPayload } from '@infrastructure/types'
 
 import { testingUsers, testingExpiredJwtToken } from '@testingFixtures'
 
-const { id: testingUserId, username: testingUsername } = testingUsers[0]
+const [{ id: testingUserId, username: testingUsername }] = testingUsers
 
 describe.only('[AUTHENTICATION] Token - JWT', () => {
   describe('decodeJwt', () => {

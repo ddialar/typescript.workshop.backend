@@ -6,7 +6,7 @@ import { testingUsers, testingAvatarUrls, cleanUsersCollection, saveUser, getUse
 
 import { updateUserProfile } from '@domainServices'
 
-const { username, password, email, avatar, name, surname, token } = testingUsers[0]
+const [{ username, password, email, avatar, name, surname, token }] = testingUsers
 
 describe('[SERVICES] User - updateUserProfile', () => {
   const { connect, disconnect } = mongodb

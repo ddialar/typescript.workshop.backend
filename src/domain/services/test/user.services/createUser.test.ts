@@ -7,7 +7,7 @@ import { testingUsers, cleanUsersCollection, getUserByUsername } from '@testingF
 
 import { createUser } from '@domainServices'
 
-const { username, password, email, name, surname, avatar } = testingUsers[0]
+const [{ username, password, email, name, surname, avatar }] = testingUsers
 
 describe('[SERVICES] User - createUser', () => {
   const { connect, disconnect } = mongodb

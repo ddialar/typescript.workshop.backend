@@ -7,7 +7,7 @@ import { testingNonValidUserId, testingUsers, cleanUsersCollection, saveUser } f
 import { getUserProfile } from '@domainServices'
 import { UserDto } from '@infrastructure/dtos'
 
-const { username, password, email, avatar, name, surname } = testingUsers[0]
+const [{ username, password, email, avatar, name, surname }] = testingUsers
 
 interface TestingProfileDomainModel extends UserProfileDomainModel {
   password: string
