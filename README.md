@@ -359,3 +359,4 @@ Thanks a lot for a so incredible support to:
 ## <a id="research-list"></a>🔬 Researching list
 
 -   Investigate the use of [esbuild-loader](https://github.com/privatenumber/esbuild-loader).
+-   Investigate the profits of using [Estrella](https://github.com/rsms/estrella) as building tool.

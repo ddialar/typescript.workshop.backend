@@ -359,3 +359,4 @@ Muchísimas gracias por el incalculable apoyo prestado por:
 ## <a id="research-list"></a>🔬 Elementos a investigar
 
 -   Investigar el uso de [esbuild-loader](https://github.com/privatenumber/esbuild-loader).
+-   Investigar los beneficios de usar [Estrella](https://github.com/rsms/estrella) como herramienta de compilación.
