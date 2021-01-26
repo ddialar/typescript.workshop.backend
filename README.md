@@ -348,7 +348,8 @@ Thanks a lot for a so incredible support to:
 ## <a id="todo-list"></a>📝 TODO list
 
 -   Include [Joi](https://joi.dev/).
--   Include [Husky](https://joi.dev/).
+-   Include [Husky](https://github.com/typicode/husky).
+-   Include [Helmet](https://github.com/helmetjs/helmet).
 -   Include production configuration to compile and generate Docker container ready to deploy.
 -   Include Postman requests to test the API.
 -   Include Insomnia requests to test the API.
