@@ -13,8 +13,9 @@ import * as hashServices from '../../../../../domain/services/hash.services' // 
 import * as token from '../../../../authentication/token' // Just for mocking purposes
 import { testingUsers, testingValidPlainPassword, cleanUsersCollection, saveUser } from '@testingFixtures'
 
-const [{ id: testingUserId, username: testingUsername, password, email, name, surname, avatar }] = testingUsers
+const [{ id: userId, username: testingUsername, password, email, name, surname, avatar }] = testingUsers
 
+const secret: Secret = process.env.JWT_KEY!
 const LOGIN_PATH = '/login'
 
 describe('[API] - Authentication endpoints', () => {
@@ -22,7 +23,7 @@ describe('[API] - Authentication endpoints', () => {
     const { connect, disconnect } = mongodb
 
     const mockedUserData: NewUserDatabaseDto & { _id: string } = {
-      _id: testingUserId,
+      _id: userId,
       username: testingUsername,
       password,
       email,
@@ -64,11 +65,15 @@ describe('[API] - Authentication endpoints', () => {
 
           expect(body.token).not.toBe('')
 
-          const secret: Secret = process.env.JWT_KEY!
-          const { sub, username } = verify(body.token, secret) as DecodedJwtToken
+          const verifiedToken = verify(body.token, secret) as DecodedJwtToken
+          const expectedTokenFields = ['exp', 'iat', 'sub', 'username']
+          const retrievedTokenFields = Object.keys(verifiedToken).sort()
+          expect(retrievedTokenFields.sort()).toEqual(expectedTokenFields.sort())
 
-          expect(sub).toBe(testingUserId)
-          expect(username).toBe(testingUsername)
+          expect(verifiedToken.exp).toBeGreaterThan(0)
+          expect(verifiedToken.iat).toBeGreaterThan(0)
+          expect(verifiedToken.sub).toBe(userId)
+          expect(verifiedToken.username).toBe(loginData.username)
         })
 
       done()
