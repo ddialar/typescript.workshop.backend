@@ -1,5 +1,5 @@
-import { PostDto } from '../../../infrastructure/dtos'
-import { mongodb } from '../../../infrastructure/orm'
+import { PostDto } from '@infrastructure/dtos'
+import { mongodb } from '@infrastructure/orm'
 
 const { models: { Post } } = mongodb
 

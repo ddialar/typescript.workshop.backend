@@ -1,7 +1,7 @@
 import { Types } from 'mongoose'
 
-import { UserDto } from '../../../infrastructure/dtos'
-import { mongodb } from '../../../infrastructure/orm'
+import { UserDto } from '@infrastructure/dtos'
+import { mongodb } from '@infrastructure/orm'
 
 const { models: { User } } = mongodb
 
