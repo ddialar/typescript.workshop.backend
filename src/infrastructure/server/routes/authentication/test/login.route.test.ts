@@ -7,7 +7,7 @@ import { mongodb } from '@infrastructure/orm'
 import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { LoginInputParams, DecodedJwtToken } from '@infrastructure/types'
 
-import { cleanUsersCollection, saveUser, testingUsers, testingValidPlainPassword } from '@testingFixtures'
+import { cleanUsersCollection, saveUser, testingUsers, testingValidPlainPassword, testingWrongPlainPassword } from '@testingFixtures'
 import { UNAUTHORIZED } from '@errors'
 
 const [{ id: userId, username: testingUsername, password, email, name, surname, avatar }] = testingUsers
@@ -82,6 +82,24 @@ describe('[API] - Authentication endpoints', () => {
         password: testingValidPlainPassword
       }
       const errorMessage = 'Username not valid'
+
+      await request
+        .post(LOGIN_PATH)
+        .send(loginData)
+        .expect(UNAUTHORIZED)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+        })
+
+      done()
+    })
+
+    it('must throw an UNAUTHORIZED (401) error when we use a wrong password', async (done) => {
+      const loginData: LoginInputParams = {
+        username: testingUsername,
+        password: testingWrongPlainPassword
+      }
+      const errorMessage = 'Password not valid'
 
       await request
         .post(LOGIN_PATH)

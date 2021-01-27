@@ -5,7 +5,9 @@ import { login } from '@domainServices'
 import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { DecodedJwtToken } from '@infrastructure/types'
 import { mongodb } from '@infrastructure/orm'
-import { WrongUsernameError } from '@errors'
+import { CheckingPasswordError, WrongPasswordError, WrongUsernameError } from '@errors'
+
+import * as hashServices from '../../hash.services' // Just for mocking purposes
 
 const secret: Secret = process.env.JWT_KEY!
 
@@ -72,6 +74,34 @@ describe('[SERVICES] Authentication - login', () => {
     const password = testingValidPlainPassword
 
     await expect(login(username, password)).rejects.toThrowError(new WrongUsernameError(`User with username '${username}' doesn't exist in login process.`))
+
+    done()
+  })
+
+  it('must throw an UNAUTHORIZED (401) error when we use a wrong password', async (done) => {
+    const { username } = mockedUserData
+    const password = 'wr0np4$$w0rd'
+
+    await expect(login(username, password)).rejects.toThrowError(new WrongPasswordError(`Password missmatches for username '${username}'.`))
+
+    done()
+  })
+
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the checking password process fails', async (done) => {
+    jest.spyOn(hashServices, 'checkPassword').mockImplementation(() => {
+      throw new CheckingPasswordError('Error checking password')
+    })
+
+    const { username } = mockedUserData
+    const password = testingValidPlainPassword
+
+    try {
+      await login(username, password)
+    } catch (error) {
+      expect(error).toStrictEqual(new CheckingPasswordError(`Error checking password. ${error.message}`))
+    }
+
+    jest.spyOn(hashServices, 'checkPassword').mockRestore()
 
     done()
   })
