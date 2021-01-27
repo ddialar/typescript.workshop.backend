@@ -11,6 +11,9 @@
       "@domainServices": [
         "src/domain/services"
       ],
+      "@errors": [
+        "src/common/errors"
+      ],
       "@infrastructure/*": [
         "src/infrastructure/*"
       ],
