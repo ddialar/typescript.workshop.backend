@@ -56,6 +56,11 @@ describe('[SERVICES] Authentication - login', () => {
 
     expect(authenticationData.token).not.toBe('')
 
+    const authenticatedUser = await getUserByUsername(username)
+
+    expect(authenticatedUser.token).toBe(authenticationData.token)
+    expect(authenticatedUser.lastLoginAt).not.toBe('')
+
     const verifiedToken = verify(authenticationData.token as string, secret) as DecodedJwtToken
     const expectedFields = ['exp', 'iat', 'sub', 'username']
     const retrievedTokenFields = Object.keys(verifiedToken).sort()

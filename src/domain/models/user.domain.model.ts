@@ -15,3 +15,4 @@ export interface UserDomainModel {
 }
 
 export type AuthenticatedUserDomainModel = Pick<UserDomainModel, 'token'>
+export type UpdateUserPayloadDomainModel = Omit<Partial<UserDomainModel>, 'id' | 'username' | 'email' | 'createdAt' | 'updatedAt'>

@@ -3,7 +3,7 @@ import { WrongPasswordError, WrongUsernameError } from '@errors'
 
 import { generateToken } from '@infrastructure/authentication'
 import { getUserByUsername } from '@infrastructure/dataSources'
-import { checkPassword } from '@domainServices'
+import { checkPassword, updateUserLoginData } from '@domainServices'
 
 const getToken = (userId: string, username: string): string => {
   try {
@@ -25,5 +25,6 @@ export const login = async (username: string, password: string): Promise<Authent
   }
   const token = await getToken(persistedUser.id, username)
   // TODO Update the user's login status recording the new token
+  await updateUserLoginData(persistedUser.id, token)
   return { token }
 }
