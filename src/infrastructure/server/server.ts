@@ -4,6 +4,8 @@ import bodyParser from 'body-parser'
 
 import { authenticationRoutes } from './routes'
 
+import { handleHttpError } from './middlewares'
+
 import { createLogger } from '@common'
 const logger = createLogger('server')
 
@@ -14,6 +16,8 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 app.use(authenticationRoutes)
+
+app.use(handleHttpError)
 
 const server = createServer(app)
 
