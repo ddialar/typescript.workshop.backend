@@ -9,7 +9,7 @@ import { CreatingPostError } from '@errors'
 describe('[SERVICES] Post - createPost', () => {
   const { connect, disconnect } = mongodb
 
-  const owner = testingDomainModelPostOwners[0]
+  const [owner] = testingDomainModelPostOwners
   const postBody = lorem.paragraph()
 
   beforeAll(async () => {
