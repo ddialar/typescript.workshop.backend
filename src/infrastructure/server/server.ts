@@ -1,11 +1,10 @@
 import { createServer } from 'http'
-import express, { Request, Response, NextFunction } from 'express'
+import express from 'express'
 import bodyParser from 'body-parser'
 
 import { serve as swaggerServe, setup as swaggerSetup } from 'swagger-ui-express'
 import { swaggerDocument, swaggerOptions } from './apidoc'
 
-import { ApiError } from '@errors'
 import { authenticationRoutes, userRoutes, postRoutes } from './routes'
 
 import { handleHttpError } from './middlewares'
@@ -25,7 +24,7 @@ app.use(authenticationRoutes)
 app.use(userRoutes)
 app.use(postRoutes)
 
-app.use((err: ApiError, req: Request, res: Response, next: NextFunction) => handleHttpError(err, res))
+app.use(handleHttpError)
 
 const server = createServer(app)
 
