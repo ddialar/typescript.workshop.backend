@@ -17,8 +17,8 @@ describe('[SERVICES] Post - createPostComment', () => {
   const { connect, disconnect } = mongodb
 
   const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
-  const originalPost = mockedPosts[0]
-  const newPostCommentOwner = testingDomainModelFreeUsers[0]
+  const [originalPost] = mockedPosts
+  const [newPostCommentOwner] = testingDomainModelFreeUsers
 
   beforeAll(async () => {
     await connect()
