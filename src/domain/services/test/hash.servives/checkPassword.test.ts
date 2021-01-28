@@ -1,11 +1,11 @@
-import { testingValidHashedPassword } from '@testingFixtures'
+import { testingValidHashedPassword, testingValidPlainPassword, testingWrongPlainPassword } from '@testingFixtures'
 import { checkPassword } from '@domainServices'
 
 describe('[SERVICES] Hash - checkPassword', () => {
   const hashedPassword = testingValidHashedPassword
 
   it('must return TRUE if the provided password and the hashed one are equivalent', async (done) => {
-    const plainPassword = '123456'
+    const plainPassword = testingValidPlainPassword
 
     expect((await checkPassword(plainPassword, hashedPassword))).toBeTruthy()
 
@@ -13,7 +13,7 @@ describe('[SERVICES] Hash - checkPassword', () => {
   })
 
   it('must return FALSE if the provided password and the hashed one are NOT equivalent', async (done) => {
-    const plainPassword = 'wr0ngp4$$w0rd'
+    const plainPassword = testingWrongPlainPassword
 
     expect((await checkPassword(plainPassword, hashedPassword))).toBeFalsy()
 
