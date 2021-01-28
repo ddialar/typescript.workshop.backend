@@ -18,10 +18,10 @@ describe('[SERVICES] Post - deletePost', () => {
   const { connect, disconnect } = mongodb
 
   const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const selectedPost = testingLikedAndCommentedPersistedDomainModelPosts[0] as PostDomainModel
+  const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
   const mockedNonValidPostId = selectedPost.owner.id as string
   const selectedPostOwner = selectedPost.owner.id as string
-  const { id: unauthorizedUserId } = testingDomainModelFreeUsers[0] as UserDomainModel
+  const [{ id: unauthorizedUserId }] = testingDomainModelFreeUsers as UserDomainModel[]
 
   beforeAll(async () => {
     await connect()
