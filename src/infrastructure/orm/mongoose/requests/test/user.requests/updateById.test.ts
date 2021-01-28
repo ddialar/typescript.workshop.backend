@@ -1,10 +1,10 @@
-import { connect, disconnect } from '../../../core'
-import { User } from '../../../models'
+import { connect, disconnect } from '@infrastructure/orm/mongoose/core'
+import { User } from '@infrastructure/orm/mongoose/models'
 import { UserDto, NewUserDatabaseDto } from '@infrastructure/dtos'
 import { getUtcTimestampIsoString } from '@common'
 import { testingUsers, cleanUsersCollection, saveUser } from '@testingFixtures'
 
-import { updateById } from '../../user.mongodb.requests'
+import { updateById } from '@infrastructure/orm/mongoose/requests/user.mongodb.requests'
 
 const [{ username, password, email, name, surname, avatar }] = testingUsers
 
