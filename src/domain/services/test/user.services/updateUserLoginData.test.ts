@@ -1,5 +1,5 @@
 import { mongodb } from '@infrastructure/orm'
-import { UserDto, NewUserDatabaseDto } from '@infrastructure/dtos'
+import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UpdatingUserError } from '@errors'
 import { testingUsers, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
@@ -9,7 +9,7 @@ import { updateUserLoginData } from '@domainServices'
 const [{ username, password, email, name, surname, avatar, token }] = testingUsers
 
 describe('[SERVICES] User - updateUserLoginData', () => {
-  const { connect, disconnect, models: { User } } = mongodb
+  const { connect, disconnect } = mongodb
 
   const mockedUserData: NewUserDatabaseDto = {
     username,
@@ -37,7 +37,7 @@ describe('[SERVICES] User - updateUserLoginData', () => {
     const newUserData: NewUserDatabaseDto = { ...mockedUserData }
     await saveUser(newUserData)
 
-    const originalUser = (await User.findOne({ username: newUserData.username }))?.toJSON() as UserDto
+    const originalUser = await getUserByUsername(newUserData.username)
 
     const expectedFields = ['_id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
     const originalUserFields = Object.keys(originalUser).sort()
@@ -62,7 +62,7 @@ describe('[SERVICES] User - updateUserLoginData', () => {
 
     await updateUserLoginData(userId, token)
 
-    const updatedUser = (await User.findOne({ username: newUserData.username }))?.toJSON() as UserDto
+    const updatedUser = await getUserByUsername(newUserData.username)
 
     const updatedUserFields = Object.keys(updatedUser).sort()
     expect(updatedUserFields.sort()).toEqual(expectedFields.sort())
