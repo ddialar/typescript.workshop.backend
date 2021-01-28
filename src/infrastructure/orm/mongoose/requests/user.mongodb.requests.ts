@@ -1,3 +1,4 @@
+import { QueryFindOneAndUpdateOptions } from 'mongoose'
 import { User } from '../models'
 import { UserDto, NewUserDatabaseDto, UpdateUserPayloadDto, UserProfileDto } from '@infrastructure/dtos'
 
@@ -18,7 +19,7 @@ export const getProfileById = async (id: string): Promise<UserProfileDto | null>
 export const updateById = async (id: string, payload: UpdateUserPayloadDto): Promise<UserDto | null> => {
   // NOTE: Besides to define the fields as 'immutable' in the schema definition, it's required to use the 'strict' option 'cos in opposite, the field can be overwriten anyway :(
   const update = payload
-  const options = { new: true, strict: 'throw' as const }
+  const options: QueryFindOneAndUpdateOptions = { new: true, strict: 'throw' }
 
   const updatedUser = await User.findByIdAndUpdate(id, update, options)
   return updatedUser ? updatedUser.toJSON() as UserDto : null
