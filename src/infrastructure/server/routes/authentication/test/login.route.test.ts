@@ -11,7 +11,7 @@ import { userDataSource } from '@infrastructure/dataSources'
 
 import * as hashServices from '../../../../../domain/services/hash.services' // Just for mocking purposes
 import * as token from '../../../../authentication/token' // Just for mocking purposes
-import { testingUsers, testingValidPlainPassword, cleanUsersCollection, saveUser } from '@testingFixtures'
+import { testingUsers, testingNonPersistedUsername, testingValidPlainPassword, testingWrongPlainPassword, cleanUsersCollection, saveUser } from '@testingFixtures'
 
 const [{ id: userId, username: testingUsername, password, email, name, surname, avatar }] = testingUsers
 
@@ -81,7 +81,7 @@ describe('[API] - Authentication endpoints', () => {
 
     it('must throw an UNAUTHORIZED (401) error when we use a non persisted username', async (done) => {
       const loginData: LoginInputParams = {
-        username: 'user@test.com',
+        username: testingNonPersistedUsername,
         password: testingValidPlainPassword
       }
       const errorMessage = 'Username not valid'
@@ -100,7 +100,7 @@ describe('[API] - Authentication endpoints', () => {
     it('must throw an UNAUTHORIZED (401) error when we use a wrong password', async (done) => {
       const loginData: LoginInputParams = {
         username: testingUsername,
-        password: 'wr0np4$$w0rd'
+        password: testingWrongPlainPassword
       }
       const errorMessage = 'Password not valid'
 
