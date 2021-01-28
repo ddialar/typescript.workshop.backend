@@ -14,5 +14,6 @@ export const getUserProfileById = async (userId: string): Promise<UserProfileDom
 
 export const updateUserById = async (userId: string, updatedUserData: UpdateUserPayloadDomainModel): Promise<UserDomainModel | null> =>
   mapUserFromDtoToDomainModel(await mongodb.requests.user.updateById(userId, updatedUserData))
-export const updateUserProfileById = async (userId: string, newUserProfileData: NewUserProfileDto): Promise<UserProfileDomainModel | null> =>
+
+export const updateUserProfileById = async (userId: string, newUserProfileData: NewUserProfileDomainModel): Promise<UserProfileDomainModel | null> =>
   mapUserFromDtoToProfileDomainModel(await mongodb.requests.user.updateById(userId, newUserProfileData))
