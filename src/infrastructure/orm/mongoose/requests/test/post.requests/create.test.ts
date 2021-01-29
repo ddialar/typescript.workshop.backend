@@ -1,7 +1,7 @@
 import { lorem } from 'faker'
 import { connect, disconnect } from '../../../core'
 import { PostDto, PostOwnerDto } from '@infrastructure/dtos'
-import { testingDtoPostOwners, cleanPostsCollection } from '@testingFixtures'
+import { testingDtoPostOwners, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { create } from '../../post.mongodb.requests'
 
@@ -11,11 +11,11 @@ describe('[ORM] MongoDB - Posts - create', () => {
   })
 
   beforeEach(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 

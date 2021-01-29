@@ -1,6 +1,6 @@
 import { connect, disconnect } from '../../../core'
 import { PostDto } from '@infrastructure/dtos'
-import { testingLikedAndCommentedPersistedDtoPosts, savePosts, cleanPostsCollection, getPostById } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, getPostByIdFixture } from '@testingFixtures'
 
 import { deletePost } from '../../post.mongodb.requests'
 
@@ -10,11 +10,11 @@ describe('[ORM] MongoDB - Posts - deletePost', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts(mockedPosts)
+    await savePostsFixture(mockedPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 
@@ -23,7 +23,7 @@ describe('[ORM] MongoDB - Posts - deletePost', () => {
 
     await deletePost(postId)
 
-    const retrievedPost = await getPostById(postId)
+    const retrievedPost = await getPostByIdFixture(postId)
 
     expect(retrievedPost).toBeNull()
 

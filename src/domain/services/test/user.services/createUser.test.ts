@@ -3,7 +3,7 @@ import { mongodb } from '@infrastructure/orm'
 import { userDataSource } from '@infrastructure/dataSources'
 import { NewUserDomainModel } from '@domainModels'
 import { NewUserAlreadyExistsError, CreatingUserError } from '@errors'
-import { testingUsers, cleanUsersCollection, getUserByUsername } from '@testingFixtures'
+import { testingUsers, cleanUsersCollectionFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { createUser } from '@domainServices'
 
@@ -25,11 +25,11 @@ describe('[SERVICES] User - createUser', () => {
   })
 
   beforeEach(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
   })
 
   afterAll(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
     await disconnect()
   })
 
@@ -38,7 +38,7 @@ describe('[SERVICES] User - createUser', () => {
 
     await createUser(newUserData)
 
-    const retrievedUser = await getUserByUsername(username)
+    const retrievedUser = await getUserByUsernameFixture(username)
 
     const expectedFields = ['_id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
     const retrievedUserFields = Object.keys(retrievedUser).sort()

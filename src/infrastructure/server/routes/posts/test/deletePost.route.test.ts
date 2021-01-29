@@ -14,9 +14,9 @@ import {
   testingValidJwtTokenForNonPersistedUser,
   testingDomainModelFreeUsers,
   testingUsers,
-  cleanUsersCollection,
-  cleanPostsCollection,
-  getPostById
+  cleanUsersCollectionFixture,
+  cleanPostsCollectionFixture,
+  getPostByIdFixture
 } from '@testingFixtures'
 
 const POSTS_PATH = '/posts'
@@ -65,18 +65,18 @@ describe('[API] - Posts endpoints', () => {
     beforeAll(async () => {
       request = supertest(server)
       await connect()
-      await cleanUsersCollection()
+      await cleanUsersCollectionFixture()
       await User.insertMany([mockedPostCommentOwner, mockedUnauthorizedUserToBePersisted])
     })
 
     beforeEach(async () => {
-      await cleanPostsCollection()
+      await cleanPostsCollectionFixture()
       await Post.insertMany(testingLikedAndCommentedPersistedDtoPosts)
     })
 
     afterAll(async () => {
-      await cleanUsersCollection()
-      await cleanPostsCollection()
+      await cleanUsersCollectionFixture()
+      await cleanPostsCollectionFixture()
       await disconnect()
     })
 
@@ -90,7 +90,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(OK)
         .then(async () => {
-          const retrievedPost = await getPostById(postId)
+          const retrievedPost = await getPostByIdFixture(postId)
 
           expect(retrievedPost).toBeNull()
         })
@@ -101,7 +101,7 @@ describe('[API] - Posts endpoints', () => {
     it('must return BAD_REQUEST (400) when the action is performed by an user who is not recorded in the database', async (done) => {
       const token = `bearer ${unknownUserToken}`
       const postId = selectedPostValidId
-      const errorMessage = 'User does not exist'
+      const expectedErrorMessage = 'User does not exist'
 
       await request
         .delete(POSTS_PATH)
@@ -109,7 +109,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(BAD_REQUEST)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -118,7 +118,7 @@ describe('[API] - Posts endpoints', () => {
     it('must return UNAUTHORIZED (401) when the action is performed by an user with an expired token', async (done) => {
       const token = `bearer ${expiredToken}`
       const postId = selectedPostValidId
-      const errorMessage = 'Token expired'
+      const expectedErrorMessage = 'Token expired'
 
       await request
         .delete(POSTS_PATH)
@@ -126,7 +126,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -135,7 +135,7 @@ describe('[API] - Posts endpoints', () => {
     it('must return UNAUTHORIZED (401) when the action is performed by an user who is not the owner of the post', async (done) => {
       const token = `bearer ${unauthorizedValidToken}`
       const postId = selectedPostValidId
-      const errorMessage = 'User not authorized to delete this post'
+      const expectedErrorMessage = 'User not authorized to delete this post'
 
       await request
         .delete(POSTS_PATH)
@@ -143,7 +143,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -152,7 +152,7 @@ describe('[API] - Posts endpoints', () => {
     it('must return FORBIDDEN (403) when the sent token is empty', async (done) => {
       const token = ''
       const postId = selectedPostValidId
-      const errorMessage = 'Required token was not provided'
+      const expectedErrorMessage = 'Required token was not provided'
 
       await request
         .delete(POSTS_PATH)
@@ -160,7 +160,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(FORBIDDEN)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -169,7 +169,7 @@ describe('[API] - Posts endpoints', () => {
     it('must return NOT_FOUND (404) when we select a post which does not exist', async (done) => {
       const token = `bearer ${ownerValidToken}`
       const postId = nonValidPostId
-      const errorMessage = 'Post not found'
+      const expectedErrorMessage = 'Post not found'
 
       await request
         .delete(POSTS_PATH)
@@ -177,7 +177,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(NOT_FOUND)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -190,7 +190,7 @@ describe('[API] - Posts endpoints', () => {
 
       const token = `bearer ${ownerValidToken}`
       const postId = selectedPostValidId
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .delete(POSTS_PATH)
@@ -198,7 +198,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'getPostById').mockRestore()
@@ -213,7 +213,7 @@ describe('[API] - Posts endpoints', () => {
 
       const token = `bearer ${ownerValidToken}`
       const postId = selectedPostValidId
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .delete(POSTS_PATH)
@@ -221,7 +221,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'deletePost').mockRestore()

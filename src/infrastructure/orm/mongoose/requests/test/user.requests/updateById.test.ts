@@ -2,7 +2,7 @@ import { connect, disconnect } from '@infrastructure/orm/mongoose/core'
 import { User } from '@infrastructure/orm/mongoose/models'
 import { UserDto, NewUserDatabaseDto } from '@infrastructure/dtos'
 import { getUtcTimestampIsoString } from '@common'
-import { testingUsers, cleanUsersCollection, saveUser } from '@testingFixtures'
+import { testingUsers, cleanUsersCollectionFixture, saveUserFixture } from '@testingFixtures'
 
 import { updateById } from '@infrastructure/orm/mongoose/requests/user.mongodb.requests'
 
@@ -23,17 +23,17 @@ describe('[ORM] MongoDB - updateById', () => {
   })
 
   beforeEach(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
   })
 
   afterAll(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
     await disconnect()
   })
 
   it('must update several allowed fields successfully', async (done) => {
     const newUserData: NewUserDatabaseDto = { ...mockedUserData }
-    await saveUser(newUserData)
+    await saveUserFixture(newUserData)
 
     const originalUser = (await User.findOne({ username: newUserData.username }))?.toJSON() as UserDto
 

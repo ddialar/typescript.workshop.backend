@@ -5,11 +5,11 @@ import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } from '@errors'
-import { PostDomainModel, PostOwnerDomainModel } from '@domainModels'
+import { PostDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
 import { UserProfileDto } from '@infrastructure/dtos'
 
-import { testingUsers, testingValidJwtTokenForNonPersistedUser, testingExpiredJwtToken, cleanUsersCollection, cleanPostsCollection, saveUser } from '@testingFixtures'
+import { testingUsers, testingValidJwtTokenForNonPersistedUser, testingExpiredJwtToken, cleanUsersCollectionFixture, cleanPostsCollectionFixture, saveUserFixture } from '@testingFixtures'
 
 const [{ username, password, email, avatar, name, surname, token: validToken }] = testingUsers
 interface TestingProfileDto extends UserProfileDto {
@@ -37,17 +37,17 @@ describe('[API] - Posts endpoints', () => {
     beforeAll(async () => {
       request = supertest(server)
       await connect()
-      await cleanUsersCollection()
-      await saveUser(mockedUserData)
+      await cleanUsersCollectionFixture()
+      await saveUserFixture(mockedUserData)
     })
 
     beforeEach(async () => {
-      await cleanPostsCollection()
+      await cleanPostsCollectionFixture()
     })
 
     afterAll(async () => {
-      await cleanUsersCollection()
-      await cleanPostsCollection()
+      await cleanUsersCollectionFixture()
+      await cleanPostsCollectionFixture()
       await disconnect()
     })
 
@@ -60,7 +60,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postBody })
         .expect(OK)
         .then(async ({ body }) => {
-          const createdPost = body as PostDomainModel
+          const createdPost: PostDomainModel = body
 
           const expectedFields = ['id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
           const createdPostFields = Object.keys(createdPost).sort()
@@ -73,7 +73,7 @@ describe('[API] - Posts endpoints', () => {
           const createdOwnerPostFields = Object.keys(createdPost.owner).sort()
           expect(createdOwnerPostFields.sort()).toEqual(expectedPostOwnerFields.sort())
 
-          const postOwner = createdPost.owner as PostOwnerDomainModel
+          const postOwner = createdPost.owner
           expect(postOwner.id).not.toBeNull()
           expect(postOwner.name).toBe(mockedUserData.name)
           expect(postOwner.surname).toBe(mockedUserData.surname)
@@ -90,7 +90,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return FORBIDDEN (403) when we send an empty token', async (done) => {
       const token = ''
-      const errorMessage = 'Required token was not provided'
+      const expectedErrorMessage = 'Required token was not provided'
 
       await request
         .post(POSTS_CREATE_PATH)
@@ -98,7 +98,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postBody })
         .expect(FORBIDDEN)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -106,7 +106,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
-      const errorMessage = 'Token expired'
+      const expectedErrorMessage = 'Token expired'
 
       await request
         .post(POSTS_CREATE_PATH)
@@ -114,7 +114,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postBody })
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -122,7 +122,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return BAD_REQUEST (400) error when we send an expired token', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
-      const errorMessage = 'User does not exist'
+      const expectedErrorMessage = 'User does not exist'
 
       await request
         .post(POSTS_CREATE_PATH)
@@ -130,7 +130,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postBody })
         .expect(BAD_REQUEST)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -140,7 +140,7 @@ describe('[API] - Posts endpoints', () => {
       jest.spyOn(postDataSource, 'createPost').mockImplementation(() => Promise.resolve(null))
 
       const token = `bearer ${validToken}`
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(POSTS_CREATE_PATH)
@@ -148,7 +148,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postBody })
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'createPost').mockRestore()
@@ -162,7 +162,7 @@ describe('[API] - Posts endpoints', () => {
       })
 
       const token = `bearer ${validToken}`
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(POSTS_CREATE_PATH)
@@ -170,7 +170,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postBody })
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'createPost').mockRestore()

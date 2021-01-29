@@ -5,7 +5,7 @@ import { userDataSource } from '@infrastructure/dataSources'
 import { mongodb } from '@infrastructure/orm'
 import * as token from '@infrastructure/authentication/token'
 import { GettingTokenError, GettingUserError, WrongPasswordError, WrongUsernameError, UpdatingUserError, CheckingPasswordError } from '@errors'
-import { testingUsers, testingValidPlainPassword, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
+import { testingUsers, testingValidPlainPassword, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { login } from '@domainServices'
 import * as hashServices from '../../hash.services' // Just for mocking purposes
@@ -29,12 +29,12 @@ describe('[SERVICES] Authentication - login', () => {
 
   beforeAll(async () => {
     await connect()
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
   })
 
   beforeEach(async () => {
-    await cleanUsersCollection()
-    await saveUser(mockedUserData)
+    await cleanUsersCollectionFixture()
+    await saveUserFixture(mockedUserData)
   })
 
   afterAll(async () => {
@@ -45,7 +45,7 @@ describe('[SERVICES] Authentication - login', () => {
     const { username } = mockedUserData
     const password = plainPassword
 
-    const unauthenticatedUser = await getUserByUsername(username)
+    const unauthenticatedUser = await getUserByUsernameFixture(username)
 
     expect(unauthenticatedUser.name).toBe(mockedUserData.name)
     expect(unauthenticatedUser.surname).toBe(mockedUserData.surname)
@@ -58,7 +58,7 @@ describe('[SERVICES] Authentication - login', () => {
 
     expect(authenticationData.token).not.toBe('')
 
-    const authenticatedUser = await getUserByUsername(username)
+    const authenticatedUser = await getUserByUsernameFixture(username)
 
     expect(authenticatedUser.token).toBe(authenticationData.token)
     expect(authenticatedUser.lastLoginAt).not.toBe('')
@@ -151,7 +151,7 @@ describe('[SERVICES] Authentication - login', () => {
 
     const { username } = mockedUserData
     const password = plainPassword
-    const { _id: userId } = await getUserByUsername(username)
+    const { _id: userId } = await getUserByUsernameFixture(username)
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' login data. ${errorMessage}`)
 
     await expect(login(username, password)).rejects.toThrowError(expectedError)

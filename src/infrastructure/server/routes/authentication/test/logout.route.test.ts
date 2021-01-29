@@ -7,7 +7,7 @@ import { BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from 
 
 import { userDataSource } from '@infrastructure/dataSources'
 
-import { testingUsers, testingExpiredJwtToken, testingValidJwtTokenForNonPersistedUser, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
+import { testingUsers, testingExpiredJwtToken, testingValidJwtTokenForNonPersistedUser, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 const [{ username, password, email, token }] = testingUsers
 
@@ -30,17 +30,18 @@ describe('[API] - Authentication endpoints', () => {
     })
 
     beforeEach(async () => {
-      await cleanUsersCollection()
-      await saveUser(mockedUserData)
+      await cleanUsersCollectionFixture()
+      await saveUserFixture(mockedUserData)
     })
 
     afterAll(async () => {
-      await cleanUsersCollection()
+      await cleanUsersCollectionFixture()
       await disconnect()
     })
 
     it('must return a OK (200) and the token field must be set to NULL in the user record', async (done) => {
       const token = `bearer ${mockedUserData.token}`
+
       await request
         .post(LOGOUT_PATH)
         .set('Authorization', token)
@@ -48,7 +49,7 @@ describe('[API] - Authentication endpoints', () => {
         .then(async ({ text }) => {
           expect(text).toBe('User logged out successfully')
 
-          const editedUser = await getUserByUsername(username)
+          const editedUser = await getUserByUsernameFixture(username)
 
           expect(editedUser.token).toBe('')
         })
@@ -58,14 +59,14 @@ describe('[API] - Authentication endpoints', () => {
 
     it('must return a FORBIDDEN (403) error when we send an expired token', async (done) => {
       const token = ''
-      const errorMessage = 'Required token was not provided'
+      const expectedErrorMessage = 'Required token was not provided'
 
       await request
         .post(LOGOUT_PATH)
         .set('Authorization', token)
         .expect(FORBIDDEN)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -73,14 +74,14 @@ describe('[API] - Authentication endpoints', () => {
 
     it('must return an UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
-      const errorMessage = 'Token expired'
+      const expectedErrorMessage = 'Token expired'
 
       await request
         .post(LOGOUT_PATH)
         .set('Authorization', token)
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -88,14 +89,14 @@ describe('[API] - Authentication endpoints', () => {
 
     it('must return an BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
-      const errorMessage = 'User does not exist'
+      const expectedErrorMessage = 'User does not exist'
 
       await request
         .post(LOGOUT_PATH)
         .set('Authorization', token)
         .expect(BAD_REQUEST)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -107,14 +108,14 @@ describe('[API] - Authentication endpoints', () => {
       })
 
       const token = `bearer ${mockedUserData.token}`
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(LOGOUT_PATH)
         .set('Authorization', token)
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(userDataSource, 'updateUserById').mockRestore()

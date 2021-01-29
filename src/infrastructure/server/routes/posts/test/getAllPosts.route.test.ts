@@ -7,7 +7,7 @@ import { OK, INTERNAL_SERVER_ERROR } from '@errors'
 import { PostDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
 
-import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePosts, cleanPostsCollection } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
 const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts
@@ -23,11 +23,11 @@ describe('[API] - Posts endpoints', () => {
     beforeAll(async () => {
       request = supertest(server)
       await connect()
-      await savePosts(mockedPosts)
+      await savePostsFixture(mockedPosts)
     })
 
     afterAll(async () => {
-      await cleanPostsCollection()
+      await cleanPostsCollectionFixture()
       await disconnect()
     })
 
@@ -36,7 +36,7 @@ describe('[API] - Posts endpoints', () => {
         .get(POSTS_PATH)
         .expect(OK)
         .then(async ({ body }) => {
-          const persistedPosts = body as PostDomainModel[]
+          const persistedPosts: PostDomainModel[] = body
 
           expect(persistedPosts).toHaveLength(persistedPosts.length)
 
@@ -45,9 +45,9 @@ describe('[API] - Posts endpoints', () => {
             const getAlldPostFields = Object.keys(post).sort()
             expect(getAlldPostFields.sort()).toEqual(expectedFields.sort())
 
-            const expectedPost = resultPosts.find((resultPost) => resultPost.id === post.id?.toString()) as PostDomainModel
+            const expectedPost = resultPosts.find((resultPost) => resultPost.id === post.id?.toString())
 
-            expect(post).toStrictEqual<PostDomainModel>(expectedPost)
+            expect(post).toStrictEqual<PostDomainModel>(expectedPost!)
           })
         })
 
@@ -74,13 +74,13 @@ describe('[API] - Posts endpoints', () => {
         throw new Error('Testing error')
       })
 
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .get(POSTS_PATH)
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'getPosts').mockRestore()

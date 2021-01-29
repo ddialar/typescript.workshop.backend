@@ -13,8 +13,8 @@ import {
   testingLikedAndCommentedPersistedDomainModelPosts,
   testingDomainModelFreeUsers,
   testingUsers,
-  cleanUsersCollection,
-  cleanPostsCollection
+  cleanUsersCollectionFixture,
+  cleanPostsCollectionFixture
 } from '@testingFixtures'
 
 const POSTS_COMMENT_PATH = '/posts/comment'
@@ -64,18 +64,18 @@ describe('[API] - Posts endpoints', () => {
     beforeAll(async () => {
       request = supertest(server)
       await connect()
-      await cleanUsersCollection()
+      await cleanUsersCollectionFixture()
       await User.insertMany([mockedPostCommentOwner, mockedUnauthorizedUserToBePersisted])
     })
 
     beforeEach(async () => {
-      await cleanPostsCollection()
+      await cleanPostsCollectionFixture()
       await Post.insertMany(testingLikedAndCommentedPersistedDtoPosts)
     })
 
     afterAll(async () => {
-      await cleanUsersCollection()
-      await cleanPostsCollection()
+      await cleanUsersCollectionFixture()
+      await cleanPostsCollectionFixture()
       await disconnect()
     })
 
@@ -103,7 +103,7 @@ describe('[API] - Posts endpoints', () => {
       const token = `bearer ${ownerValidToken}`
       const postId = nonValidPost.id as string
       const commentId = selectedComment.id as string
-      const errorMessage = 'Post comment not found'
+      const expectedErrorMessage = 'Post comment not found'
 
       await request
         .delete(POSTS_COMMENT_PATH)
@@ -111,7 +111,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentId })
         .expect(NOT_FOUND)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -121,7 +121,7 @@ describe('[API] - Posts endpoints', () => {
       const token = `bearer ${ownerValidToken}`
       const postId = selectedPost.id as string
       const commentId = nonValidPostComment.id as string
-      const errorMessage = 'Post comment not found'
+      const expectedErrorMessage = 'Post comment not found'
 
       await request
         .delete(POSTS_COMMENT_PATH)
@@ -129,7 +129,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentId })
         .expect(NOT_FOUND)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -139,7 +139,7 @@ describe('[API] - Posts endpoints', () => {
       const token = `bearer ${unauthorizedValidToken}`
       const postId = selectedPost.id as string
       const commentId = selectedComment.id as string
-      const errorMessage = 'User not authorized to delete this comment'
+      const expectedErrorMessage = 'User not authorized to delete this comment'
 
       await request
         .delete(POSTS_COMMENT_PATH)
@@ -147,7 +147,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentId })
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -161,7 +161,7 @@ describe('[API] - Posts endpoints', () => {
       const token = `bearer ${ownerValidToken}`
       const postId = selectedPost.id as string
       const commentId = selectedComment.id as string
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .delete(POSTS_COMMENT_PATH)
@@ -169,7 +169,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentId })
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'getPostComment').mockRestore()
@@ -185,7 +185,7 @@ describe('[API] - Posts endpoints', () => {
       const token = `bearer ${ownerValidToken}`
       const postId = selectedPost.id as string
       const commentId = selectedComment.id as string
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .delete(POSTS_COMMENT_PATH)
@@ -193,7 +193,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentId })
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'deletePostComment').mockRestore()

@@ -4,8 +4,8 @@ import { PostDomainModel } from '@domainModels'
 import {
   testingLikedAndCommentedPersistedDtoPosts,
   testingLikedAndCommentedPersistedDomainModelPosts,
-  savePosts,
-  cleanPostsCollection
+  savePostsFixture,
+  cleanPostsCollectionFixture
 } from '@testingFixtures'
 
 import { getPostById } from '@domainServices'
@@ -22,11 +22,11 @@ describe('[SERVICES] Post - getPostById', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts(mockedPosts)
+    await savePostsFixture(mockedPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 

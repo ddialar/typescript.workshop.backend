@@ -1,7 +1,7 @@
 import { connect, disconnect } from '../../../core'
 import { User } from '../../../models'
 import { UserDto, NewUserDatabaseDto } from '@infrastructure/dtos'
-import { testingUsers, testingNonPersistedUsername, cleanUsersCollection } from '@testingFixtures'
+import { testingUsers, testingNonPersistedUsername, cleanUsersCollectionFixture } from '@testingFixtures'
 
 import { getByUsername } from '../../user.mongodb.requests'
 
@@ -22,11 +22,11 @@ describe('[ORM] MongoDB - getByUsername', () => {
   })
 
   beforeEach(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
   })
 
   afterAll(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
     await disconnect()
   })
 

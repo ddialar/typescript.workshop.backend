@@ -8,7 +8,7 @@ import { CREATED, BAD_REQUEST, INTERNAL_SERVER_ERROR } from '@errors'
 import { NewUserInputDto } from '@infrastructure/dtos'
 import { userDataSource } from '@infrastructure/dataSources'
 
-import { testingUsers, cleanUsersCollection, getUserByUsername, saveUser } from '@testingFixtures'
+import { testingUsers, cleanUsersCollectionFixture, getUserByUsernameFixture, saveUserFixture } from '@testingFixtures'
 
 const [{ email, password, name, surname, avatar }] = testingUsers
 
@@ -24,11 +24,11 @@ describe(`[POST] ${SIGIN_PATH}`, () => {
   })
 
   beforeEach(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
   })
 
   afterAll(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
     await disconnect()
   })
 
@@ -49,7 +49,7 @@ describe(`[POST] ${SIGIN_PATH}`, () => {
       .then(async ({ text }) => {
         expect(text).toBe('User created')
 
-        const retrievedUser = await getUserByUsername(newUserData.email)
+        const retrievedUser = await getUserByUsernameFixture(newUserData.email)
 
         const expectedFields = ['_id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
         const retrievedUserFields = Object.keys(retrievedUser).sort()
@@ -77,16 +77,16 @@ describe(`[POST] ${SIGIN_PATH}`, () => {
 
   it('must return a 400 (BAD_REQUEST) when we try to persist an already user', async (done) => {
     const newUserData = { ...mockedUserData }
-    const errorMessage = 'User already exists'
+    const expectedErrorMessage = 'User already exists'
 
-    await saveUser({ ...newUserData, username: newUserData.email })
+    await saveUserFixture({ ...newUserData, username: newUserData.email })
 
     await request
       .post(SIGIN_PATH)
       .send(newUserData)
       .expect(BAD_REQUEST)
       .then(({ text }) => {
-        expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+        expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
       })
 
     done()
@@ -98,14 +98,14 @@ describe(`[POST] ${SIGIN_PATH}`, () => {
     })
 
     const newUserData = { ...mockedUserData }
-    const errorMessage = 'Internal Server Error'
+    const expectedErrorMessage = 'Internal Server Error'
 
     await request
       .post(SIGIN_PATH)
       .send(newUserData)
       .expect(INTERNAL_SERVER_ERROR)
       .then(({ text }) => {
-        expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+        expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
       })
 
     jest.spyOn(userDataSource, 'getUserByUsername').mockRestore()

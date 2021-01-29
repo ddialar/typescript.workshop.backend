@@ -1,6 +1,6 @@
 import { connect, disconnect } from '../../../core'
 import { PostDto } from '@infrastructure/dtos'
-import { testingLikedAndCommentedPersistedDtoPosts, savePosts, cleanPostsCollection, getPostById } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, getPostByIdFixture } from '@testingFixtures'
 
 import { deleteComment } from '../../post.mongodb.requests'
 
@@ -11,11 +11,11 @@ describe('[ORM] MongoDB - Posts - deleteComment', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts(mockedPosts)
+    await savePostsFixture(mockedPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 
@@ -25,7 +25,7 @@ describe('[ORM] MongoDB - Posts - deleteComment', () => {
 
     await deleteComment(postId, commentId)
 
-    const { comments: updatedComments } = await getPostById(postId) as PostDto
+    const { comments: updatedComments } = await getPostByIdFixture(postId) as PostDto
 
     expect(updatedComments).toHaveLength(selectedPost.comments.length - 1)
     expect(updatedComments.map(({ _id }) => _id).includes(commentId)).toBeFalsy()

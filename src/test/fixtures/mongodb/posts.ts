@@ -3,12 +3,13 @@ import { mongodb } from '@infrastructure/orm'
 
 const { models: { Post } } = mongodb
 
-export const cleanPostsCollection = async () => Post.deleteMany({})
+export const cleanPostsCollectionFixture = async () => Post.deleteMany({})
 
-export const savePost = async (postData: PostDto) => (new Post(postData)).save()
-export const savePosts = async (postsData: PostDto[]) => Post.insertMany(postsData)
+export const savePostFixture = async (postData: PostDto) => (new Post(postData)).save()
 
-export const getPostById = async (postId: string) => {
+export const savePostsFixture = async (postsData: PostDto[]) => Post.insertMany(postsData)
+
+export const getPostByIdFixture = async (postId: string) => {
   const retrievedPost = await Post.findById(postId)
   return retrievedPost ? retrievedPost.toJSON() as PostDto : null
 }

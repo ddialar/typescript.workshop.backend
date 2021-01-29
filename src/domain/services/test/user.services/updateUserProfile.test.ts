@@ -2,7 +2,7 @@ import { mongodb } from '@infrastructure/orm'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UpdatingUserError } from '@errors'
 import { NewUserProfileDomainModel, UserProfileDomainModel } from '@domainModels'
-import { testingUsers, testingAvatarUrls, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
+import { testingUsers, testingAvatarUrls, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { updateUserProfile } from '@domainServices'
 
@@ -25,17 +25,17 @@ describe('[SERVICES] User - updateUserProfile', () => {
   })
 
   beforeEach(async () => {
-    await cleanUsersCollection()
-    await saveUser(mockedUserData)
+    await cleanUsersCollectionFixture()
+    await saveUserFixture(mockedUserData)
   })
 
   afterAll(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
     await disconnect()
   })
 
   it('must update the user\'s profile and return the final result', async (done) => {
-    const originalUser = await getUserByUsername(username)
+    const originalUser = await getUserByUsernameFixture(username)
 
     expect(originalUser.name).toBe(mockedUserData.name)
     expect(originalUser.surname).toBe(mockedUserData.surname)
@@ -65,7 +65,7 @@ describe('[SERVICES] User - updateUserProfile', () => {
       throw new Error(errorMessage)
     })
 
-    const { _id: userId } = await getUserByUsername(username)
+    const { _id: userId } = await getUserByUsernameFixture(username)
     const newProfileData: NewUserProfileDomainModel = {
       name: 'Jane',
       surname: 'Doe',

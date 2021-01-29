@@ -1,7 +1,7 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
 import { PostDomainModel, PostLikeOwnerDomainModel } from '@domainModels'
-import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, testingDomainModelFreeUsers, savePosts, cleanPostsCollection } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, testingDomainModelFreeUsers, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { getPostLikeByOwnerId } from '@domainServices'
 import { GettingPostLikeError } from '@errors'
@@ -23,11 +23,11 @@ describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts([mockedCompleteDtoPost, mockedEmptyLikesDtoPost])
+    await savePostsFixture([mockedCompleteDtoPost, mockedEmptyLikesDtoPost])
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 

@@ -5,9 +5,9 @@ import {
   testingLikedAndCommentedPersistedDtoPosts,
   testingLikedAndCommentedPersistedDomainModelPosts,
   testingDomainModelFreeUsers,
-  cleanPostsCollection,
-  savePosts,
-  getPostById
+  cleanPostsCollectionFixture,
+  savePostsFixture,
+  getPostByIdFixture
 } from '@testingFixtures'
 
 import { deletePostComment } from '@domainServices'
@@ -32,12 +32,12 @@ describe('[SERVICES] Post - deletePostComment', () => {
   })
 
   beforeEach(async () => {
-    await cleanPostsCollection()
-    await savePosts(mockedPosts)
+    await cleanPostsCollectionFixture()
+    await savePostsFixture(mockedPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 
@@ -48,7 +48,7 @@ describe('[SERVICES] Post - deletePostComment', () => {
 
     await deletePostComment(postId, commentId, commentOwnerId)
 
-    const { comments: updatedDtoComments } = await getPostById(postId) as PostDto
+    const { comments: updatedDtoComments } = await getPostByIdFixture(postId) as PostDto
 
     expect(updatedDtoComments).toHaveLength(selectedPost.comments.length - 1)
     expect(updatedDtoComments.map(({ _id }) => _id).includes(commentId)).toBeFalsy()

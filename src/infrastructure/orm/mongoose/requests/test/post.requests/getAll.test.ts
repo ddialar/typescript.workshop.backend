@@ -1,6 +1,6 @@
 import { connect, disconnect } from '../../../core'
 import { PostDto } from '@infrastructure/dtos'
-import { testingLikedAndCommentedPersistedDtoPosts, savePosts, cleanPostsCollection } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { getAll } from '../../post.mongodb.requests'
 
@@ -9,11 +9,11 @@ describe('[ORM] MongoDB - Posts - getAll', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts(mockedPosts)
+    await savePostsFixture(mockedPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 

@@ -11,7 +11,7 @@ import { userDataSource } from '@infrastructure/dataSources'
 
 import * as hashServices from '../../../../../domain/services/hash.services' // Just for mocking purposes
 import * as token from '../../../../authentication/token' // Just for mocking purposes
-import { testingUsers, testingNonPersistedUsername, testingValidPlainPassword, testingWrongPlainPassword, cleanUsersCollection, saveUser } from '@testingFixtures'
+import { testingUsers, testingNonPersistedUsername, testingValidPlainPassword, testingWrongPlainPassword, cleanUsersCollectionFixture, saveUserFixture } from '@testingFixtures'
 
 const [{ id: userId, username: testingUsername, password, email, name, surname, avatar }] = testingUsers
 
@@ -40,12 +40,12 @@ describe('[API] - Authentication endpoints', () => {
     })
 
     beforeEach(async () => {
-      await cleanUsersCollection()
-      await saveUser(mockedUserData)
+      await cleanUsersCollectionFixture()
+      await saveUserFixture(mockedUserData)
     })
 
     afterAll(async () => {
-      await cleanUsersCollection()
+      await cleanUsersCollectionFixture()
       await disconnect()
     })
 
@@ -84,14 +84,14 @@ describe('[API] - Authentication endpoints', () => {
         username: testingNonPersistedUsername,
         password: testingValidPlainPassword
       }
-      const errorMessage = 'Username not valid'
+      const expectedErrorMessage = 'Username not valid'
 
       await request
         .post(LOGIN_PATH)
         .send(loginData)
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -102,14 +102,14 @@ describe('[API] - Authentication endpoints', () => {
         username: testingUsername,
         password: testingWrongPlainPassword
       }
-      const errorMessage = 'Password not valid'
+      const expectedErrorMessage = 'Password not valid'
 
       await request
         .post(LOGIN_PATH)
         .send(loginData)
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -124,14 +124,14 @@ describe('[API] - Authentication endpoints', () => {
         username: testingUsername,
         password: testingValidPlainPassword
       }
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(LOGIN_PATH)
         .send(loginData)
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(userDataSource, 'getUserByUsername').mockRestore()
@@ -148,14 +148,14 @@ describe('[API] - Authentication endpoints', () => {
         username: testingUsername,
         password: testingValidPlainPassword
       }
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(LOGIN_PATH)
         .send(loginData)
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(hashServices, 'checkPassword').mockRestore()
@@ -172,14 +172,14 @@ describe('[API] - Authentication endpoints', () => {
         username: testingUsername,
         password: testingValidPlainPassword
       }
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(LOGIN_PATH)
         .send(loginData)
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(token, 'generateToken').mockRestore()
@@ -196,14 +196,14 @@ describe('[API] - Authentication endpoints', () => {
         username: testingUsername,
         password: testingValidPlainPassword
       }
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(LOGIN_PATH)
         .send(loginData)
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(userDataSource, 'updateUserById').mockRestore()

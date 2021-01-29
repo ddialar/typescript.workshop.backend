@@ -1,7 +1,7 @@
 import { mongodb } from '@infrastructure/orm'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UpdatingUserError } from '@errors'
-import { testingUsers, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
+import { testingUsers, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { updateUserLogoutData } from '@domainServices'
 
@@ -18,12 +18,12 @@ describe('[SERVICES] User - updateUserLogoutData', () => {
 
   beforeAll(async () => {
     await connect()
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
   })
 
   beforeEach(async () => {
-    await cleanUsersCollection()
-    await saveUser(mockedUserData)
+    await cleanUsersCollectionFixture()
+    await saveUserFixture(mockedUserData)
   })
 
   afterAll(async () => {
@@ -31,13 +31,13 @@ describe('[SERVICES] User - updateUserLogoutData', () => {
   })
 
   it('must update the user record setting the token field content to NULL', async (done) => {
-    const { _id: userId, token } = await getUserByUsername(username)
+    const { _id: userId, token } = await getUserByUsernameFixture(username)
 
     expect(token).toBe(mockedUserData.token)
 
     await updateUserLogoutData(userId)
 
-    const updatedUser = await getUserByUsername(username)
+    const updatedUser = await getUserByUsernameFixture(username)
 
     expect(updatedUser.token).toBe('')
 
@@ -49,7 +49,7 @@ describe('[SERVICES] User - updateUserLogoutData', () => {
       throw new UpdatingUserError(errorMessage)
     })
 
-    const { _id: userId } = await getUserByUsername(username)
+    const { _id: userId } = await getUserByUsernameFixture(username)
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' logout data. ${errorMessage}`)
 
     await expect(updateUserLogoutData(userId)).rejects.toThrowError(expectedError)

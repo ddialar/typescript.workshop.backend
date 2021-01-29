@@ -5,9 +5,9 @@ import {
   testingLikedAndCommentedPersistedDtoPosts,
   testingLikedAndCommentedPersistedDomainModelPosts,
   testingDomainModelFreeUsers,
-  cleanPostsCollection,
-  savePosts,
-  getPostById
+  cleanPostsCollectionFixture,
+  savePostsFixture,
+  getPostByIdFixture
 } from '@testingFixtures'
 
 import { deletePost } from '@domainServices'
@@ -28,12 +28,12 @@ describe('[SERVICES] Post - deletePost', () => {
   })
 
   beforeEach(async () => {
-    await cleanPostsCollection()
-    await savePosts(mockedPosts)
+    await cleanPostsCollectionFixture()
+    await savePostsFixture(mockedPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 
@@ -43,7 +43,7 @@ describe('[SERVICES] Post - deletePost', () => {
 
     await deletePost(postId, postOwnerId)
 
-    const retrievedPost = await getPostById(postId)
+    const retrievedPost = await getPostByIdFixture(postId)
 
     expect(retrievedPost).toBeNull()
 

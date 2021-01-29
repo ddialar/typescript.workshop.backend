@@ -16,10 +16,10 @@ import {
   testingUsers,
   testingValidJwtTokenForNonPersistedUser,
   testingExpiredJwtToken,
-  cleanUsersCollection,
-  saveUser,
-  cleanPostsCollection,
-  savePosts
+  cleanUsersCollectionFixture,
+  saveUserFixture,
+  cleanPostsCollectionFixture,
+  savePostsFixture
 } from '@testingFixtures'
 
 const POSTS_COMMENT_PATH = '/posts/comment'
@@ -34,8 +34,8 @@ describe('[API] - Posts endpoints', () => {
     const { connect, disconnect } = mongodb
 
     const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
-    const originalPost = mockedPosts[0]
-    const testingFreeUser = testingDomainModelFreeUsers[0] as PostCommentOwnerDomainModel
+    const [originalPost] = mockedPosts
+    const [testingFreeUser] = testingDomainModelFreeUsers as PostCommentOwnerDomainModel[]
     const { id, username, password, email, avatar, name, surname, token: validToken } = testingUsers.find(({ id }) => id === testingFreeUser.id) as UserDomainModel
 
     const mockedUserDataToBePersisted: TestingProfileDto = {
@@ -54,18 +54,18 @@ describe('[API] - Posts endpoints', () => {
     beforeAll(async () => {
       request = supertest(server)
       await connect()
-      await cleanUsersCollection()
-      persistedUser = await saveUser(mockedUserDataToBePersisted)
+      await cleanUsersCollectionFixture()
+      persistedUser = await saveUserFixture(mockedUserDataToBePersisted)
     })
 
     beforeEach(async () => {
-      await cleanPostsCollection()
-      await savePosts(testingLikedAndCommentedPersistedDtoPosts)
+      await cleanPostsCollectionFixture()
+      await savePostsFixture(testingLikedAndCommentedPersistedDtoPosts)
     })
 
     afterAll(async () => {
-      await cleanUsersCollection()
-      await cleanPostsCollection()
+      await cleanUsersCollectionFixture()
+      await cleanPostsCollectionFixture()
       await disconnect()
     })
 
@@ -80,7 +80,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentBody })
         .expect(OK)
         .then(async ({ body }) => {
-          const updatedPost = body as PostDomainModel
+          const updatedPost: PostDomainModel = body
 
           const expectedPostFields = ['id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
           const updatedPostFields = Object.keys(updatedPost).sort()
@@ -118,7 +118,7 @@ describe('[API] - Posts endpoints', () => {
       const token = ''
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
-      const errorMessage = 'Required token was not provided'
+      const expectedErrorMessage = 'Required token was not provided'
 
       await request
         .post(POSTS_COMMENT_PATH)
@@ -126,7 +126,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentBody })
         .expect(FORBIDDEN)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -136,7 +136,7 @@ describe('[API] - Posts endpoints', () => {
       const token = `bearer ${testingExpiredJwtToken}`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
-      const errorMessage = 'Token expired'
+      const expectedErrorMessage = 'Token expired'
 
       await request
         .post(POSTS_COMMENT_PATH)
@@ -144,7 +144,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentBody })
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -154,7 +154,7 @@ describe('[API] - Posts endpoints', () => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
-      const errorMessage = 'User does not exist'
+      const expectedErrorMessage = 'User does not exist'
 
       await request
         .post(POSTS_COMMENT_PATH)
@@ -162,7 +162,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentBody })
         .expect(BAD_REQUEST)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -174,7 +174,7 @@ describe('[API] - Posts endpoints', () => {
       const token = `bearer ${validToken}`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(POSTS_COMMENT_PATH)
@@ -182,7 +182,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentBody })
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'createPostComment').mockRestore()
@@ -198,7 +198,7 @@ describe('[API] - Posts endpoints', () => {
       const token = `bearer ${validToken}`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(POSTS_COMMENT_PATH)
@@ -206,7 +206,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentBody })
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'createPostComment').mockRestore()

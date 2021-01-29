@@ -8,7 +8,7 @@ import { UserProfileDomainModel } from '@domainModels'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UserProfileDto } from '@infrastructure/dtos'
 
-import { testingUsers, testingValidJwtTokenForNonPersistedUser, testingExpiredJwtToken, cleanUsersCollection, saveUser } from '@testingFixtures'
+import { testingUsers, testingValidJwtTokenForNonPersistedUser, testingExpiredJwtToken, cleanUsersCollectionFixture, saveUserFixture } from '@testingFixtures'
 
 const [{ username, password, email, avatar, name, surname, token: validToken }] = testingUsers
 
@@ -43,22 +43,23 @@ describe('[API] - User endpoints', () => {
     }
 
     beforeEach(async () => {
-      await cleanUsersCollection()
-      await saveUser(mockedUserData)
+      await cleanUsersCollectionFixture()
+      await saveUserFixture(mockedUserData)
     })
 
     afterEach(async () => {
-      await cleanUsersCollection()
+      await cleanUsersCollectionFixture()
     })
 
     it('must return a 200 (OK) and the user\'s profile data', async (done) => {
       const token = `bearer ${validToken}`
+
       await request
         .get(PROFILE_PATH)
         .set('Authorization', token)
         .expect(OK)
         .then(async ({ body }) => {
-          const userProfile = body as UserProfileDomainModel
+          const userProfile: UserProfileDomainModel = body
           const expectedFields = ['username', 'email', 'name', 'surname', 'avatar']
 
           const userProfileFields = Object.keys(userProfile).sort()
@@ -76,14 +77,14 @@ describe('[API] - User endpoints', () => {
 
     it('must return a FORBIDDEN (403) error when we send an empty token', async (done) => {
       const token = ''
-      const errorMessage = 'Required token was not provided'
+      const expectedErrorMessage = 'Required token was not provided'
 
       await request
         .get(PROFILE_PATH)
         .set('Authorization', token)
         .expect(FORBIDDEN)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -91,14 +92,14 @@ describe('[API] - User endpoints', () => {
 
     it('must return an UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
-      const errorMessage = 'Token expired'
+      const expectedErrorMessage = 'Token expired'
 
       await request
         .get(PROFILE_PATH)
         .set('Authorization', token)
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -106,14 +107,14 @@ describe('[API] - User endpoints', () => {
 
     it('must return an BAD_REQUEST (400) error when we send an expired token', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
-      const errorMessage = 'User does not exist'
+      const expectedErrorMessage = 'User does not exist'
 
       await request
         .get(PROFILE_PATH)
         .set('Authorization', token)
         .expect(BAD_REQUEST)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -125,14 +126,14 @@ describe('[API] - User endpoints', () => {
       })
 
       const token = `bearer ${validToken}`
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .get(PROFILE_PATH)
         .set('Authorization', token)
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(userDataSource, 'getUserProfileById').mockRestore()

@@ -4,9 +4,9 @@ import { PostDomainModel } from '@domainModels'
 import {
   testingLikedAndCommentedPersistedDtoPosts,
   testingLikedAndCommentedPersistedDomainModelPosts,
-  cleanPostsCollection,
-  savePosts,
-  getPostById
+  cleanPostsCollectionFixture,
+  savePostsFixture,
+  getPostByIdFixture
 } from '@testingFixtures'
 
 import { dislikePost } from '@domainServices'
@@ -32,12 +32,12 @@ describe('[SERVICES] Post - dislikePost', () => {
   })
 
   beforeEach(async () => {
-    await cleanPostsCollection()
-    await savePosts([mockedCompleteDtoPost, mockedEmptyLikesDtoPost])
+    await cleanPostsCollectionFixture()
+    await savePostsFixture([mockedCompleteDtoPost, mockedEmptyLikesDtoPost])
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 
@@ -47,7 +47,7 @@ describe('[SERVICES] Post - dislikePost', () => {
 
     await dislikePost(postId, likeOwnerId)
 
-    const { likes: updatedDtoLikes } = await getPostById(postId) as PostDto
+    const { likes: updatedDtoLikes } = await getPostByIdFixture(postId) as PostDto
 
     expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length - 1)
     expect(updatedDtoLikes.map(({ userId }) => userId).includes(likeOwnerId)).toBeFalsy()
@@ -61,7 +61,7 @@ describe('[SERVICES] Post - dislikePost', () => {
 
     await dislikePost(postId, likeOwnerId)
 
-    const { likes: updatedDtoLikes } = await getPostById(postId) as PostDto
+    const { likes: updatedDtoLikes } = await getPostByIdFixture(postId) as PostDto
 
     expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length)
 

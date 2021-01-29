@@ -2,7 +2,7 @@ import { mongodb } from '@infrastructure/orm'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UserProfileDomainModel } from '@domainModels'
 import { GettingUserError, GettingUserProfileError } from '@errors'
-import { testingNonValidUserId, testingUsers, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
+import { testingNonValidUserId, testingUsers, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { getUserProfile } from '@domainServices'
 
@@ -25,12 +25,12 @@ describe('[SERVICES] User - getUserProfile', () => {
 
   beforeAll(async () => {
     await connect()
-    await cleanUsersCollection()
-    await saveUser(mockedUserData)
+    await cleanUsersCollectionFixture()
+    await saveUserFixture(mockedUserData)
   })
 
   afterAll(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
     await disconnect()
   })
 
@@ -43,7 +43,7 @@ describe('[SERVICES] User - getUserProfile', () => {
   })
 
   it('must retrieve selected user\'s profile', async (done) => {
-    const { _id: userId } = await getUserByUsername(username)
+    const { _id: userId } = await getUserByUsernameFixture(username)
     const retrievedUserProfile = await getUserProfile(userId) as UserProfileDomainModel
 
     const expectedFields = ['username', 'email', 'name', 'surname', 'avatar']
@@ -64,7 +64,7 @@ describe('[SERVICES] User - getUserProfile', () => {
       throw new GettingUserError(errorMessage)
     })
 
-    const { _id: userId } = await getUserByUsername(username)
+    const { _id: userId } = await getUserByUsernameFixture(username)
     const expectedError = new GettingUserProfileError(`Error retrieving profile for user ${userId}. ${errorMessage}`)
 
     await expect(getUserProfile(userId)).rejects.toThrowError(expectedError)

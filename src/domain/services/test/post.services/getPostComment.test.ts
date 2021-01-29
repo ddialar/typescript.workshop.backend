@@ -1,7 +1,7 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
 import { PostCommentDomainModel, PostDomainModel } from '@domainModels'
-import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePosts, cleanPostsCollection } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { getPostComment } from '@domainServices'
 import { GettingPostCommentError } from '@errors'
@@ -20,11 +20,11 @@ describe('[SERVICES] Post - getPostComment', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts(mockedPosts)
+    await savePostsFixture(mockedPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 

@@ -2,7 +2,7 @@ import { mongodb } from '@infrastructure/orm'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UserDomainModel, NewUserDomainModel } from '@domainModels'
 import { GettingUserError } from '@errors'
-import { testingUsers, cleanUsersCollection, saveUser } from '@testingFixtures'
+import { testingUsers, cleanUsersCollectionFixture, saveUserFixture } from '@testingFixtures'
 
 import { getUserByUsername } from '@domainServices'
 
@@ -24,11 +24,11 @@ describe('[SERVICES] User - getUserByUsername', () => {
   })
 
   beforeEach(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
   })
 
   afterAll(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
     await disconnect()
   })
 
@@ -43,7 +43,7 @@ describe('[SERVICES] User - getUserByUsername', () => {
   it('must retrieve the persisted user', async (done) => {
     const newUserData: NewUserDomainModel = { ...mockedUserData }
 
-    await saveUser(newUserData)
+    await saveUserFixture(newUserData)
 
     const username = newUserData.username
     const retrievedUser = await getUserByUsername(username) as UserDomainModel

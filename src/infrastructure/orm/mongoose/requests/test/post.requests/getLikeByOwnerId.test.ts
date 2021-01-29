@@ -1,6 +1,6 @@
 import { connect, disconnect } from '../../../core'
 import { PostDto, PostLikeOwnerDto } from '@infrastructure/dtos'
-import { testingLikedAndCommentedPersistedDtoPosts, savePosts, cleanPostsCollection } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { getLikeByOwnerId } from '../../post.mongodb.requests'
 
@@ -18,11 +18,11 @@ describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts([mockedCompleteDtoPost, mockedEmptyLikesDtoPost])
+    await savePostsFixture([mockedCompleteDtoPost, mockedEmptyLikesDtoPost])
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 

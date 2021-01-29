@@ -1,7 +1,7 @@
 import { lorem } from 'faker'
 import { connect, disconnect } from '../../../core'
 import { PostCommentDto, PostDto } from '@infrastructure/dtos'
-import { testingLikedAndCommentedPersistedDtoPosts, testingDtoFreeUsers, savePosts, cleanPostsCollection } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, testingDtoFreeUsers, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { createComment } from '../../post.mongodb.requests'
 
@@ -10,11 +10,11 @@ describe('[ORM] MongoDB - Posts - createComment', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts(mockedPosts)
+    await savePostsFixture(mockedPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 

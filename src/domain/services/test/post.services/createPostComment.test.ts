@@ -4,8 +4,8 @@ import {
   testingLikedAndCommentedPersistedDtoPosts,
   testingLikedAndCommentedPersistedDomainModelPosts,
   testingDomainModelFreeUsers,
-  savePosts,
-  cleanPostsCollection
+  savePostsFixture,
+  cleanPostsCollectionFixture
 } from '@testingFixtures'
 
 import { createPostComment } from '@domainServices'
@@ -22,11 +22,11 @@ describe('[SERVICES] Post - createPostComment', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts(testingLikedAndCommentedPersistedDtoPosts)
+    await savePostsFixture(testingLikedAndCommentedPersistedDtoPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 

@@ -1,7 +1,7 @@
 import { lorem } from 'faker'
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
-import { testingDomainModelPostOwners, cleanUsersCollection } from '@testingFixtures'
+import { testingDomainModelPostOwners, cleanUsersCollectionFixture } from '@testingFixtures'
 
 import { createPost } from '@domainServices'
 import { CreatingPostError } from '@errors'
@@ -17,11 +17,11 @@ describe('[SERVICES] Post - createPost', () => {
   })
 
   beforeEach(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
   })
 
   afterAll(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
     await disconnect()
   })
 

@@ -10,8 +10,8 @@ import { postDataSource } from '@infrastructure/dataSources'
 import {
   testingLikedAndCommentedPersistedDtoPosts,
   testingLikedAndCommentedPersistedDomainModelPosts,
-  savePosts,
-  cleanPostsCollection
+  savePostsFixture,
+  cleanPostsCollectionFixture
 } from '@testingFixtures'
 
 const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
@@ -30,16 +30,17 @@ describe('[API] - Posts endpoints', () => {
     beforeAll(async () => {
       request = supertest(server)
       await connect()
-      await savePosts(mockedPosts)
+      await savePostsFixture(mockedPosts)
     })
 
     afterAll(async () => {
-      await cleanPostsCollection()
+      await cleanPostsCollectionFixture()
       await disconnect()
     })
 
     it('must return OK (200) and the selected post data', async (done) => {
       const postId = selectedPost.id
+
       await request
         .get(`${POSTS_PATH}/${postId}`)
         .expect(OK)
@@ -52,14 +53,14 @@ describe('[API] - Posts endpoints', () => {
     })
 
     it('must return NOT_FOUND (404) when the selected post does not exist', async (done) => {
-      const errorMessage = 'Post not found'
       const postId = nonValidPostId
+      const expectedErrorMessage = 'Post not found'
 
       await request
         .get(`${POSTS_PATH}/${postId}`)
         .expect(NOT_FOUND)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -70,14 +71,14 @@ describe('[API] - Posts endpoints', () => {
         throw new Error('Testing error')
       })
 
-      const errorMessage = 'Internal Server Error'
       const postId = selectedPost.id
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .get(`${POSTS_PATH}/${postId}`)
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'getPostById').mockRestore()

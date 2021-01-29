@@ -15,11 +15,11 @@ import {
   testingUsers,
   testingValidJwtTokenForNonPersistedUser,
   testingExpiredJwtToken,
-  cleanUsersCollection,
-  cleanPostsCollection,
-  saveUser,
-  savePosts,
-  getPostById
+  cleanUsersCollectionFixture,
+  cleanPostsCollectionFixture,
+  saveUserFixture,
+  savePostsFixture,
+  getPostByIdFixture
 } from '@testingFixtures'
 import { mapPostFromDtoToDomainModel } from '@infrastructure/mappers'
 
@@ -55,18 +55,18 @@ describe('[API] - Posts endpoints', () => {
     beforeAll(async () => {
       request = supertest(server)
       await connect()
-      await cleanUsersCollection()
-      await saveUser(mockedUserDataToBePersisted)
+      await cleanUsersCollectionFixture()
+      await saveUserFixture(mockedUserDataToBePersisted)
     })
 
     beforeEach(async () => {
-      await cleanPostsCollection()
-      await savePosts(testingLikedAndCommentedPersistedDtoPosts)
+      await cleanPostsCollectionFixture()
+      await savePostsFixture(testingLikedAndCommentedPersistedDtoPosts)
     })
 
     afterAll(async () => {
-      await cleanUsersCollection()
-      await cleanPostsCollection()
+      await cleanUsersCollectionFixture()
+      await cleanPostsCollectionFixture()
       await disconnect()
     })
 
@@ -81,7 +81,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(OK)
         .then(async () => {
-          const updatedPost = mapPostFromDtoToDomainModel(JSON.parse(JSON.stringify(await getPostById(postId as string)))) as PostDomainModel
+          const updatedPost = mapPostFromDtoToDomainModel(await getPostByIdFixture(postId as string)) as PostDomainModel
 
           expect(updatedPost.id).not.toBeNull()
           expect(updatedPost.body).toBe(originalPost.body)
@@ -111,7 +111,7 @@ describe('[API] - Posts endpoints', () => {
     it('must return NOT_FOUND (404) when the provided post ID doesn\'t exist', async (done) => {
       const token = `bearer ${validToken}`
       const postId = nonValidPostId
-      const errorMessage = 'Post not found'
+      const expectedErrorMessage = 'Post not found'
 
       await request
         .post(POSTS_LIKE_PATH)
@@ -119,7 +119,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(NOT_FOUND)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -128,7 +128,7 @@ describe('[API] - Posts endpoints', () => {
     it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
       const { id: postId } = originalPost
-      const errorMessage = 'Token expired'
+      const expectedErrorMessage = 'Token expired'
 
       await request
         .post(POSTS_LIKE_PATH)
@@ -136,7 +136,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -145,7 +145,7 @@ describe('[API] - Posts endpoints', () => {
     it('must return BAD_REQUEST (400) error when we send a token of non recorded user', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const { id: postId } = originalPost
-      const errorMessage = 'User does not exist'
+      const expectedErrorMessage = 'User does not exist'
 
       await request
         .post(POSTS_LIKE_PATH)
@@ -153,7 +153,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(BAD_REQUEST)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
@@ -166,7 +166,7 @@ describe('[API] - Posts endpoints', () => {
 
       const token = `bearer ${validToken}`
       const { id: postId } = originalPost
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(POSTS_LIKE_PATH)
@@ -174,7 +174,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'getPostById').mockRestore()
@@ -189,7 +189,7 @@ describe('[API] - Posts endpoints', () => {
 
       const token = `bearer ${validToken}`
       const { id: postId } = originalPost
-      const errorMessage = 'Internal Server Error'
+      const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(POSTS_LIKE_PATH)
@@ -197,7 +197,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: errorMessage })
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       jest.spyOn(postDataSource, 'likePost').mockRestore()

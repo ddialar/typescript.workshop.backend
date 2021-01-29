@@ -2,7 +2,7 @@ import { connect, disconnect } from '../../../core'
 import { UserProfileDto } from '@infrastructure/dtos'
 
 import { getProfileById } from '../../user.mongodb.requests'
-import { testingUsers, testingNonValidUserId, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
+import { testingUsers, testingNonValidUserId, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 const [{ username, password, email, avatar, name, surname }] = testingUsers
 
@@ -22,12 +22,12 @@ describe('[ORM] MongoDB - getProfileById', () => {
 
   beforeAll(async () => {
     await connect()
-    await cleanUsersCollection()
-    await saveUser(mockedUserData)
+    await cleanUsersCollectionFixture()
+    await saveUserFixture(mockedUserData)
   })
 
   afterAll(async () => {
-    await cleanUsersCollection()
+    await cleanUsersCollectionFixture()
     await disconnect()
   })
 
@@ -40,7 +40,7 @@ describe('[ORM] MongoDB - getProfileById', () => {
   })
 
   it('must retrieve selected user\'s profile', async (done) => {
-    const { _id: userId } = await getUserByUsername(username)
+    const { _id: userId } = await getUserByUsernameFixture(username)
     const retrievedUserProfile = await getProfileById(userId) as UserProfileDto
 
     const expectedFields = ['username', 'email', 'name', 'surname', 'avatar']

@@ -1,6 +1,6 @@
 import { connect, disconnect } from '../../../core'
 import { PostCommentDto, PostDto } from '@infrastructure/dtos'
-import { testingLikedAndCommentedPersistedDtoPosts, savePosts, cleanPostsCollection } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { getComment } from '../../post.mongodb.requests'
 
@@ -13,11 +13,11 @@ describe('[ORM] MongoDB - Posts - getComment', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts(mockedPosts)
+    await savePostsFixture(mockedPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 

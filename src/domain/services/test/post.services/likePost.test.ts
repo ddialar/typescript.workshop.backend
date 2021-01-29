@@ -1,5 +1,5 @@
 import { mongodb } from '@infrastructure/orm'
-import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, testingDomainModelFreeUsers, savePosts, cleanPostsCollection, getPostById } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, testingDomainModelFreeUsers, savePostsFixture, cleanPostsCollectionFixture, getPostByIdFixture } from '@testingFixtures'
 
 import { likePost } from '@domainServices'
 import { PostDomainModel, PostLikeOwnerDomainModel } from '@domainModels'
@@ -16,11 +16,11 @@ describe('[SERVICES] Post - likePost', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePosts(testingLikedAndCommentedPersistedDtoPosts)
+    await savePostsFixture(testingLikedAndCommentedPersistedDtoPosts)
   })
 
   afterAll(async () => {
-    await cleanPostsCollection()
+    await cleanPostsCollectionFixture()
     await disconnect()
   })
 
@@ -30,7 +30,7 @@ describe('[SERVICES] Post - likePost', () => {
 
     await likePost(postId, likeOwner)
 
-    const updatedPost = mapPostFromDtoToDomainModel(await getPostById(postId) as PostDto) as PostDomainModel
+    const updatedPost = mapPostFromDtoToDomainModel(await getPostByIdFixture(postId) as PostDto) as PostDomainModel
 
     expect(updatedPost.id).not.toBeNull()
     expect(updatedPost.body).toBe(originalPost.body)
