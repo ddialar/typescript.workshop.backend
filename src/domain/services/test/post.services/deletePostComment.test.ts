@@ -18,11 +18,14 @@ describe('[SERVICES] Post - deletePostComment', () => {
   const { connect, disconnect } = mongodb
 
   const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const selectedPost = testingLikedAndCommentedPersistedDomainModelPosts[0] as PostDomainModel
-  const selectedComment = selectedPost.comments[0]
-  const mockedNonValidPostId = mockedPosts[1]._id as string
-  const mockedNonValidCommentId = mockedPosts[1].comments[0]._id as string
-  const { id: unauthorizedUserId } = testingDomainModelFreeUsers[0] as UserDomainModel
+  const { 1: mockedNonValidPost } = mockedPosts
+  const { _id: mockedNonValidPostId } = mockedNonValidPost
+  const [{ _id: mockedNonValidCommentId }] = mockedNonValidPost.comments
+
+  const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+  const [selectedComment] = selectedPost.comments
+
+  const [{ id: unauthorizedUserId }] = testingDomainModelFreeUsers as UserDomainModel[]
 
   beforeAll(async () => {
     await connect()
@@ -54,7 +57,7 @@ describe('[SERVICES] Post - deletePostComment', () => {
   })
 
   it('must throw NOT_FOUND (404) when we select a post which doesn\'t contain the provided comment', async (done) => {
-    const postId = mockedNonValidPostId
+    const postId = mockedNonValidPostId as string
     const commentId = selectedComment.id as string
     const commentOwnerId = selectedComment.owner.id as string
 
@@ -65,7 +68,7 @@ describe('[SERVICES] Post - deletePostComment', () => {
 
   it('must throw NOT_FOUND (404) when provide a comment which is not contained into the selected post', async (done) => {
     const postId = selectedPost.id as string
-    const commentId = mockedNonValidCommentId
+    const commentId = mockedNonValidCommentId as string
     const commentOwnerId = selectedComment.owner.id as string
 
     await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`))

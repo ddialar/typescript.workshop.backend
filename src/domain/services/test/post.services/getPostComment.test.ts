@@ -11,10 +11,12 @@ describe('[SERVICES] Post - getPostComment', () => {
   const { connect, disconnect } = mongodb
 
   const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const selectedPost = testingLikedAndCommentedPersistedDomainModelPosts[0] as PostDomainModel
-  const selectedComment = selectedPost.comments[0]
-  const mockedNonValidPostId = mockedPosts[1]._id as string
-  const mockedNonValidCommentId = mockedPosts[1].comments[0]._id as string
+  const { 1: mockedNonValidPost } = mockedPosts
+  const { _id: mockedNonValidPostId } = mockedNonValidPost
+  const [{ _id: mockedNonValidCommentId }] = mockedNonValidPost.comments
+
+  const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+  const [selectedComment] = selectedPost.comments
 
   beforeAll(async () => {
     await connect()
@@ -42,7 +44,7 @@ describe('[SERVICES] Post - getPostComment', () => {
   })
 
   it('must return NULL when select a post which doesn\'t contain the provided comment', async (done) => {
-    const postId = mockedNonValidPostId
+    const postId = mockedNonValidPostId as string
     const commentId = selectedComment.id as string
 
     await expect(getPostComment(postId, commentId)).resolves.toBeNull()
@@ -52,7 +54,7 @@ describe('[SERVICES] Post - getPostComment', () => {
 
   it('must return NULL when provide a comment which is not contained into the selected post', async (done) => {
     const postId = selectedPost.id as string
-    const commentId = mockedNonValidCommentId
+    const commentId = mockedNonValidCommentId as string
 
     await expect(getPostComment(postId, commentId)).resolves.toBeNull()
 

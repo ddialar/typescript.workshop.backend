@@ -17,7 +17,7 @@ describe('[SERVICES] Post - getPostById', () => {
   const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
   const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts
   const [selectedPost] = resultPosts
-  const selectedPostId = selectedPost.id
+  const { id: selectedPostId } = selectedPost
   const nonValidPostId = selectedPost.comments[0].id
 
   beforeAll(async () => {

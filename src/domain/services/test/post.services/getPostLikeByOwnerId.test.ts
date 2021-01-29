@@ -1,7 +1,7 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
 import { PostDomainModel, PostLikeOwnerDomainModel } from '@domainModels'
-import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePosts, cleanPostsCollection } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, testingDomainModelFreeUsers, savePosts, cleanPostsCollection } from '@testingFixtures'
 
 import { getPostLikeByOwnerId } from '@domainServices'
 import { GettingPostLikeError } from '@errors'
@@ -11,16 +11,15 @@ describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
   const { connect, disconnect } = mongodb
 
   const mockedDtoPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const mockedCompleteDtoPost = JSON.parse(JSON.stringify(mockedDtoPosts[0]))
-  const mockedEmptyLikesDtoPost = JSON.parse(JSON.stringify(mockedDtoPosts[1]))
+  const [mockedCompleteDtoPost, mockedEmptyLikesDtoPost] = mockedDtoPosts
   mockedEmptyLikesDtoPost.likes = []
 
   const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
-  const selectedPost = resultPosts[0]
-  const selectedLike = selectedPost.likes[0]
-  const selectedLikeOwnerId = selectedLike.id
+  const [selectedPost] = resultPosts
+  const [selectedLike] = selectedPost.likes
+  const { id: selectedLikeOwnerId } = selectedLike
   const mockedNonValidPostId = resultPosts[1].id as string
-  const mockedNonValidLikeOwnerId = resultPosts[1].owner.id as string
+  const mockedNonValidLikeOwnerId = testingDomainModelFreeUsers[0].id
 
   beforeAll(async () => {
     await connect()
