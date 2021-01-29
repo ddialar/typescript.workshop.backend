@@ -1,11 +1,10 @@
 import { mongodb } from '@infrastructure/orm'
 import { userDataSource } from '@infrastructure/dataSources'
-import { UserDomainModel, UserProfileDomainModel } from '@domainModels'
+import { UserProfileDomainModel } from '@domainModels'
 import { GettingUserError, GettingUserProfileError } from '@errors'
-import { testingNonValidUserId, testingUsers, cleanUsersCollection, saveUser } from '@testingFixtures'
+import { testingNonValidUserId, testingUsers, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
 
 import { getUserProfile } from '@domainServices'
-import { UserDto } from '@infrastructure/dtos'
 
 const [{ username, password, email, avatar, name, surname }] = testingUsers
 
@@ -14,7 +13,7 @@ interface TestingProfileDomainModel extends UserProfileDomainModel {
 }
 
 describe('[SERVICES] User - getUserProfile', () => {
-  const { connect, disconnect, models: { User } } = mongodb
+  const { connect, disconnect } = mongodb
 
   const mockedUserData: TestingProfileDomainModel = {
     username,
@@ -45,7 +44,7 @@ describe('[SERVICES] User - getUserProfile', () => {
   })
 
   it('must retrieve selected user\'s profile', async (done) => {
-    const { _id: userId } = (await User.findOne({ username }))?.toJSON() as UserDto
+    const { _id: userId } = await getUserByUsername(username)
     const retrievedUserProfile = await getUserProfile(userId) as UserProfileDomainModel
 
     const expectedFields = ['username', 'email', 'name', 'surname', 'avatar']
@@ -66,7 +65,7 @@ describe('[SERVICES] User - getUserProfile', () => {
       throw new GettingUserError('Testing error')
     })
 
-    const { id: userId } = (await User.findOne({ username }))?.toJSON() as UserDomainModel
+    const { _id: userId } = await getUserByUsername(username)
 
     try {
       await getUserProfile(userId)

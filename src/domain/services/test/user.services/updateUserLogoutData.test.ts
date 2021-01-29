@@ -1,5 +1,4 @@
 import { mongodb } from '@infrastructure/orm'
-import { UserDto } from '@infrastructure/dtos'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UpdatingUserError } from '@errors'
 import { testingUsers, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
@@ -9,7 +8,7 @@ import { updateUserLogoutData } from '@domainServices'
 const [{ username, password, email, token }] = testingUsers
 
 describe('[SERVICES] User - updateUserLogoutData', () => {
-  const { connect, disconnect, models: { User } } = mongodb
+  const { connect, disconnect } = mongodb
 
   const mockedUserData = {
     username,
@@ -33,7 +32,7 @@ describe('[SERVICES] User - updateUserLogoutData', () => {
   })
 
   it('must update the user record setting the token field content to NULL', async (done) => {
-    const { _id: userId, token } = (await User.findOne({ username }))?.toJSON() as UserDto
+    const { _id: userId, token } = await getUserByUsername(username)
 
     expect(token).toBe(mockedUserData.token)
 

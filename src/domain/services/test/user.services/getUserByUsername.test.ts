@@ -2,14 +2,14 @@ import { mongodb } from '@infrastructure/orm'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UserDomainModel, NewUserDomainModel } from '@domainModels'
 import { GettingUserError } from '@errors'
-import { testingUsers, cleanUsersCollection } from '@testingFixtures'
+import { testingUsers, cleanUsersCollection, saveUser } from '@testingFixtures'
 
 import { getUserByUsername } from '@domainServices'
 
 const [{ username, password, email, name, surname, avatar }] = testingUsers
 
 describe('[SERVICES] User - getUserByUsername', () => {
-  const { connect, disconnect, models: { User } } = mongodb
+  const { connect, disconnect } = mongodb
 
   const mockedUserData: NewUserDomainModel = {
     username,
@@ -44,7 +44,7 @@ describe('[SERVICES] User - getUserByUsername', () => {
   it('must retrieve the persisted user', async (done) => {
     const newUserData: NewUserDomainModel = { ...mockedUserData }
 
-    await (new User(newUserData)).save()
+    await saveUser(newUserData)
 
     const username = newUserData.username
     const retrievedUser = await getUserByUsername(username) as UserDomainModel
