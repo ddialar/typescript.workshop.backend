@@ -8,7 +8,7 @@ import { CreatingPostError } from '@errors'
 
 describe('[SERVICES] Post - createPost', () => {
   const { connect, disconnect } = mongodb
-
+  const errorMessage = 'Testing error'
   const [owner] = testingDomainModelPostOwners
   const postBody = lorem.paragraph()
 
@@ -49,12 +49,10 @@ describe('[SERVICES] Post - createPost', () => {
   it('must throw INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
     jest.spyOn(postDataSource, 'createPost').mockImplementation(() => Promise.resolve(null))
 
-    try {
-      await createPost(owner, postBody)
-    } catch (error) {
-      const message = 'Post creation process initiated but completed with NULL result'
-      expect(error).toStrictEqual(new CreatingPostError(`Error creating post for user '${owner.id}'. ${message}`))
-    }
+    const message = 'Post creation process initiated but completed with NULL result'
+    const expectedError = new CreatingPostError(`Error creating post for user '${owner.id}'. ${message}`)
+
+    await expect(createPost(owner, postBody)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'createPost').mockRestore()
 
@@ -63,14 +61,12 @@ describe('[SERVICES] Post - createPost', () => {
 
   it('must throw INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async (done) => {
     jest.spyOn(postDataSource, 'createPost').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
-    try {
-      await createPost(owner, postBody)
-    } catch (error) {
-      expect(error).toStrictEqual(new CreatingPostError(`Error creating post for user '${owner.id}'. ${error.message}`))
-    }
+    const expectedError = new CreatingPostError(`Error creating post for user '${owner.id}'. ${errorMessage}`)
+
+    await expect(createPost(owner, postBody)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'createPost').mockRestore()
 

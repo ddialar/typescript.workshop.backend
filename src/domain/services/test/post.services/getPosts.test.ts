@@ -12,6 +12,7 @@ const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDom
 
 describe('[SERVICES] Post - getPosts', () => {
   const { connect, disconnect } = mongodb
+  const errorMessage = 'Testing error'
 
   beforeAll(async () => {
     await connect()
@@ -43,14 +44,12 @@ describe('[SERVICES] Post - getPosts', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'getPosts').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
-    try {
-      await getPosts()
-    } catch (error) {
-      expect(error).toStrictEqual(new GettingPostError(`Error retereaving posts. ${error.message}`))
-    }
+    const expectedError = new GettingPostError(`Error retereaving posts. ${errorMessage}`)
+
+    await expect(getPosts()).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'getPosts').mockRestore()
 

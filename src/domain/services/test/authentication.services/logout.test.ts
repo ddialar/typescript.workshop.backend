@@ -6,10 +6,10 @@ import { testingUsers, cleanUsersCollection, saveUser, getUserByUsername } from 
 
 import { logout } from '@domainServices'
 
-const [{ username, password, email, name, surname, avatar, token }] = testingUsers
-
 describe('[SERVICES] Authentication - logout', () => {
   const { connect, disconnect } = mongodb
+  const errorMessage = 'Testing Error'
+  const [{ username, password, email, name, surname, avatar, token }] = testingUsers
   const mockedUserData: NewUserDomainModel & { token: string } = {
     username,
     password,
@@ -51,17 +51,14 @@ describe('[SERVICES] Authentication - logout', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the updating logout user data process fails', async (done) => {
     jest.spyOn(userDataSource, 'updateUserById').mockImplementation(() => {
-      throw new Error('Testing Error')
+      throw new Error(errorMessage)
     })
 
     const { username } = mockedUserData
     const { _id: userId } = await getUserByUsername(username)
+    const expectedError = new UpdatingUserError(`Error updating user '${userId}' logout data. ${errorMessage}`)
 
-    try {
-      await logout(userId)
-    } catch (error) {
-      expect(error).toStrictEqual(new UpdatingUserError(`Error updating user '${userId}' logout data. ${error.message}`))
-    }
+    await expect(logout(userId)).rejects.toThrowError(expectedError)
 
     jest.spyOn(userDataSource, 'updateUserById').mockRestore()
 

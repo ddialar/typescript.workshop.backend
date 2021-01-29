@@ -10,7 +10,7 @@ import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - likePost', () => {
   const { connect, disconnect } = mongodb
-
+  const errorMessage = 'Testing Error'
   const [originalPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
   const nonValidPostId = originalPost.comments[0].id as string
 
@@ -63,16 +63,15 @@ describe('[SERVICES] Post - likePost', () => {
   })
 
   it('must throw INTERNAL_SERVER_ERROR (500) when the retrieving post pocess throws an error', async (done) => {
-    const errorMessage = 'Testing error'
-
     jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
 
     const postId = originalPost.id as string
     const likeOwner = testingDomainModelFreeUsers[0] as PostLikeOwnerDomainModel
+    const expectedError = new GettingPostCommentError(`Error retereaving post comment. ${errorMessage}`)
 
-    await expect(likePost(postId, likeOwner)).rejects.toThrowError(new GettingPostCommentError(`Error retereaving post comment. ${errorMessage}`))
+    await expect(likePost(postId, likeOwner)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
 
@@ -80,16 +79,15 @@ describe('[SERVICES] Post - likePost', () => {
   })
 
   it('must throw INTERNAL_SERVER_ERROR (500) when the liking process throws an exception', async (done) => {
-    const errorMessage = 'Testing error'
-
     jest.spyOn(postDataSource, 'likePost').mockImplementation(() => {
       throw new Error(errorMessage)
     })
 
     const postId = originalPost.id as string
     const likeOwner = testingDomainModelFreeUsers[0] as PostLikeOwnerDomainModel
+    const expectedError = new LikingPostError(`Error setting like to post '${postId}' by user '${likeOwner.id}'. ${errorMessage}`)
 
-    await expect(likePost(postId, likeOwner)).rejects.toThrowError(new LikingPostError(`Error setting like to post '${postId}' by user '${likeOwner.id}'. ${errorMessage}`))
+    await expect(likePost(postId, likeOwner)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'likePost').mockRestore()
 

@@ -15,7 +15,7 @@ import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - dislikePost', () => {
   const { connect, disconnect } = mongodb
-
+  const errorMessage = 'Testing Error'
   const mockedDtoPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
   const [mockedCompleteDtoPost, mockedEmptyLikesDtoPost] = mockedDtoPosts
   mockedEmptyLikesDtoPost.likes = []
@@ -79,17 +79,14 @@ describe('[SERVICES] Post - dislikePost', () => {
 
   it('must throw INTERNAL_SERVER_ERROR (500) when the datasource retrieving post by ID process throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
     const postId = selectedPost.id as string
     const likeOwnerId = selectedLikeOwnerId
+    const expectedError = new GettingPostError(`Error retereaving post '${postId}'. ${errorMessage}`)
 
-    try {
-      await dislikePost(postId, likeOwnerId)
-    } catch (error) {
-      expect(error).toStrictEqual(new GettingPostError(`Error retereaving post '${postId}'. ${error.message}`))
-    }
+    await expect(dislikePost(postId, likeOwnerId)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
 
@@ -98,17 +95,14 @@ describe('[SERVICES] Post - dislikePost', () => {
 
   it('must throw INTERNAL_SERVER_ERROR (500) when the datasource retrieving post like by owner ID throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'getPostLikeByOwnerId').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
     const postId = selectedPost.id as string
     const likeOwnerId = selectedLikeOwnerId
+    const expectedError = new GettingPostLikeError(`Error retereaving post comment. ${errorMessage}`)
 
-    try {
-      await dislikePost(postId, likeOwnerId)
-    } catch (error) {
-      expect(error).toStrictEqual(new GettingPostLikeError(`Error retereaving post comment. ${error.message}`))
-    }
+    await expect(dislikePost(postId, likeOwnerId)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'getPostLikeByOwnerId').mockRestore()
 
@@ -117,17 +111,14 @@ describe('[SERVICES] Post - dislikePost', () => {
 
   it('must throw INTERNAL_SERVER_ERROR (500) when the datasource disliking process throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'dislikePost').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
     const postId = selectedPost.id as string
     const likeOwnerId = selectedLikeOwnerId
+    const expectedError = new DeletingPostLikeError(`Error deleting like '${selectedLike.id}', from post '${postId}', by user '${likeOwnerId}'. ${errorMessage}`)
 
-    try {
-      await dislikePost(postId, likeOwnerId)
-    } catch (error) {
-      expect(error).toStrictEqual(new DeletingPostLikeError(`Error deleting like '${selectedLike.id}', from post '${postId}', by user '${likeOwnerId}'. ${error.message}`))
-    }
+    await expect(dislikePost(postId, likeOwnerId)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'dislikePost').mockRestore()
 

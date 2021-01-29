@@ -9,7 +9,7 @@ import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
   const { connect, disconnect } = mongodb
-
+  const errorMessage = 'Testing error'
   const mockedDtoPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
   const [mockedCompleteDtoPost, mockedEmptyLikesDtoPost] = mockedDtoPosts
   mockedEmptyLikesDtoPost.likes = []
@@ -66,17 +66,14 @@ describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
 
   it('must throw INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'getPostLikeByOwnerId').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
     const postId = selectedPost.id as string
     const commentId = selectedLike.id as string
+    const expectedError = new GettingPostLikeError(`Error retereaving post comment. ${errorMessage}`)
 
-    try {
-      await getPostLikeByOwnerId(postId, commentId)
-    } catch (error) {
-      expect(error).toStrictEqual(new GettingPostLikeError(`Error retereaving post comment. ${error.message}`))
-    }
+    await expect(getPostLikeByOwnerId(postId, commentId)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'getPostLikeByOwnerId').mockRestore()
 

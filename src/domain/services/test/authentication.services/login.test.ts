@@ -5,19 +5,17 @@ import { userDataSource } from '@infrastructure/dataSources'
 import { mongodb } from '@infrastructure/orm'
 import * as token from '@infrastructure/authentication/token'
 import { GettingTokenError, GettingUserError, WrongPasswordError, WrongUsernameError, UpdatingUserError, CheckingPasswordError } from '@errors'
-// import { NewUserDomainModel } from '@domainModels'
 import { testingUsers, testingValidPlainPassword, cleanUsersCollection, saveUser, getUserByUsername } from '@testingFixtures'
 
 import { login } from '@domainServices'
 import * as hashServices from '../../hash.services' // Just for mocking purposes
 import { DecodedJwtToken } from '@infrastructure/types'
 
-const secret: Secret = process.env.JWT_KEY!
-
-const [{ id: userId, username, password, email, name, surname, avatar }] = testingUsers
-
 describe('[SERVICES] Authentication - login', () => {
   const { connect, disconnect } = mongodb
+  const errorMessage = 'Testing error'
+  const secret: Secret = process.env.JWT_KEY!
+  const [{ id: userId, username, password, email, name, surname, avatar }] = testingUsers
   const plainPassword = testingValidPlainPassword
   const mockedUserData: NewUserDatabaseDto & { _id: string } = {
     _id: userId,
@@ -81,8 +79,9 @@ describe('[SERVICES] Authentication - login', () => {
   it('must throw an UNAUTHORIZED (401) error when we use a non persisted username', async (done) => {
     const username = 'user@test.com'
     const password = plainPassword
+    const expectedError = new WrongUsernameError(`User with username '${username}' doesn't exist in login process.`)
 
-    await expect(login(username, password)).rejects.toThrowError(new WrongUsernameError(`User with username '${username}' doesn't exist in login process.`))
+    await expect(login(username, password)).rejects.toThrowError(expectedError)
 
     done()
   })
@@ -90,25 +89,23 @@ describe('[SERVICES] Authentication - login', () => {
   it('must throw an UNAUTHORIZED (401) error when we use a wrong password', async (done) => {
     const { username } = mockedUserData
     const password = 'wr0np4$$w0rd'
+    const expectedError = new WrongPasswordError(`Password missmatches for username '${username}'.`)
 
-    await expect(login(username, password)).rejects.toThrowError(new WrongPasswordError(`Password missmatches for username '${username}'.`))
+    await expect(login(username, password)).rejects.toThrowError(expectedError)
 
     done()
   })
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the retrieving user process fails', async (done) => {
     jest.spyOn(userDataSource, 'getUserByUsername').mockImplementation(() => {
-      throw new GettingUserError('Testing error')
+      throw new GettingUserError(errorMessage)
     })
 
     const { username } = mockedUserData
     const password = plainPassword
+    const expectedError = new GettingUserError(`Error retrieving user with username '${username}' login data. ${errorMessage}`)
 
-    try {
-      await login(username, password)
-    } catch (error) {
-      expect(error).toStrictEqual(new GettingUserError(`Error retrieving user with username '${username}' login data. ${error.message}`))
-    }
+    await expect(login(username, password)).rejects.toThrowError(expectedError)
 
     jest.spyOn(userDataSource, 'getUserByUsername').mockRestore()
 
@@ -117,17 +114,14 @@ describe('[SERVICES] Authentication - login', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the checking password process fails', async (done) => {
     jest.spyOn(hashServices, 'checkPassword').mockImplementation(() => {
-      throw new CheckingPasswordError('Error checking password')
+      throw new CheckingPasswordError(errorMessage)
     })
 
     const { username } = mockedUserData
     const password = plainPassword
+    const expectedError = new CheckingPasswordError(`Error checking password. ${errorMessage}`)
 
-    try {
-      await login(username, password)
-    } catch (error) {
-      expect(error).toStrictEqual(new CheckingPasswordError(`Error checking password. ${error.message}`))
-    }
+    await expect(login(username, password)).rejects.toThrowError(expectedError)
 
     jest.spyOn(hashServices, 'checkPassword').mockRestore()
 
@@ -136,17 +130,14 @@ describe('[SERVICES] Authentication - login', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the getting token process fails', async (done) => {
     jest.spyOn(token, 'generateToken').mockImplementation(() => {
-      throw new Error('Testing Error')
+      throw new Error(errorMessage)
     })
 
     const { username } = mockedUserData
     const password = plainPassword
+    const expectedError = new GettingTokenError(`Error getting token for username '${username}'. ${errorMessage}`)
 
-    try {
-      await login(username, password)
-    } catch (error) {
-      expect(error).toStrictEqual(new GettingTokenError(`Error getting token for username '${username}'. ${error.message}`))
-    }
+    await expect(login(username, password)).rejects.toThrowError(expectedError)
 
     jest.spyOn(token, 'generateToken').mockRestore()
 
@@ -155,19 +146,15 @@ describe('[SERVICES] Authentication - login', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the updating login user data process fails', async (done) => {
     jest.spyOn(userDataSource, 'updateUserById').mockImplementation(() => {
-      throw new Error('Testing Error')
+      throw new Error(errorMessage)
     })
 
     const { username } = mockedUserData
     const password = plainPassword
-
     const { _id: userId } = await getUserByUsername(username)
+    const expectedError = new UpdatingUserError(`Error updating user '${userId}' login data. ${errorMessage}`)
 
-    try {
-      await login(username, password)
-    } catch (error) {
-      expect(error).toStrictEqual(new UpdatingUserError(`Error updating user '${userId}' login data. ${error.message}`))
-    }
+    await expect(login(username, password)).rejects.toThrowError(expectedError)
 
     jest.spyOn(userDataSource, 'updateUserById').mockRestore()
 

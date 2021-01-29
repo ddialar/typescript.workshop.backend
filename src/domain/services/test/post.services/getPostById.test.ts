@@ -13,7 +13,7 @@ import { GettingPostError, PostNotFoundError } from '@errors'
 
 describe('[SERVICES] Post - getPostById', () => {
   const { connect, disconnect } = mongodb
-
+  const errorMessage = 'Testing Error'
   const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
   const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts
   const [selectedPost] = resultPosts
@@ -42,28 +42,22 @@ describe('[SERVICES] Post - getPostById', () => {
 
   it('must throw an NOT_FOUND (404) when the selected post does not exist', async (done) => {
     const postId = nonValidPostId
+    const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
 
-    try {
-      await getPostById(postId)
-    } catch (error) {
-      expect(error).toStrictEqual(new PostNotFoundError(`Post with id '${postId}' doesn't exist.`))
-    }
+    await expect(getPostById(postId)).rejects.toThrowError(expectedError)
 
     done()
   })
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
     const postId = selectedPostId
+    const expectedError = new GettingPostError(`Error retereaving post '${postId}'. ${errorMessage}`)
 
-    try {
-      await getPostById(postId)
-    } catch (error) {
-      expect(error).toStrictEqual(new GettingPostError(`Error retereaving post '${postId}'. ${error.message}`))
-    }
+    await expect(getPostById(postId)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
 

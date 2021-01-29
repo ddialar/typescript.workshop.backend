@@ -9,7 +9,7 @@ import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - getPostComment', () => {
   const { connect, disconnect } = mongodb
-
+  const errorMessage = 'Testing error'
   const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
   const { 1: mockedNonValidPost } = mockedPosts
   const { _id: mockedNonValidPostId } = mockedNonValidPost
@@ -63,17 +63,14 @@ describe('[SERVICES] Post - getPostComment', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'getPostComment').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
     const postId = selectedPost.id as string
     const commentId = selectedComment.id as string
+    const expectedError = new GettingPostCommentError(`Error retereaving post comment. ${errorMessage}`)
 
-    try {
-      await getPostComment(postId, commentId)
-    } catch (error) {
-      expect(error).toStrictEqual(new GettingPostCommentError(`Error retereaving post comment. ${error.message}`))
-    }
+    await expect(getPostComment(postId, commentId)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'getPostComment').mockRestore()
 

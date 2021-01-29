@@ -16,7 +16,7 @@ import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - deletePostComment', () => {
   const { connect, disconnect } = mongodb
-
+  const errorMessage = 'Testing Error'
   const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
   const { 1: mockedNonValidPost } = mockedPosts
   const { _id: mockedNonValidPostId } = mockedNonValidPost
@@ -60,8 +60,9 @@ describe('[SERVICES] Post - deletePostComment', () => {
     const postId = mockedNonValidPostId as string
     const commentId = selectedComment.id as string
     const commentOwnerId = selectedComment.owner.id as string
+    const expectedError = new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`)
 
-    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`))
+    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
 
     done()
   })
@@ -70,8 +71,9 @@ describe('[SERVICES] Post - deletePostComment', () => {
     const postId = selectedPost.id as string
     const commentId = mockedNonValidCommentId as string
     const commentOwnerId = selectedComment.owner.id as string
+    const expectedError = new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`)
 
-    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`))
+    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
 
     done()
   })
@@ -80,26 +82,24 @@ describe('[SERVICES] Post - deletePostComment', () => {
     const postId = selectedPost.id as string
     const commentId = selectedComment.id as string
     const commentOwnerId = unauthorizedUserId
+    const expectedError = new UnauthorizedPostCommentDeletingError(`User '${commentOwnerId}' is not the owner of the comment '${commentId}', from post '${postId}', which is trying to delete.`)
 
-    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(new UnauthorizedPostCommentDeletingError(`User '${commentOwnerId}' is not the owner of the comment '${commentId}', from post '${postId}', which is trying to delete.`))
+    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
 
     done()
   })
 
   it('must throw INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'getPostComment').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
     const postId = selectedPost.id as string
     const commentId = selectedComment.id as string
     const commentOwnerId = selectedComment.owner.id as string
+    const expectedError = new GettingPostCommentError(`Error retereaving post comment. ${errorMessage}`)
 
-    try {
-      await deletePostComment(postId, commentId, commentOwnerId)
-    } catch (error) {
-      expect(error).toStrictEqual(new GettingPostCommentError(`Error retereaving post comment. ${error.message}`))
-    }
+    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'deletePostComment').mockRestore()
 
@@ -108,18 +108,15 @@ describe('[SERVICES] Post - deletePostComment', () => {
 
   it('must throw INTERNAL_SERVER_ERROR (500) when the deleting process throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'deletePostComment').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
     const postId = selectedPost.id as string
     const commentId = selectedComment.id as string
     const commentOwnerId = selectedComment.owner.id as string
+    const expectedError = new DeletingPostCommentError(`Error deleting comment '${commentId}', from post '${postId}', by user '${commentOwnerId}'. ${errorMessage}`)
 
-    try {
-      await deletePostComment(postId, commentId, commentOwnerId)
-    } catch (error) {
-      expect(error).toStrictEqual(new DeletingPostCommentError(`Error deleting comment '${commentId}', from post '${postId}', by user '${commentOwnerId}'. ${error.message}`))
-    }
+    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'deletePostComment').mockRestore()
 

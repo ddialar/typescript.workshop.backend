@@ -15,7 +15,7 @@ import { postDataSource } from '@infrastructure/dataSources'
 
 describe('[SERVICES] Post - createPostComment', () => {
   const { connect, disconnect } = mongodb
-
+  const errorMessage = 'Testing Error'
   const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
   const [originalPost] = mockedPosts
   const [newPostCommentOwner] = testingDomainModelFreeUsers
@@ -69,13 +69,10 @@ describe('[SERVICES] Post - createPostComment', () => {
 
     const { id: postId } = originalPost
     const newPostComment = lorem.paragraph()
+    const message = 'Post comment insertion process initiated but completed with NULL result'
+    const expectedError = new CreatingPostCommentError(`Error creating post '${postId}' commment by user '${newPostCommentOwner.id}'. ${message}`)
 
-    try {
-      await createPostComment(postId as string, newPostComment, newPostCommentOwner)
-    } catch (error) {
-      const message = 'Post comment insertion process initiated but completed with NULL result'
-      expect(error).toStrictEqual(new CreatingPostCommentError(`Error creating post '${postId}' commment by user '${newPostCommentOwner.id}'. ${message}`))
-    }
+    await expect(createPostComment(postId as string, newPostComment, newPostCommentOwner)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'createPostComment').mockRestore()
 
@@ -84,17 +81,14 @@ describe('[SERVICES] Post - createPostComment', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async (done) => {
     jest.spyOn(postDataSource, 'createPostComment').mockImplementation(() => {
-      throw new Error('Testing error')
+      throw new Error(errorMessage)
     })
 
     const { id: postId } = originalPost
     const newPostComment = lorem.paragraph()
+    const expectedError = new CreatingPostCommentError(`Error creating post '${postId}' commment by user '${newPostCommentOwner.id}'. ${errorMessage}`)
 
-    try {
-      await createPostComment(postId as string, newPostComment, newPostCommentOwner)
-    } catch (error) {
-      expect(error).toStrictEqual(new CreatingPostCommentError(`Error creating post '${postId}' commment by user '${newPostCommentOwner.id}'. ${error.message}`))
-    }
+    expect(createPostComment(postId as string, newPostComment, newPostCommentOwner)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'createPostComment').mockRestore()
 

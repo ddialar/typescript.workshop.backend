@@ -6,15 +6,14 @@ import { testingNonValidUserId, testingUsers, cleanUsersCollection, saveUser, ge
 
 import { getUserProfile } from '@domainServices'
 
-const [{ username, password, email, avatar, name, surname }] = testingUsers
-
 interface TestingProfileDomainModel extends UserProfileDomainModel {
   password: string
 }
 
 describe('[SERVICES] User - getUserProfile', () => {
   const { connect, disconnect } = mongodb
-
+  const errorMessage = 'Testing error'
+  const [{ username, password, email, avatar, name, surname }] = testingUsers
   const mockedUserData: TestingProfileDomainModel = {
     username,
     password,
@@ -62,16 +61,13 @@ describe('[SERVICES] User - getUserProfile', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
     jest.spyOn(userDataSource, 'getUserProfileById').mockImplementation(() => {
-      throw new GettingUserError('Testing error')
+      throw new GettingUserError(errorMessage)
     })
 
     const { _id: userId } = await getUserByUsername(username)
+    const expectedError = new GettingUserProfileError(`Error retrieving profile for user ${userId}. ${errorMessage}`)
 
-    try {
-      await getUserProfile(userId)
-    } catch (error) {
-      expect(error).toStrictEqual(new GettingUserProfileError(`Error retrieving profile for user ${userId}. ${error.message}`))
-    }
+    await expect(getUserProfile(userId)).rejects.toThrowError(expectedError)
 
     jest.spyOn(userDataSource, 'getUserProfileById').mockRestore()
 
