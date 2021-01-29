@@ -10,18 +10,20 @@ export const mapOwnerFromDtoToDomainModel = (owner: PostOwnerDto): PostOwnerDoma
 }
 
 export const mapPostCommentFromDtoToDomainModel = (comment: PostCommentDto): PostCommentDomainModel => {
-  const { _id, owner, ...otherCommentFields } = comment
+  const { _id, owner, createdAt, updatedAt, ...otherCommentFields } = comment
   return {
     ...otherCommentFields,
-    id: _id as string,
-    owner: mapOwnerFromDtoToDomainModel(owner)
+    id: _id?.toString(),
+    owner: mapOwnerFromDtoToDomainModel(owner),
+    createdAt: createdAt && (new Date(createdAt)).toISOString(),
+    updatedAt: updatedAt && (new Date(updatedAt)).toISOString()
   }
 }
 
 export const mapPostFromDtoToDomainModel = (post: PostDto | null): PostDomainModel | null => {
   if (!post) { return post }
 
-  const { _id, owner, comments, likes, ...oherPostFields } = post
+  const { _id, owner, comments, likes, createdAt, updatedAt, ...oherPostFields } = post
 
   const parsedOwner = mapOwnerFromDtoToDomainModel(owner)
   const parsedComments = comments.map((comment) => mapPostCommentFromDtoToDomainModel(comment))
@@ -31,7 +33,9 @@ export const mapPostFromDtoToDomainModel = (post: PostDto | null): PostDomainMod
     id: _id?.toString(),
     owner: parsedOwner,
     comments: parsedComments,
-    likes: parsedLikes
+    likes: parsedLikes,
+    createdAt: createdAt && (new Date(createdAt)).toISOString(),
+    updatedAt: updatedAt && (new Date(updatedAt)).toISOString()
   }
 }
 
@@ -39,6 +43,6 @@ export const mapPostOwnerFromDomainModelToDto = (owner: PostOwnerDomainModel): P
   const { id, ...otherOwnerFields } = owner
   return {
     ...otherOwnerFields,
-    userId: id as string
+    userId: id.toString()
   }
 }
