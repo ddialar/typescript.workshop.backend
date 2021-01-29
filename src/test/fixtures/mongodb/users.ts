@@ -26,12 +26,11 @@ const parseUserData = (userData: OptionalUserData) => {
 
 export const cleanUsersCollection = async () => User.deleteMany({})
 
-// export const saveUser = async (userData: Partial<UserDto>) => (await (new User(userData)).save()).toJSON() as UserDto
-// export const saveUsers = async (usersData: Partial<UserDto>[]) => await User.insertMany(usersData)
 export const saveUser = async (userData: OptionalUserData) => {
   const parsedUserData = parseUserData(userData)
   return (await (new User(parsedUserData)).save()).toJSON() as UserDto
 }
+
 export const saveUsers = async (usersData: OptionalUserData[]) => {
   const parsedUsersData = usersData.map(parseUserData)
   await User.insertMany(parsedUsersData)
