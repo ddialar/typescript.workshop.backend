@@ -9,6 +9,7 @@ import { updateUserProfile } from '@domainServices'
 describe('[SERVICES] User - updateUserProfile', () => {
   const { connect, disconnect } = mongodb
   const errorMessage = 'Testing error'
+  const [avatarUrl] = testingAvatarUrls
   const [{ username, password, email, avatar, name, surname, token }] = testingUsers
   const mockedUserData = {
     username,
@@ -45,7 +46,7 @@ describe('[SERVICES] User - updateUserProfile', () => {
     const newProfileData: NewUserProfileDomainModel = {
       name: 'Jane',
       surname: 'Doe',
-      avatar: testingAvatarUrls[1]
+      avatar: avatarUrl
     }
 
     const updatedProfile = await updateUserProfile(userId, newProfileData) as UserProfileDomainModel
@@ -69,7 +70,7 @@ describe('[SERVICES] User - updateUserProfile', () => {
     const newProfileData: NewUserProfileDomainModel = {
       name: 'Jane',
       surname: 'Doe',
-      avatar: testingAvatarUrls[1]
+      avatar: avatarUrl
     }
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' profile. ${errorMessage}`)
 
