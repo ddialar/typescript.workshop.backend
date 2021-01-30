@@ -1,6 +1,6 @@
 import { UserDomainModel } from './user.domain.models'
 
-export interface BasicPostDomainModel {
+interface BasicPostDomainModel {
   id?: string
   body: string
   createdAt?: string

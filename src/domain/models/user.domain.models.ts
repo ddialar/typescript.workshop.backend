@@ -3,9 +3,9 @@ export interface UserDomainModel {
   username: string
   password: string
   email: string
-  name: string | null
-  surname: string | null
-  avatar: string | null
+  name: string
+  surname: string
+  avatar: string
   token: string | null
   enabled: boolean
   deleted: boolean
