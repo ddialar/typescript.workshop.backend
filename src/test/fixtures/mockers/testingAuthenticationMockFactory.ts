@@ -1,15 +1,16 @@
-const path = require('path')
-const { sign } = require('jsonwebtoken')
-const bcrypt = require('bcrypt')
-const { config } = require('dotenv')
+import path from 'path'
+import { sign, SignOptions, Algorithm } from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
+import { config } from 'dotenv'
+import { AuthenticationFixture, JwtFixtureParams, PrePopulatedJwt } from './../types'
 
 config({ path: path.join(__dirname, '../../../../env/.env.test') })
 
-const bcryptSalt = parseInt(process.env.BCRYPT_SALT, 10)
-const plainPassword = process.env.PLAIN_PASSWORD
-const wrongPlainPassword = process.env.WRONG_PASSWORD
+const bcryptSalt = parseInt(process.env.BCRYPT_SALT!, 10)
+const plainPassword = process.env.PLAIN_PASSWORD!
+const wrongPlainPassword = process.env.WRONG_PASSWORD!
 
-const passwordMockedData = {
+const passwordMockedData: AuthenticationFixture = {
   validHashedPassword: {
     value: bcrypt.hashSync(plainPassword, bcryptSalt),
     comments: {
@@ -28,31 +29,31 @@ const passwordMockedData = {
   }
 }
 
-const tokensToBeGenerated = [
+const tokensToBeGenerated: PrePopulatedJwt[] = [
   {
     tokenName: 'validJwtTokenForNonPersistedUser',
-    userId: 1,
+    userId: '1',
     username: 'non.persisted@mail.com',
-    algorithm: process.env.JWT_ALGORITHM || 'HS512',
-    secret: process.env.JWT_KEY,
+    algorithm: process.env.JWT_ALGORITHM as Algorithm || 'HS512',
+    secret: process.env.JWT_KEY!,
     expiresAt: Date.parse('2120-10-31T07:43:09.000Z')
   },
   {
     tokenName: 'expiredJwtToken',
-    userId: 2,
+    userId: '2',
     username: 'test@mail.com',
-    algorithm: process.env.JWT_ALGORITHM || 'HS512',
-    secret: process.env.JWT_KEY,
+    algorithm: process.env.JWT_ALGORITHM as Algorithm || 'HS512',
+    secret: process.env.JWT_KEY!,
     expiresAt: 1000
   }
 ]
 
-const encodeJwt = ({ userId, username, secret, algorithm, expiresIn }) => {
+const encodeJwt = ({ userId, username, secret, algorithm, expiresIn }: JwtFixtureParams): string => {
   const payload = {
     sub: userId,
     username
   }
-  const options = {
+  const options: SignOptions = {
     algorithm,
     expiresIn
   }
@@ -60,7 +61,7 @@ const encodeJwt = ({ userId, username, secret, algorithm, expiresIn }) => {
   return sign(payload, secret, options)
 }
 
-const generateTokens = (tokensDataCollection) => tokensDataCollection.reduce((generated, { tokenName, userId, username, algorithm, secret, expiresAt }) => {
+const generateTokens = (tokensDataCollection: PrePopulatedJwt[]): AuthenticationFixture => tokensDataCollection.reduce((generated, { tokenName, userId, username, algorithm, secret, expiresAt }) => {
   const expiresIn = Math.trunc(expiresAt / 1000)
   const processedToken = {
     [tokenName]: {
@@ -75,9 +76,7 @@ const generateTokens = (tokensDataCollection) => tokensDataCollection.reduce((ge
   return { ...generated, ...processedToken }
 }, {})
 
-const createdMokedAuthentication = () => ({
+export const createdMokedAuthentication = (): AuthenticationFixture => ({
   ...passwordMockedData,
   ...generateTokens(tokensToBeGenerated)
 })
-
-module.exports = { createdMokedAuthentication }

@@ -1,3 +1,1 @@
-const { generateMockedMongoDbId } = require('./mockers/utils.js')
-
-export { generateMockedMongoDbId }
+export * from './mockers/utils'

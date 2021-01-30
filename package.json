@@ -15,7 +15,7 @@
         "test:watch": "npm run test_infra:up && npm run test_mock:data && jest --watch --runInBand --detectOpenHandles && npm run test_infra:down",
         "test_infra:up": "docker-compose --env-file docker/test/.docker.env -f docker/docker-compose.yml up -d",
         "test_infra:down": "docker-compose --env-file docker/test/.docker.env -f docker/docker-compose.yml down -v",
-        "test_mock:data": "node src/test/fixtures/mockers/runMockers.js"
+        "test_mock:data": "npx ts-node src/test/fixtures/mockers/runMockers.ts"
     },
     "keywords": [
         "backend",

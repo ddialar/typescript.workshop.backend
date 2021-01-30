@@ -1,13 +1,14 @@
-const fs = require('fs')
-const path = require('path')
-const { config } = require('dotenv')
-// const { createdMokedAuthentication } = require('./testingAuthenticationMockFactory')
-const { createMockedUsers } = require('./testingUserMockFactory')
-const { createMockedPosts } = require('./testingPostMockFactory')
+import fs from 'fs'
+import path from 'path'
+import { config } from 'dotenv'
+// import { createdMokedAuthentication } from './testingAuthenticationMockFactory'
+import { createMockedUsers } from './testingUserMockFactory'
+import { createMockedPosts } from './testingPostMockFactory'
+import { UserFixture, MockedPosts } from '../types'
 
 config({ path: path.join(__dirname, '../../../../env/.env.test') })
 
-const saveFile = async (fileName, data) => {
+const saveFile = async (fileName: string, data: string) => {
   const filePath = path.join(__dirname, '../assets', fileName)
 
   console.log(`[DEBUG] Creating '${fileName}' file...`)
@@ -18,11 +19,11 @@ const saveFile = async (fileName, data) => {
 }
 
 // Uncomment this lines when you need to generage new authentication credentials.
-// const rawAuthentication = createdMokedAuthentication()
+// const rawAuthentication: AuthenticationFixture = createdMokedAuthentication()
 // saveFile('authentication.json', JSON.stringify(rawAuthentication))
 
-const rawUsers = createMockedUsers(305)
+const rawUsers: UserFixture[] = createMockedUsers(305)
 saveFile('users.json', JSON.stringify(rawUsers))
 
-const rawPosts = createMockedPosts(rawUsers)
+const rawPosts: MockedPosts = createMockedPosts(rawUsers)
 saveFile('posts.json', JSON.stringify(rawPosts))

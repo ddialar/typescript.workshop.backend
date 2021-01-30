@@ -1,4 +1,10 @@
-import { validJwtTokenForNonPersistedUser, expiredJwtToken, validHashedPassword, validPlainPassword, wrongPlainPassword } from './assets/authentication.json'
+import {
+  validJwtTokenForNonPersistedUser,
+  expiredJwtToken,
+  validHashedPassword,
+  validPlainPassword,
+  wrongPlainPassword
+} from './assets/authentication.json'
 
 export const testingValidJwtTokenForNonPersistedUser = validJwtTokenForNonPersistedUser.value
 export const testingExpiredJwtToken = expiredJwtToken.value
