@@ -36,8 +36,9 @@ describe('[ORM] MongoDB - Posts - create', () => {
     const expectedPostOwnerFields = ['_id', 'userId', 'name', 'surname', 'avatar', 'createdAt', 'updatedAt']
     const createdOwnerPostFields = Object.keys(createdPost.owner).sort()
     expect(createdOwnerPostFields.sort()).toEqual(expectedPostOwnerFields.sort())
-    const { _id, createdAt, updatedAt, ...otherPersistedPostOwnerFields } = createdPost.owner
-    expect(otherPersistedPostOwnerFields).toStrictEqual(basicPost.owner)
+
+    // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
+    expect(JSON.parse(JSON.stringify(createdPost.owner))).toStrictEqual(basicPost.owner)
 
     expect(createdPost.comments).toStrictEqual(basicPost.comments)
     expect(createdPost.likes).toStrictEqual(basicPost.likes)

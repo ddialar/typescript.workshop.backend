@@ -1,25 +1,26 @@
-import { UserDomainModel } from '@domainModels'
+import { OwnerBasicStructure } from '@domainModels'
 
-type DatabaseFields = {
+interface DatabaseSpecificStructure {
     _id?: string
     createdAt?: string
     updatedAt?: string
 }
 
-type BasicPostDto = DatabaseFields & {
+interface BasicContentStructure extends DatabaseSpecificStructure {
     body: string
 }
 
-export type PostOwnerDto = Pick<UserDomainModel, 'name' | 'surname' | 'avatar'> & { userId: string } & DatabaseFields
+export type PostOwnerDto = DatabaseSpecificStructure & OwnerBasicStructure & { userId: string }
 type PostCommentOwnerDto = PostOwnerDto
-export type PostLikeOwnerDto = PostOwnerDto
 
-export type PostCommentDto = BasicPostDto & {
+export interface PostCommentDto extends BasicContentStructure {
     owner: PostCommentOwnerDto
 }
 
-export interface PostDto extends BasicPostDto {
+export type PostLikeDto = PostOwnerDto
+
+export interface PostDto extends BasicContentStructure {
     owner: PostOwnerDto
     comments: PostCommentDto[]
-    likes: PostLikeOwnerDto[]
+    likes: PostLikeDto[]
 }

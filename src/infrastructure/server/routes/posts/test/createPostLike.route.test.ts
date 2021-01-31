@@ -4,7 +4,7 @@ import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND } from '@errors'
-import { PostCommentOwnerDomainModel, PostDomainModel, PostLikeOwnerDomainModel, UserDomainModel } from '@domainModels'
+import { PostCommentOwnerDomainModel, PostDomainModel, PostLikeDomainModel, UserDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
 import { UserProfileDto } from '@infrastructure/dtos'
 
@@ -92,7 +92,7 @@ describe('[API] - Posts endpoints', () => {
           const originalLikesIds = originalPost.likes.map(({ id }) => id as string)
           const updatedLikesIds = updatedPost.likes.map(({ id }) => id as string)
           const newLikeId = updatedLikesIds.find((updatedId) => !originalLikesIds.includes(updatedId))
-          const newPersistedLike = updatedPost.likes.find((like) => like.id === newLikeId) as PostLikeOwnerDomainModel
+          const newPersistedLike = updatedPost.likes.find((like) => like.id === newLikeId) as PostLikeDomainModel
           expect(newPersistedLike.id).toBe(likeOwner.id)
           expect(newPersistedLike.name).toBe(likeOwner.name)
           expect(newPersistedLike.surname).toBe(likeOwner.surname)

@@ -1,9 +1,9 @@
 import { Post } from '../models'
-import { PostCommentDto, PostDto, PostLikeOwnerDto } from '@infrastructure/dtos'
+import { PostCommentDto, PostDto, PostLikeDto } from '@infrastructure/dtos'
 
 export const create = async (post: PostDto): Promise<PostDto | null> => {
   const createdPost = await (new Post(post)).save()
-  return createdPost ? createdPost.toJSON() as PostDto : null
+  return createdPost ? createdPost.toJSON() : null
 }
 
 // Official documentation: https://mongoosejs.com/docs/api.html#model_Model.findOneAndUpdate
@@ -36,7 +36,7 @@ export const getComment = async (postId: string, commentId: string): Promise<Pos
   return (JSON.parse(JSON.stringify(retrievedPost)) as PostDto).comments.find(({ _id }) => _id === commentId) || null
 }
 
-export const getLikeByOwnerId = async (postId: string, ownerId: string): Promise<PostLikeOwnerDto | null> => {
+export const getLikeByOwnerId = async (postId: string, ownerId: string): Promise<PostLikeDto | null> => {
   // REFACTOR Research about how to retrieve the selected comment from the post, using aggregation framework.
   const retrievedPost = await Post.findById({ _id: postId }).lean()
   return (JSON.parse(JSON.stringify(retrievedPost)) as PostDto).likes.find(({ userId }) => userId === ownerId) || null
@@ -48,7 +48,7 @@ export const deleteComment = async (postId: string, commentId: string): Promise<
   await Post.findOneAndUpdate(conditions, update)
 }
 
-export const like = async (postId: string, owner: PostLikeOwnerDto): Promise<PostDto | null> => {
+export const like = async (postId: string, owner: PostLikeDto): Promise<PostDto | null> => {
   const conditions = { _id: postId }
   const update = { $push: { likes: owner } }
   const options = { new: true }

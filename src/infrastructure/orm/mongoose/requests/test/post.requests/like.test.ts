@@ -1,5 +1,5 @@
 import { connect, disconnect } from '../../../core'
-import { PostDto, PostLikeOwnerDto } from '@infrastructure/dtos'
+import { PostDto, PostLikeDto } from '@infrastructure/dtos'
 import { testingLikedAndCommentedPersistedDtoPosts, testingDtoFreeUsers, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { like } from '../../post.mongodb.requests'
@@ -20,7 +20,7 @@ describe('[ORM] MongoDB - Posts - like', () => {
   it('must persist the new like into the selected post', async (done) => {
     const originalPost = mockedPosts[0] as PostDto
     const { _id: postId } = originalPost
-    const likeOwner = testingDtoFreeUsers[0] as PostLikeOwnerDto
+    const likeOwner = testingDtoFreeUsers[0] as PostLikeDto
 
     const updatedPost = await like(postId as string, likeOwner) as PostDto
 
@@ -37,7 +37,7 @@ describe('[ORM] MongoDB - Posts - like', () => {
     const originalLikesIds = originalPost.likes.map(({ _id }) => _id as string)
     const updatedLikesIds = updatedPost.likes.map(({ _id }) => _id as string)
     const newLikeId = updatedLikesIds.find((updatedId) => !originalLikesIds.includes(updatedId))
-    const newPersistedLike = updatedPost.likes.find((like) => like._id === newLikeId) as PostLikeOwnerDto
+    const newPersistedLike = updatedPost.likes.find((like) => like._id === newLikeId) as PostLikeDto
     expect(newPersistedLike.userId).toBe(likeOwner.userId)
     expect(newPersistedLike.name).toBe(likeOwner.name)
     expect(newPersistedLike.surname).toBe(likeOwner.surname)

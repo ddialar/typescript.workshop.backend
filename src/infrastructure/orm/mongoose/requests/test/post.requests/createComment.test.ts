@@ -45,8 +45,7 @@ describe('[ORM] MongoDB - Posts - createComment', () => {
     const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId))
     const newPersistedComment = updatedPost.comments.find((comment) => comment._id === newPostId) as PostDto
     expect(newPersistedComment.body).toBe(postComment.body)
-    const { _id, createdAt, updatedAt, ...otherCommentOwnerFields } = newPersistedComment.owner
-    expect(otherCommentOwnerFields).toStrictEqual(postComment.owner)
+    expect(newPersistedComment.owner).toStrictEqual(postComment.owner)
 
     expect(updatedPost.likes).toStrictEqual(originalPost.likes)
 

@@ -1,5 +1,5 @@
 import { connect, disconnect } from '../../../core'
-import { PostDto, PostLikeOwnerDto } from '@infrastructure/dtos'
+import { PostDto, PostLikeDto } from '@infrastructure/dtos'
 import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { getLikeByOwnerId } from '../../post.mongodb.requests'
@@ -30,13 +30,13 @@ describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
     const postId = selectedPost._id as string
     const ownerId = selectedLikeOwnerId
 
-    const persistedLike = await getLikeByOwnerId(postId, ownerId) as PostLikeOwnerDto
+    const persistedLike = await getLikeByOwnerId(postId, ownerId) as PostLikeDto
 
     const expectedFields = ['_id', 'userId', 'name', 'surname', 'avatar', 'createdAt', 'updatedAt']
     const persistedLikeFields = Object.keys(persistedLike).sort()
     expect(persistedLikeFields.sort()).toEqual(expectedFields.sort())
 
-    expect(persistedLike).toStrictEqual<PostLikeOwnerDto>(selectedLike)
+    expect(persistedLike).toStrictEqual<PostLikeDto>(selectedLike)
 
     done()
   })
