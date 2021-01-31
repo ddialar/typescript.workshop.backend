@@ -1,9 +1,9 @@
 import { lorem } from 'faker'
 import { generateMockedMongoDbId } from './utils'
+import { UserDomainModel } from '@domainModels'
 import {
   UserDomainModelFixture,
   UserDtoFixture,
-  UserFixture,
   OwnerDtoFixture,
   CommentDtoFixture,
   CommentDomainModelFixture,
@@ -14,54 +14,47 @@ import {
   MockedPosts
 } from '../types'
 
-const domainModelOwnerFactory = (rawOwner: UserFixture): UserDomainModelFixture => {
+const domainModelOwnerFactory = (rawOwner: UserDomainModel): UserDomainModelFixture => {
   const { id, name, surname, avatar } = rawOwner
   return { id, name, surname, avatar }
 }
 
-const dtoOwnerFactory = (rawOwner: UserFixture): UserDtoFixture => {
-  const { id, name, surname, avatar } = rawOwner
-  return { userId: id, name, surname, avatar }
+const dtoOwnerFactory = (rawOwner: UserDomainModel): UserDtoFixture => {
+  const { id, name, surname, avatar, createdAt, updatedAt } = rawOwner
+  return {
+    _id: generateMockedMongoDbId(),
+    userId: id,
+    name,
+    surname,
+    avatar,
+    createdAt,
+    updatedAt
+  }
 }
 
-const postDtoFactory = (owner: UserFixture): PostDtoFixture => ({
+const postDtoFactory = (owner: UserDomainModel): PostDtoFixture => ({
   _id: generateMockedMongoDbId(),
   body: lorem.paragraphs(),
-  owner: {
-    _id: generateMockedMongoDbId(),
-    ...dtoOwnerFactory(owner),
-    createdAt: (new Date()).toISOString(),
-    updatedAt: (new Date()).toISOString()
-  },
+  owner: dtoOwnerFactory(owner),
   comments: [],
   likes: [],
   createdAt: (new Date()).toISOString(),
   updatedAt: (new Date()).toISOString()
 })
 
-const commentDtoFactory = (owner: UserFixture): CommentDtoFixture => ({
+const commentDtoFactory = (owner: UserDomainModel): CommentDtoFixture => ({
   _id: generateMockedMongoDbId(),
   body: lorem.paragraph(),
-  owner: {
-    _id: generateMockedMongoDbId(),
-    ...dtoOwnerFactory(owner),
-    createdAt: (new Date()).toISOString(),
-    updatedAt: (new Date()).toISOString()
-  },
+  owner: dtoOwnerFactory(owner),
   createdAt: (new Date()).toISOString(),
   updatedAt: (new Date()).toISOString()
 })
 
-const likeDtoFactory = (owner: UserFixture): OwnerDtoFixture => ({
-  _id: generateMockedMongoDbId(),
-  ...dtoOwnerFactory(owner),
-  createdAt: (new Date()).toISOString(),
-  updatedAt: (new Date()).toISOString()
-})
+const likeDtoFactory = (owner: UserDomainModel): OwnerDtoFixture => dtoOwnerFactory(owner)
 
-const createPostsDto = (owners: UserFixture[]): PostDtoFixture[] => owners.map((owner) => postDtoFactory(owner))
+const createPostsDto = (owners: UserDomainModel[]): PostDtoFixture[] => owners.map((owner) => postDtoFactory(owner))
 
-const createCommentsDto = (owners: UserFixture[]) => {
+const createCommentsDto = (owners: UserDomainModel[]) => {
   const amountOfComments = Math.floor(Math.random() * (5 - 1)) + 1
   return [...Array(amountOfComments)].map(() => {
     const ownerIndex = Math.floor(Math.random() * (owners.length - 1)) + 1
@@ -71,7 +64,7 @@ const createCommentsDto = (owners: UserFixture[]) => {
   })
 }
 
-const createLikesDto = (owners: UserFixture[]): OwnerDtoFixture[] => {
+const createLikesDto = (owners: UserDomainModel[]): OwnerDtoFixture[] => {
   const amountOfComments = Math.floor(Math.random() * (5 - 1)) + 1
   return [...Array(amountOfComments)].map(() => {
     const ownerIndex = Math.floor(Math.random() * (owners.length - 1)) + 1
@@ -134,8 +127,8 @@ const mapPostLikesFromDtoToDomainModel = (postLikes: LikeDtoFixture[]): LikeDoma
     }
   })
 
-export const createMockedPosts = (mockedUsers: UserFixture[]): MockedPosts => {
-  const users: UserFixture[] = [...mockedUsers]
+export const createMockedPosts = (mockedUsers: UserDomainModel[]): MockedPosts => {
+  const users: UserDomainModel[] = [...mockedUsers]
   const postOwners = users.splice(0, 5)
   const postCommentOwners = users.splice(0, 100)
   const postLikeOwners = users.splice(0, 100)

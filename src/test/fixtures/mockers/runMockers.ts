@@ -4,7 +4,8 @@ import { config } from 'dotenv'
 // import { createdMokedAuthentication } from './testingAuthenticationMockFactory'
 import { createMockedUsers } from './testingUserMockFactory'
 import { createMockedPosts } from './testingPostMockFactory'
-import { UserFixture, MockedPosts } from '../types'
+import { MockedPosts } from '../types'
+import { UserDomainModel } from '@domainModels'
 
 config({ path: path.join(__dirname, '../../../../env/.env.test') })
 
@@ -22,7 +23,7 @@ const saveFile = async (fileName: string, data: string) => {
 // const rawAuthentication: AuthenticationFixture = createdMokedAuthentication()
 // saveFile('authentication.json', JSON.stringify(rawAuthentication))
 
-const rawUsers: UserFixture[] = createMockedUsers(305)
+const rawUsers: UserDomainModel[] = createMockedUsers(305)
 saveFile('users.json', JSON.stringify(rawUsers))
 
 const rawPosts: MockedPosts = createMockedPosts(rawUsers)

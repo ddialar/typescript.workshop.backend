@@ -3,8 +3,8 @@ import { name } from 'faker'
 import { avatarUrls } from '../assets/avatarUrls.json'
 import { validHashedPassword } from '../assets/authentication.json'
 import { generateMockedMongoDbId } from './utils'
+import { UserDomainModel } from '@domainModels'
 import { JwtPayload } from '@infrastructure/types'
-import { UserFixture } from '../types'
 
 const encodeJwt = (username: string, userId: string) => {
   const payload: JwtPayload = {
@@ -20,7 +20,7 @@ const encodeJwt = (username: string, userId: string) => {
   return sign(payload, secret, options)
 }
 
-const testingUserFactory = (usersAmount: number): UserFixture[] => {
+const testingUserFactory = (usersAmount: number): UserDomainModel[] => {
   const avatars = [...avatarUrls]
 
   return [...Array(usersAmount)].map(() => {
@@ -41,7 +41,9 @@ const testingUserFactory = (usersAmount: number): UserFixture[] => {
       token: encodeJwt(username, userId),
       enabled: true,
       deleted: false,
-      lastLoginAt: ''
+      lastLoginAt: '',
+      createdAt: (new Date()).toISOString(),
+      updatedAt: (new Date()).toISOString()
     }
   })
 }
