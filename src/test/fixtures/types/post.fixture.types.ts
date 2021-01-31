@@ -1,34 +1,21 @@
+import { PostOwnerDomainModel } from '@domainModels'
+import { PostOwnerDto } from '@infrastructure/dtos'
 import { UserDomainModelFixture, UserDtoFixture } from './user.fixture.types'
-
-interface OwnerFixture {
-  name: string
-  surname: string
-  avatar: string
-}
-
-export type OwnerDtoFixture = OwnerFixture & { _id: string, userId: string, createdAt: string, updatedAt: string }
-type OwnerDomainModelFixture = OwnerFixture & { id: string }
-
-interface CommentFixture {
+interface BasicContentFixture {
   body: string
   createdAt: string
   updatedAt: string
 }
 
-export type CommentDtoFixture = CommentFixture & { _id: string, owner: OwnerDtoFixture }
-export type CommentDomainModelFixture = CommentFixture & { id: string, owner: OwnerDomainModelFixture }
-
-interface PostFixture {
-  body: string
-  createdAt: string
-  updatedAt: string
-}
-
+export type OwnerDtoFixture = PostOwnerDto
+export type CommentDtoFixture = BasicContentFixture & { _id: string, owner: OwnerDtoFixture }
 export type LikeDtoFixture = OwnerDtoFixture
-export type LikeDomainModelFixture = OwnerDomainModelFixture
+export type PostDtoFixture = BasicContentFixture & { _id: string, owner: OwnerDtoFixture, comments: CommentDtoFixture[], likes: LikeDtoFixture[] }
 
-export type PostDtoFixture = PostFixture & { _id: string, owner: OwnerDtoFixture, comments: CommentDtoFixture[], likes: LikeDtoFixture[] }
-export type PostDomainModelFixture = PostFixture & { id: string, owner: OwnerDomainModelFixture, comments: CommentDomainModelFixture[], likes: LikeDomainModelFixture[] }
+type OwnerDomainModelFixture = PostOwnerDomainModel
+export type CommentDomainModelFixture = BasicContentFixture & { id: string, owner: OwnerDomainModelFixture }
+export type LikeDomainModelFixture = OwnerDomainModelFixture
+export type PostDomainModelFixture = BasicContentFixture & { id: string, owner: OwnerDomainModelFixture, comments: CommentDomainModelFixture[], likes: LikeDomainModelFixture[] }
 
 export interface MockedPosts {
   basicDtoPostOwners: UserDtoFixture[]
