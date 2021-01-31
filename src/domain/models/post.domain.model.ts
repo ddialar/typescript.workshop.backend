@@ -1,22 +1,28 @@
 import { UserDomainModel } from './user.domain.models'
 
-interface BasicPostDomainModel {
+interface DatabaseSpecificStructure {
   id?: string
-  body: string
   createdAt?: string
   updatedAt?: string
 }
 
-export type PostOwnerDomainModel = Required<Pick<UserDomainModel, 'id' | 'name' | 'surname' | 'avatar'>>
-export type PostCommentOwnerDomainModel = PostOwnerDomainModel
-export type PostLikeOwnerDomainModel = PostOwnerDomainModel
+interface BasicContentStructure extends DatabaseSpecificStructure {
+  body: string
+}
 
-export interface PostCommentDomainModel extends BasicPostDomainModel {
+export type OwnerBasicStructure = Pick<UserDomainModel, 'name' | 'surname' | 'avatar'>
+
+export type PostOwnerDomainModel = OwnerBasicStructure & Pick<UserDomainModel, 'id'>
+export type PostCommentOwnerDomainModel = PostOwnerDomainModel
+
+export interface PostCommentDomainModel extends BasicContentStructure {
   owner: PostCommentOwnerDomainModel
 }
 
-export interface PostDomainModel extends BasicPostDomainModel {
+export type PostLikeDomainModel = PostOwnerDomainModel
+
+export interface PostDomainModel extends BasicContentStructure {
   owner: PostOwnerDomainModel
   comments: PostCommentDomainModel[]
-  likes: PostLikeOwnerDomainModel[]
+  likes: PostLikeDomainModel[]
 }

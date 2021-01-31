@@ -2,7 +2,7 @@ import { mongodb } from '@infrastructure/orm'
 import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, testingDomainModelFreeUsers, savePostsFixture, cleanPostsCollectionFixture, getPostByIdFixture } from '@testingFixtures'
 
 import { likePost } from '@domainServices'
-import { PostDomainModel, PostLikeOwnerDomainModel } from '@domainModels'
+import { PostDomainModel, PostLikeDomainModel } from '@domainModels'
 import { GettingPostCommentError, LikingPostError, PostNotFoundError } from '@errors'
 import { postDataSource } from '@infrastructure/dataSources'
 import { mapPostFromDtoToDomainModel } from '@infrastructure/mappers'
@@ -26,7 +26,7 @@ describe('[SERVICES] Post - likePost', () => {
 
   it('must persist the new like into the selected post', async (done) => {
     const postId = originalPost.id as string
-    const likeOwner = testingDomainModelFreeUsers[0] as PostLikeOwnerDomainModel
+    const likeOwner = testingDomainModelFreeUsers[0] as PostLikeDomainModel
 
     await likePost(postId, likeOwner)
 
@@ -41,7 +41,7 @@ describe('[SERVICES] Post - likePost', () => {
     const originalLikesIds = originalPost.likes.map(({ id }) => id as string)
     const updatedLikesIds = updatedPost.likes.map(({ id }) => id as string)
     const newLikeId = updatedLikesIds.find((updatedId) => !originalLikesIds.includes(updatedId))
-    const newPersistedLike = updatedPost.likes.find((like) => like.id === newLikeId) as PostLikeOwnerDomainModel
+    const newPersistedLike = updatedPost.likes.find((like) => like.id === newLikeId) as PostLikeDomainModel
     expect(newPersistedLike.id).toBe(likeOwner.id)
     expect(newPersistedLike.name).toBe(likeOwner.name)
     expect(newPersistedLike.surname).toBe(likeOwner.surname)
@@ -55,7 +55,7 @@ describe('[SERVICES] Post - likePost', () => {
 
   it('must throw NOT_FOUND (404) when the provided post ID doesn\'t exist', async (done) => {
     const postId = nonValidPostId
-    const likeOwner = testingDomainModelFreeUsers[0] as PostLikeOwnerDomainModel
+    const likeOwner = testingDomainModelFreeUsers[0] as PostLikeDomainModel
 
     await expect(likePost(postId, likeOwner)).rejects.toThrowError(new PostNotFoundError(`Post '${postId}' not found`))
 
@@ -68,7 +68,7 @@ describe('[SERVICES] Post - likePost', () => {
     })
 
     const postId = originalPost.id as string
-    const likeOwner = testingDomainModelFreeUsers[0] as PostLikeOwnerDomainModel
+    const likeOwner = testingDomainModelFreeUsers[0] as PostLikeDomainModel
     const expectedError = new GettingPostCommentError(`Error retereaving post comment. ${errorMessage}`)
 
     await expect(likePost(postId, likeOwner)).rejects.toThrowError(expectedError)
@@ -84,7 +84,7 @@ describe('[SERVICES] Post - likePost', () => {
     })
 
     const postId = originalPost.id as string
-    const likeOwner = testingDomainModelFreeUsers[0] as PostLikeOwnerDomainModel
+    const likeOwner = testingDomainModelFreeUsers[0] as PostLikeDomainModel
     const expectedError = new LikingPostError(`Error setting like to post '${postId}' by user '${likeOwner.id}'. ${errorMessage}`)
 
     await expect(likePost(postId, likeOwner)).rejects.toThrowError(expectedError)

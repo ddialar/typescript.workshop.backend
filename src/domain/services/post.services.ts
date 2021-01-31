@@ -14,7 +14,7 @@ import {
   UnauthorizedPostDeletingError,
   DeletingPostError
 } from '@errors'
-import { PostCommentDomainModel, PostDomainModel, PostLikeOwnerDomainModel, PostOwnerDomainModel } from '@domainModels'
+import { PostCommentDomainModel, PostDomainModel, PostLikeDomainModel, PostOwnerDomainModel } from '@domainModels'
 
 export const createPost = async (owner: PostOwnerDomainModel, postBody: string): Promise<PostDomainModel> => {
   try {
@@ -83,7 +83,7 @@ export const getPostComment = async (postId: string, commentId: string): Promise
   }
 }
 
-export const getPostLikeByOwnerId = async (postId: string, likeOwnerId: string): Promise<PostLikeOwnerDomainModel | null> => {
+export const getPostLikeByOwnerId = async (postId: string, likeOwnerId: string): Promise<PostLikeDomainModel | null> => {
   try {
     return await postDataSource.getPostLikeByOwnerId(postId, likeOwnerId)
   } catch ({ message }) {

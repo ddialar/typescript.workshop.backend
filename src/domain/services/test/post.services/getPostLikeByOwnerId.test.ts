@@ -1,6 +1,6 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
-import { PostDomainModel, PostLikeOwnerDomainModel } from '@domainModels'
+import { PostDomainModel, PostLikeDomainModel } from '@domainModels'
 import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, testingDomainModelFreeUsers, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { getPostLikeByOwnerId } from '@domainServices'
@@ -35,13 +35,13 @@ describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
     const postId = selectedPost.id as string
     const ownerId = selectedLikeOwnerId
 
-    const persistedLike = await getPostLikeByOwnerId(postId, ownerId) as PostLikeOwnerDomainModel
+    const persistedLike = await getPostLikeByOwnerId(postId, ownerId) as PostLikeDomainModel
 
     const expectedFields = ['id', 'name', 'surname', 'avatar']
     const persistedLikeFields = Object.keys(persistedLike).sort()
     expect(persistedLikeFields.sort()).toEqual(expectedFields.sort())
 
-    expect(persistedLike).toStrictEqual<PostLikeOwnerDomainModel>(selectedLike)
+    expect(persistedLike).toStrictEqual<PostLikeDomainModel>(selectedLike)
 
     done()
   })
