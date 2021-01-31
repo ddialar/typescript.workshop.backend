@@ -6,8 +6,8 @@ import {
   wrongPlainPassword
 } from './assets/authentication.json'
 
-export const testingValidJwtTokenForNonPersistedUser = validJwtTokenForNonPersistedUser.value
-export const testingExpiredJwtToken = expiredJwtToken.value
-export const testingValidHashedPassword = validHashedPassword.value
-export const testingValidPlainPassword = validPlainPassword.value
-export const testingWrongPlainPassword = wrongPlainPassword.value
+export const testingValidJwtTokenForNonPersistedUser: string = validJwtTokenForNonPersistedUser.value
+export const testingExpiredJwtToken: string = expiredJwtToken.value
+export const testingValidHashedPassword: string = validHashedPassword.value
+export const testingValidPlainPassword: string = validPlainPassword.value
+export const testingWrongPlainPassword: string = wrongPlainPassword.value

@@ -1,4 +1,3 @@
-
 import {
   basicDtoPostOwners,
   basicDtoPostCommentOwners,
@@ -18,21 +17,22 @@ import {
   commentedDomainModelPosts,
   likedAndCommentedDomainModelPosts
 } from './assets/posts.json'
+import { PostDomainModelFixture, PostDtoFixture, UserDomainModelFixture, UserDtoFixture } from './types'
 
-export const testingDtoPostOwners = basicDtoPostOwners
-export const testingDtoPostCommentOwners = basicDtoPostCommentOwners
-export const testingDtoPostLikeOwners = basicDtoPostLikeOwners
-export const testingDtoFreeUsers = basicDtoFreeUsers
+export const testingDtoPostOwners: UserDtoFixture[] = basicDtoPostOwners
+export const testingDtoPostCommentOwners: UserDtoFixture[] = basicDtoPostCommentOwners
+export const testingDtoPostLikeOwners: UserDtoFixture[] = basicDtoPostLikeOwners
+export const testingDtoFreeUsers: UserDtoFixture[] = basicDtoFreeUsers
 
-export const testingDomainModelPostOwners = basicDomainModelPostOwners
-export const testingDomainModelPostCommentOwners = basicDomainModelPostCommentOwners
-export const testingDomainModelPostLikeOwners = basicDomainModelPostLikeOwners
-export const testingDomainModelFreeUsers = basicDomainModelFreeUsers
+export const testingDomainModelPostOwners: UserDomainModelFixture[] = basicDomainModelPostOwners
+export const testingDomainModelPostCommentOwners: UserDomainModelFixture[] = basicDomainModelPostCommentOwners
+export const testingDomainModelPostLikeOwners: UserDomainModelFixture[] = basicDomainModelPostLikeOwners
+export const testingDomainModelFreeUsers: UserDomainModelFixture[] = basicDomainModelFreeUsers
 
-export const testingBasicPersistedDtoPosts = basicDtoPersistedPosts
-export const testingCommentedPersistedDtoPosts = commentedDtoPersistedPosts
-export const testingLikedAndCommentedPersistedDtoPosts = likedAndCommentedDtoPersistedPosts
+export const testingBasicPersistedDtoPosts: PostDtoFixture[] = basicDtoPersistedPosts
+export const testingCommentedPersistedDtoPosts: PostDtoFixture[] = commentedDtoPersistedPosts
+export const testingLikedAndCommentedPersistedDtoPosts: PostDtoFixture[] = likedAndCommentedDtoPersistedPosts
 
-export const testingBasicPersistedDomainModelPosts = basicDomainModelPosts
-export const testingCommentedPersistedDomainModelPosts = commentedDomainModelPosts
-export const testingLikedAndCommentedPersistedDomainModelPosts = likedAndCommentedDomainModelPosts
+export const testingBasicPersistedDomainModelPosts: PostDomainModelFixture[] = basicDomainModelPosts
+export const testingCommentedPersistedDomainModelPosts: PostDomainModelFixture[] = commentedDomainModelPosts
+export const testingLikedAndCommentedPersistedDomainModelPosts: PostDomainModelFixture[] = likedAndCommentedDomainModelPosts
