@@ -31,7 +31,8 @@ describe('[ORM] MongoDB - Posts - getComment', () => {
     const persistedCommentFields = Object.keys(persistedComment).sort()
     expect(persistedCommentFields.sort()).toEqual(expectedFields.sort())
 
-    expect(persistedComment).toStrictEqual<PostCommentDto>(selectedComment)
+    // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
+    expect(JSON.parse(JSON.stringify(persistedComment))).toStrictEqual<PostCommentDto>(selectedComment)
 
     done()
   })

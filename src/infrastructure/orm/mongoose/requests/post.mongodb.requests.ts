@@ -29,9 +29,38 @@ export const deletePost = async (postId: string): Promise<void> => {
 }
 
 export const getComment = async (postId: string, commentId: string): Promise<PostCommentDto | null> => {
-  // REFACTOR Research about how to retrieve the selected comment from the post, using aggregation framework.
-  const retrievedPost = await Post.findById({ _id: postId }).lean()
-  return (JSON.parse(JSON.stringify(retrievedPost)) as PostDto).comments.find(({ _id }) => _id === commentId) || null
+  const postMatcher = { $match: { _id: Types.ObjectId(postId) } }
+  const commentMatcher = {
+    $project: {
+      _id: 0,
+      comments: {
+        $arrayElemAt: [{
+          $filter: {
+            input: '$comments',
+            as: 'item',
+            cond: { $eq: ['$$item._id', Types.ObjectId(commentId)] }
+          }
+        }, 0]
+      }
+    }
+  }
+  const commentReduction = {
+    $project: {
+      _id: '$comments._id',
+      body: '$comments.body',
+      owner: '$comments.owner',
+      createdAt: '$comments.createdAt',
+      updatedAt: '$comments.updatedAt'
+    }
+  }
+
+  const [retrievedPost] = await Post.aggregate([
+    postMatcher,
+    commentMatcher,
+    commentReduction
+  ])
+
+  return Object.keys(retrievedPost).length ? retrievedPost : null
 }
 
 export const deleteComment = async (postId: string, commentId: string): Promise<void> => {
