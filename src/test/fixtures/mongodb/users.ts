@@ -31,4 +31,4 @@ export const saveUserFixture = async (userData: OptionalUserData) => {
   return (await (new User(parsedUserData)).save()).toJSON() as UserDto
 }
 
-export const getUserByUsernameFixture = async (username: string) => (await User.findOne({ username }))?.toJSON() as UserDto
+export const getUserByUsernameFixture = async (username: string) => await User.findOne({ username }).lean<UserDto>()
