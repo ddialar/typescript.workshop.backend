@@ -1,4 +1,4 @@
-import { NewUserDatabaseDto } from '@infrastructure/dtos'
+import { NewUserDatabaseDto, UserDto } from '@infrastructure/dtos'
 import { verify, Secret } from 'jsonwebtoken'
 
 import { userDataSource } from '@infrastructure/dataSources'
@@ -45,7 +45,7 @@ describe('[SERVICES] Authentication - login', () => {
     const { username } = mockedUserData
     const password = plainPassword
 
-    const unauthenticatedUser = await getUserByUsernameFixture(username)
+    const unauthenticatedUser = await getUserByUsernameFixture(username) as UserDto
 
     expect(unauthenticatedUser.name).toBe(mockedUserData.name)
     expect(unauthenticatedUser.surname).toBe(mockedUserData.surname)
@@ -58,7 +58,7 @@ describe('[SERVICES] Authentication - login', () => {
 
     expect(authenticationData.token).not.toBe('')
 
-    const authenticatedUser = await getUserByUsernameFixture(username)
+    const authenticatedUser = await getUserByUsernameFixture(username) as UserDto
 
     expect(authenticatedUser.token).toBe(authenticationData.token)
     expect(authenticatedUser.lastLoginAt).not.toBe('')
@@ -151,7 +151,7 @@ describe('[SERVICES] Authentication - login', () => {
 
     const { username } = mockedUserData
     const password = plainPassword
-    const { _id: userId } = await getUserByUsernameFixture(username)
+    const { _id: userId } = await getUserByUsernameFixture(username) as UserDto
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' login data. ${errorMessage}`)
 
     await expect(login(username, password)).rejects.toThrowError(expectedError)

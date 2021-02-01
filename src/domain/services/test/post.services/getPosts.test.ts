@@ -5,10 +5,9 @@ import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPers
 
 import { getPosts } from '@domainServices'
 import { GettingPostError } from '@errors'
-import { PostDto } from '@infrastructure/dtos'
 
-const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
+const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts
 
 describe('[SERVICES] Post - getPosts', () => {
   const { connect, disconnect } = mongodb
@@ -36,7 +35,7 @@ describe('[SERVICES] Post - getPosts', () => {
 
       const expectedPost = resultPosts.find((resultPost) => resultPost.id === post.id?.toString()) as PostDomainModel
 
-      expect(post).toStrictEqual<PostDomainModel>(expectedPost)
+      expect(post).toStrictEqual(expectedPost)
     })
 
     done()

@@ -5,6 +5,7 @@ import { NewUserProfileDomainModel, UserProfileDomainModel } from '@domainModels
 import { testingUsers, testingAvatarUrls, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { updateUserProfile } from '@domainServices'
+import { UserDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] User - updateUserProfile', () => {
   const { connect, disconnect } = mongodb
@@ -36,7 +37,7 @@ describe('[SERVICES] User - updateUserProfile', () => {
   })
 
   it('must update the user\'s profile and return the final result', async (done) => {
-    const originalUser = await getUserByUsernameFixture(username)
+    const originalUser = await getUserByUsernameFixture(username) as UserDto
 
     expect(originalUser.name).toBe(mockedUserData.name)
     expect(originalUser.surname).toBe(mockedUserData.surname)
@@ -66,7 +67,7 @@ describe('[SERVICES] User - updateUserProfile', () => {
       throw new Error(errorMessage)
     })
 
-    const { _id: userId } = await getUserByUsernameFixture(username)
+    const { _id: userId } = await getUserByUsernameFixture(username) as UserDto
     const newProfileData: NewUserProfileDomainModel = {
       name: 'Jane',
       surname: 'Doe',

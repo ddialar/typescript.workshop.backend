@@ -6,6 +6,7 @@ import { NewUserAlreadyExistsError, CreatingUserError } from '@errors'
 import { testingUsers, cleanUsersCollectionFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { createUser } from '@domainServices'
+import { UserDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] User - createUser', () => {
   const { connect, disconnect } = mongodb
@@ -38,7 +39,7 @@ describe('[SERVICES] User - createUser', () => {
 
     await createUser(newUserData)
 
-    const retrievedUser = await getUserByUsernameFixture(username)
+    const retrievedUser = await getUserByUsernameFixture(username) as UserDto
 
     const expectedFields = ['_id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
     const retrievedUserFields = Object.keys(retrievedUser).sort()
