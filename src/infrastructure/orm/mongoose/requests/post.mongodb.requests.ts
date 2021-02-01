@@ -12,16 +12,14 @@ export const createComment = async (postId: string, postComment: PostCommentDto)
   const conditions = { _id: postId }
   const update = { $push: { comments: postComment } }
   const options = { new: true }
-  const updaterPost = await Post.findOneAndUpdate(conditions, update, options).lean()
-  return updaterPost ? JSON.parse(JSON.stringify(updaterPost)) : null
+  return await Post.findOneAndUpdate(conditions, update, options).lean<PostDto>()
 }
 
-export const getAll = async (): Promise<PostDto[] | null> => {
-  const retrievedPosts = await Post.find({}).lean()
-  return retrievedPosts ? JSON.parse(JSON.stringify(retrievedPosts)) as PostDto[] : null
-}
+export const getAll = async (): Promise<PostDto[] | null> =>
+  Post.find({}).lean<PostDto>()
 
-export const getById = async (postId: string): Promise<PostDto | null> => Post.findById(postId).lean<PostDto>()
+export const getById = async (postId: string): Promise<PostDto | null> =>
+  Post.findById(postId).lean<PostDto>()
 
 export const deletePost = async (postId: string): Promise<void> => {
   const conditions = { _id: postId }
@@ -111,8 +109,7 @@ export const like = async (postId: string, owner: PostLikeDto): Promise<PostDto 
   const conditions = { _id: postId }
   const update = { $push: { likes: owner } }
   const options = { new: true }
-  const updaterPost = await Post.findOneAndUpdate(conditions, update, options).lean()
-  return updaterPost ? JSON.parse(JSON.stringify(updaterPost)) : null
+  return await Post.findOneAndUpdate(conditions, update, options).lean<PostDto>()
 }
 
 export const dislike = async (postId: string, userId: string): Promise<void> => {

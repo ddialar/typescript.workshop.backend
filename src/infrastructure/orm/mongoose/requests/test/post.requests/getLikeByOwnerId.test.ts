@@ -36,7 +36,8 @@ describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
     const persistedLikeFields = Object.keys(persistedLike).sort()
     expect(persistedLikeFields.sort()).toEqual(expectedFields.sort())
 
-    expect(persistedLike).toStrictEqual<PostLikeDto>(selectedLike)
+    // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
+    expect(JSON.parse(JSON.stringify(persistedLike))).toStrictEqual<PostLikeDto>(selectedLike)
 
     done()
   })

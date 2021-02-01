@@ -24,7 +24,8 @@ describe('[ORM] MongoDB - Posts - getById', () => {
 
     const persistedPost = await getById(postId) as PostDto
 
-    expect(persistedPost).toStrictEqual(selectedPost)
+    // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
+    expect(JSON.parse(JSON.stringify(persistedPost))).toStrictEqual<PostDto>(selectedPost)
 
     done()
   })

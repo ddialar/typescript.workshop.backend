@@ -38,7 +38,7 @@ describe('[ORM] MongoDB - Posts - create', () => {
     expect(createdOwnerPostFields.sort()).toEqual(expectedPostOwnerFields.sort())
 
     // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
-    expect(JSON.parse(JSON.stringify(createdPost.owner))).toStrictEqual(basicPost.owner)
+    expect(JSON.parse(JSON.stringify(createdPost.owner))).toStrictEqual<PostOwnerDto>(basicPost.owner)
 
     expect(createdPost.comments).toStrictEqual(basicPost.comments)
     expect(createdPost.likes).toStrictEqual(basicPost.likes)

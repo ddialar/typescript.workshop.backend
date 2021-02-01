@@ -18,7 +18,7 @@ describe('[ORM] MongoDB - Posts - createComment', () => {
     await disconnect()
   })
 
-  it('must persist the new comment into the selected post', async (done) => {
+  it.only('must persist the new comment into the selected post', async (done) => {
     const originalPost = mockedPosts[0] as PostDto
     const { _id: postId } = originalPost
     const postComment: PostCommentDto = {
@@ -37,20 +37,22 @@ describe('[ORM] MongoDB - Posts - createComment', () => {
     const expectedPostOwnerFields = ['_id', 'userId', 'name', 'surname', 'avatar', 'createdAt', 'updatedAt']
     const createCommentdOwnerPostFields = Object.keys(updatedPost.owner).sort()
     expect(createCommentdOwnerPostFields.sort()).toEqual(expectedPostOwnerFields.sort())
-    expect(updatedPost.owner).toStrictEqual(originalPost.owner)
+    // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
+    expect(JSON.parse(JSON.stringify(updatedPost.owner))).toStrictEqual(originalPost.owner)
 
     expect(updatedPost.comments).toHaveLength(originalPost.comments.length + 1)
-    const originalCommentsIds = originalPost.comments.map(({ _id }) => _id as string)
-    const updatedCommentsIds = updatedPost.comments.map(({ _id }) => _id as string)
-    const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId))
-    const newPersistedComment = updatedPost.comments.find((comment) => comment._id === newPostId) as PostDto
+    const originalCommentsIds = originalPost.comments.map(({ _id }) => _id?.toString())
+    const updatedCommentsIds = updatedPost.comments.map(({ _id }) => _id?.toString())
+    const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId))!
+    const newPersistedComment = updatedPost.comments.find((comment) => comment._id?.toString() === newPostId) as PostCommentDto
+
     expect(newPersistedComment.body).toBe(postComment.body)
-    expect(newPersistedComment.owner).toStrictEqual(postComment.owner)
+    // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
+    expect(JSON.parse(JSON.stringify(newPersistedComment.owner))).toStrictEqual(postComment.owner)
+    expect(JSON.parse(JSON.stringify(updatedPost.likes))).toStrictEqual(originalPost.likes)
 
-    expect(updatedPost.likes).toStrictEqual(originalPost.likes)
-
-    expect(updatedPost.createdAt).toBe(originalPost.createdAt)
-    expect(updatedPost.updatedAt).not.toBe(originalPost.updatedAt)
+    expect((new Date(updatedPost.createdAt!)).toISOString()).toBe(originalPost.createdAt)
+    expect((new Date(updatedPost.updatedAt!)).toISOString()).not.toBe(originalPost.updatedAt)
 
     done()
   })
