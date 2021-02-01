@@ -5,7 +5,7 @@ import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } from '@errors'
 import { userDataSource } from '@infrastructure/dataSources'
-import { NewUserDatabaseDto, NewUserProfileDto, UserProfileDto } from '@infrastructure/dtos'
+import { NewUserDatabaseDto, NewUserProfileDto, UserDto, UserProfileDto } from '@infrastructure/dtos'
 
 import { testingUsers, testingValidJwtTokenForNonPersistedUser, testingExpiredJwtToken, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
@@ -53,7 +53,7 @@ describe('[API] - User endpoints', () => {
     })
 
     it('must return a 200 (OK) and the user\'s profile data', async (done) => {
-      const originalUser = await getUserByUsernameFixture(username)
+      const originalUser = await getUserByUsernameFixture(username) as UserDto
       const token = `bearer ${validToken}`
 
       await request

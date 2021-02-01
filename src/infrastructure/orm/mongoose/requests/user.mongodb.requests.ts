@@ -17,5 +17,5 @@ export const updateById = async (id: string, payload: UpdateUserPayloadDto): Pro
   const update = payload
   const options: QueryFindOneAndUpdateOptions = { new: true, strict: 'throw' }
 
-  return await User.findByIdAndUpdate(id, update, options)
+  return await User.findByIdAndUpdate(id, update, options).lean<UserDto>()
 }

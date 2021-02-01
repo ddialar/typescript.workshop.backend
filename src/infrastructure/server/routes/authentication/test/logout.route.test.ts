@@ -8,6 +8,7 @@ import { BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from 
 import { userDataSource } from '@infrastructure/dataSources'
 
 import { testingUsers, testingExpiredJwtToken, testingValidJwtTokenForNonPersistedUser, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
+import { UserDto } from '@infrastructure/dtos'
 
 const [{ username, password, email, token }] = testingUsers
 
@@ -49,7 +50,7 @@ describe('[API] - Authentication endpoints', () => {
         .then(async ({ text }) => {
           expect(text).toBe('User logged out successfully')
 
-          const editedUser = await getUserByUsernameFixture(username)
+          const editedUser = await getUserByUsernameFixture(username) as UserDto
 
           expect(editedUser.token).toBe('')
         })

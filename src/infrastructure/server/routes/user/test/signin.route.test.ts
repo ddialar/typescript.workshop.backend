@@ -5,7 +5,7 @@ import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
 import { CREATED, BAD_REQUEST, INTERNAL_SERVER_ERROR } from '@errors'
-import { NewUserInputDto } from '@infrastructure/dtos'
+import { NewUserInputDto, UserDto } from '@infrastructure/dtos'
 import { userDataSource } from '@infrastructure/dataSources'
 
 import { testingUsers, cleanUsersCollectionFixture, getUserByUsernameFixture, saveUserFixture } from '@testingFixtures'
@@ -49,7 +49,7 @@ describe(`[POST] ${SIGIN_PATH}`, () => {
       .then(async ({ text }) => {
         expect(text).toBe('User created')
 
-        const retrievedUser = await getUserByUsernameFixture(newUserData.email)
+        const retrievedUser = await getUserByUsernameFixture(newUserData.email) as UserDto
 
         const expectedFields = ['_id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
         const retrievedUserFields = Object.keys(retrievedUser).sort()

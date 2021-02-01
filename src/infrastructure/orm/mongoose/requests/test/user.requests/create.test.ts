@@ -1,5 +1,5 @@
 import { connect, disconnect } from '../../../core'
-import { NewUserDatabaseDto } from '@infrastructure/dtos'
+import { NewUserDatabaseDto, UserDto } from '@infrastructure/dtos'
 
 import { testingUsers, cleanUsersCollectionFixture, getUserByUsernameFixture } from '@testingFixtures'
 
@@ -34,7 +34,7 @@ describe('[ORM] MongoDB - create', () => {
     const newUserData = { ...mockedUserData }
     await create(newUserData)
 
-    const retrievedUser = await getUserByUsernameFixture(username)
+    const retrievedUser = await getUserByUsernameFixture(username) as UserDto
 
     const expectedFields = ['_id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
     const retrievedUserFields = Object.keys(retrievedUser).sort()
