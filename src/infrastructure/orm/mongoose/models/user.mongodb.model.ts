@@ -1,8 +1,5 @@
-import mongoose, { Schema, Document, Model } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 import { MONGO_SCHEMA_OPTIONS } from '../core'
-import { UserDto } from '@infrastructure/dtos'
-
-type UserMongooseModel = Omit<UserDto, '_id'> & Document
 
 const UserSchema = new Schema({
   username: { type: String, required: true, unique: true, immutable: true },
@@ -17,4 +14,4 @@ const UserSchema = new Schema({
   lastLoginAt: { type: String, default: '' }
 }, MONGO_SCHEMA_OPTIONS)
 
-export const User: Model<UserMongooseModel> = mongoose.model('User', UserSchema)
+export const User = mongoose.model('User', UserSchema)
