@@ -6,10 +6,10 @@ export interface UserDomainModel {
   name: string
   surname: string
   avatar: string
-  token: string | null
+  token: string
   enabled: boolean
   deleted: boolean
-  lastLoginAt: string | null
+  lastLoginAt: string
   createdAt: string
   updatedAt: string
 }
