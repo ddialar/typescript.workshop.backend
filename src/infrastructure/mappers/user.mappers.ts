@@ -6,7 +6,7 @@ export const mapUserFromDtoToDomainModel = (user: UserDto | null): UserDomainMod
   const { _id, ...otherUserfields } = user
 
   return {
-    id: _id,
+    id: _id.toString(),
     ...otherUserfields
   }
 }
