@@ -7,7 +7,8 @@ import {
   testingDomainModelFreeUsers,
   cleanPostsCollectionFixture,
   savePostsFixture,
-  getPostByIdFixture
+  getPostByIdFixture,
+  testingNonValidPostId
 } from '@testingFixtures'
 
 import { deletePost } from '@domainServices'
@@ -19,8 +20,8 @@ describe('[SERVICES] Post - deletePost', () => {
   const errorMessage = 'Testing Error'
   const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
   const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
-  const mockedNonValidPostId = selectedPost.owner.id as string
-  const selectedPostOwner = selectedPost.owner.id as string
+  const { id: selectedPostOwnerId } = selectedPost.owner
+  const mockedNonValidPostId = testingNonValidPostId
   const [{ id: unauthorizedUserId }] = testingDomainModelFreeUsers as UserDomainModel[]
 
   beforeAll(async () => {
@@ -39,7 +40,7 @@ describe('[SERVICES] Post - deletePost', () => {
 
   it('must delete the selected post', async (done) => {
     const postId = selectedPost.id as string
-    const postOwnerId = selectedPostOwner
+    const postOwnerId = selectedPostOwnerId as string
 
     await deletePost(postId, postOwnerId)
 
@@ -52,7 +53,7 @@ describe('[SERVICES] Post - deletePost', () => {
 
   it('must throw NOT_FOUND (404) when we select a post which does not exist', async (done) => {
     const postId = mockedNonValidPostId
-    const postOwnerId = selectedPostOwner
+    const postOwnerId = selectedPostOwnerId as string
     const expectedError = new PostNotFoundError(`Post with id '${postId}' was not found to be deleted by user with id '${postOwnerId}'.`)
 
     await expect(deletePost(postId, postOwnerId)).rejects.toThrowError(expectedError)
@@ -76,7 +77,7 @@ describe('[SERVICES] Post - deletePost', () => {
     })
 
     const postId = selectedPost.id as string
-    const postOwnerId = selectedPostOwner
+    const postOwnerId = selectedPostOwnerId as string
     const expectedError = new GettingPostError(`Error retereaving post '${postId}'. ${errorMessage}`)
 
     await expect(deletePost(postId, postOwnerId)).rejects.toThrowError(expectedError)
@@ -92,7 +93,7 @@ describe('[SERVICES] Post - deletePost', () => {
     })
 
     const postId = selectedPost.id as string
-    const postOwnerId = selectedPostOwner
+    const postOwnerId = selectedPostOwnerId as string
     const expectedError = new DeletingPostError(`Error deleting '${postId}' by user '${postOwnerId}'. ${errorMessage}`)
 
     await expect(deletePost(postId, postOwnerId)).rejects.toThrowError(expectedError)

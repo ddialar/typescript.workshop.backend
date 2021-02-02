@@ -40,4 +40,5 @@ export const testingLikedAndCommentedPersistedDomainModelPosts: PostDomainModelF
 
 export const testingNonValidPostId = generateMockedMongoDbId()
 export const testingNonValidPostCommentId = generateMockedMongoDbId()
+export const testingNonValidCommentOwnerId = generateMockedMongoDbId()
 export const testingNonValidLikeOwnerId = generateMockedMongoDbId()

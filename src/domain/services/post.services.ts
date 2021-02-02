@@ -61,8 +61,7 @@ export const getPostById = async (postId: string): Promise<PostDomainModel | nul
 }
 
 export const deletePost = async (postId: string, postOwnerId: string): Promise<void> => {
-  const selectedPost = await getPostById(postId)
-  if (!selectedPost) { throw new PostNotFoundError(`Post with id '${postId}' was not found to be deleted by user with id '${postOwnerId}'.`) }
+  const selectedPost = await getPostById(postId) as PostDomainModel
 
   if (selectedPost.owner.id !== postOwnerId) {
     throw new UnauthorizedPostDeletingError(`User '${postOwnerId}' is not the owner of the post '${postId}', which is trying to delete.`)
@@ -107,8 +106,7 @@ export const deletePostComment = async (postId: string, commentId: string, comme
 }
 
 export const likePost = async (postId: string, owner: PostOwnerDomainModel): Promise<void> => {
-  const selectedPost = await getPostById(postId)
-  if (!selectedPost) { throw new PostNotFoundError(`Post '${postId}' not found`) }
+  await getPostById(postId)
 
   try {
     await postDataSource.likePost(postId, owner)
@@ -118,8 +116,7 @@ export const likePost = async (postId: string, owner: PostOwnerDomainModel): Pro
 }
 
 export const dislikePost = async (postId: string, likeOwnerId: string): Promise<void> => {
-  const selectedPost = await getPostById(postId)
-  if (!selectedPost) { throw new PostNotFoundError(`Post '${postId}' not found`) }
+  await getPostById(postId)
 
   const selectedLike = await getPostLikeByOwnerId(postId, likeOwnerId)
   if (selectedLike) {
