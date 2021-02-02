@@ -5,15 +5,21 @@ import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPosts
 import { getComment } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - getComment', () => {
-  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const [selectedPost] = mockedPosts
+  const [selectedPost, completeDtoPostWithNoComments] = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+
+  const { _id: selectedPostId } = selectedPost
   const [selectedComment] = selectedPost.comments
+  const { _id: selectedCommentId } = selectedComment
+
+  const { _id: noCommentsPostId } = completeDtoPostWithNoComments
+  completeDtoPostWithNoComments.comments = []
+
   const mockedNonValidPostId = testingNonValidPostId
   const mockedNonValidCommentId = testingNonValidPostCommentId
 
   beforeAll(async () => {
     await connect()
-    await savePostsFixture(mockedPosts)
+    await savePostsFixture([selectedPost, completeDtoPostWithNoComments])
   })
 
   afterAll(async () => {
@@ -22,8 +28,8 @@ describe('[ORM] MongoDB - Posts - getComment', () => {
   })
 
   it('must retrieve the selected post comment', async (done) => {
-    const postId = selectedPost._id as string
-    const commentId = selectedComment._id as string
+    const postId = selectedPostId!
+    const commentId = selectedCommentId!
 
     const persistedComment = await getComment(postId, commentId) as PostCommentDto
 
@@ -37,9 +43,18 @@ describe('[ORM] MongoDB - Posts - getComment', () => {
     done()
   })
 
-  it('must return NULL when select a post which doesn\'t contain the provided comment', async (done) => {
+  it('must return NULL when the selected post doesn\'t exist', async (done) => {
     const postId = mockedNonValidPostId
-    const commentId = selectedComment._id as string
+    const commentId = selectedCommentId!
+
+    await expect(getComment(postId, commentId)).resolves.toBeNull()
+
+    done()
+  })
+
+  it('must return NULL when select a post which doesn\'t contain the provided comment', async (done) => {
+    const postId = noCommentsPostId!
+    const commentId = selectedCommentId!
 
     await expect(getComment(postId, commentId)).resolves.toBeNull()
 
@@ -47,7 +62,7 @@ describe('[ORM] MongoDB - Posts - getComment', () => {
   })
 
   it('must return NULL when provide a comment which is not contained into the selected post', async (done) => {
-    const postId = selectedPost._id as string
+    const postId = selectedPostId!
     const commentId = mockedNonValidCommentId
 
     await expect(getComment(postId, commentId)).resolves.toBeNull()

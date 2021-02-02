@@ -58,7 +58,7 @@ export const getComment = async (postId: string, commentId: string): Promise<Pos
     commentReduction
   ])
 
-  return Object.keys(retrievedPost).length ? retrievedPost : null
+  return retrievedPost && Object.keys(retrievedPost).length ? retrievedPost : null
 }
 
 export const deleteComment = async (postId: string, commentId: string): Promise<void> => {
@@ -102,7 +102,7 @@ export const getLikeByOwnerId = async (postId: string, ownerId: string): Promise
   ])
 
   // NOTE If no coincidences are found, the aggregation returns and empty object.
-  return Object.keys(retrievedPostLike).length ? retrievedPostLike : null
+  return retrievedPostLike && Object.keys(retrievedPostLike).length ? retrievedPostLike : null
 }
 
 export const like = async (postId: string, owner: PostLikeDto): Promise<PostDto | null> => {

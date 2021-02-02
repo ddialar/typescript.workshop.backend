@@ -1,6 +1,6 @@
 import { connect, disconnect } from '../../../core'
 import { PostDto, PostLikeDto } from '@infrastructure/dtos'
-import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, testingNonValidLikeOwnerId } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, testingNonValidLikeOwnerId, testingNonValidPostId } from '@testingFixtures'
 
 import { getLikeByOwnerId } from '../../post.mongodb.requests'
 
@@ -14,6 +14,7 @@ describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
   const { _id: noLikesPostId } = completeDtoPostWithNoLikes
   completeDtoPostWithNoLikes.likes = []
 
+  const mockedNonValidPostId = testingNonValidPostId
   const nonValidLikeOwnerId = testingNonValidLikeOwnerId
 
   beforeAll(async () => {
@@ -38,6 +39,15 @@ describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
 
     // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
     expect(JSON.parse(JSON.stringify(persistedLike))).toStrictEqual<PostLikeDto>(selectedLike)
+
+    done()
+  })
+
+  it('must return NULL when the selected post doesn\'t exist', async (done) => {
+    const postId = mockedNonValidPostId
+    const ownerId = selectedLikeOwnerId
+
+    await expect(getLikeByOwnerId(postId, ownerId)).resolves.toBeNull()
 
     done()
   })
