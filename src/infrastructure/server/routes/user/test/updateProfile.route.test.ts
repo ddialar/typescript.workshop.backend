@@ -52,7 +52,7 @@ describe('[API] - User endpoints', () => {
       await cleanUsersCollectionFixture()
     })
 
-    it('must return a 200 (OK) and the user\'s profile data', async (done) => {
+    it('must return a OK (200) and the user\'s profile data', async (done) => {
       const originalUser = await getUserByUsernameFixture(username) as UserDto
       const token = `bearer ${validToken}`
 
@@ -100,7 +100,7 @@ describe('[API] - User endpoints', () => {
       const expectedErrorMessage = 'Token expired'
 
       await request
-        .get(PROFILE_PATH)
+        .put(PROFILE_PATH)
         .set('Authorization', token)
         .send(payload)
         .expect(UNAUTHORIZED)
@@ -116,7 +116,7 @@ describe('[API] - User endpoints', () => {
       const expectedErrorMessage = 'User does not exist'
 
       await request
-        .get(PROFILE_PATH)
+        .put(PROFILE_PATH)
         .set('Authorization', token)
         .send(payload)
         .expect(BAD_REQUEST)
@@ -127,8 +127,8 @@ describe('[API] - User endpoints', () => {
       done()
     })
 
-    it('must return an INTERNAL_SERVER_ERROR (500) when the updating logout user data process fails', async (done) => {
-      jest.spyOn(userDataSource, 'getUserProfileById').mockImplementation(() => {
+    it('must return an INTERNAL_SERVER_ERROR (500) when the updating process fails', async (done) => {
+      jest.spyOn(userDataSource, 'updateUserProfileById').mockImplementation(() => {
         throw new Error('Testing Error')
       })
 
@@ -136,7 +136,7 @@ describe('[API] - User endpoints', () => {
       const expectedErrorMessage = 'Internal Server Error'
 
       await request
-        .get(PROFILE_PATH)
+        .put(PROFILE_PATH)
         .set('Authorization', token)
         .send(payload)
         .expect(INTERNAL_SERVER_ERROR)
@@ -144,7 +144,7 @@ describe('[API] - User endpoints', () => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
-      jest.spyOn(userDataSource, 'getUserProfileById').mockRestore()
+      jest.spyOn(userDataSource, 'updateUserProfileById').mockRestore()
 
       done()
     })
