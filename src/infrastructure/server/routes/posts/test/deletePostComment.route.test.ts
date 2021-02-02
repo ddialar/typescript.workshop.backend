@@ -14,14 +14,17 @@ import {
   testingDomainModelFreeUsers,
   testingUsers,
   cleanUsersCollectionFixture,
-  cleanPostsCollectionFixture
+  cleanPostsCollectionFixture,
+  saveUsersFixture,
+  savePostsFixture,
+  getPostByIdFixture
 } from '@testingFixtures'
 
 const POSTS_COMMENT_PATH = '/posts/comment'
 
 describe('[API] - Posts endpoints', () => {
   describe(`[DELETE] ${POSTS_COMMENT_PATH}`, () => {
-    const { connect, disconnect, models: { User, Post } } = mongodb
+    const { connect, disconnect } = mongodb
 
     const [selectedPost, nonValidPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
     const [selectedComment] = selectedPost.comments
@@ -61,12 +64,12 @@ describe('[API] - Posts endpoints', () => {
       request = supertest(server)
       await connect()
       await cleanUsersCollectionFixture()
-      await User.insertMany([mockedPostCommentOwner, mockedUnauthorizedUserToBePersisted])
+      await saveUsersFixture([mockedPostCommentOwner, mockedUnauthorizedUserToBePersisted])
     })
 
     beforeEach(async () => {
       await cleanPostsCollectionFixture()
-      await Post.insertMany(testingLikedAndCommentedPersistedDtoPosts)
+      await savePostsFixture(testingLikedAndCommentedPersistedDtoPosts)
     })
 
     afterAll(async () => {
@@ -86,7 +89,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentId })
         .expect(OK)
         .then(async () => {
-          const { comments: updatedDtoComments } = (await Post.findById(postId))?.toJSON() as PostDto
+          const { comments: updatedDtoComments } = await getPostByIdFixture(postId) as PostDto
 
           expect(updatedDtoComments).toHaveLength(selectedPost.comments.length - 1)
           expect(updatedDtoComments.map(({ _id }) => _id).includes(commentId)).toBeFalsy()
