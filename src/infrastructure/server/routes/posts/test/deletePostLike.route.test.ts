@@ -15,14 +15,17 @@ import {
   testingExpiredJwtToken,
   cleanUsersCollectionFixture,
   cleanPostsCollectionFixture,
-  testingNonValidPostId
+  testingNonValidPostId,
+  saveUsersFixture,
+  savePostsFixture,
+  getPostByIdFixture
 } from '@testingFixtures'
 
 const POSTS_LIKE_PATH = '/posts/like'
 
 describe('[API] - Posts endpoints', () => {
   describe(`[DELETE] ${POSTS_LIKE_PATH}`, () => {
-    const { connect, disconnect, models: { User, Post } } = mongodb
+    const { connect, disconnect } = mongodb
 
     const [selectedPost, emptyLikesPost] = testingLikedAndCommentedPersistedDtoPosts
     emptyLikesPost.likes = []
@@ -63,12 +66,12 @@ describe('[API] - Posts endpoints', () => {
       request = supertest(server)
       await connect()
       await cleanUsersCollectionFixture()
-      await User.insertMany([mockedPostLikeOwner, mockedUnauthorizedUserToBePersisted])
+      await saveUsersFixture([mockedPostLikeOwner, mockedUnauthorizedUserToBePersisted])
     })
 
     beforeEach(async () => {
       await cleanPostsCollectionFixture()
-      await Post.insertMany([selectedPost, emptyLikesPost])
+      await savePostsFixture([selectedPost, emptyLikesPost])
     })
 
     afterAll(async () => {
@@ -87,7 +90,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(OK)
         .then(async () => {
-          const { likes: updatedDtoLikes } = (await Post.findById(postId))?.toJSON() as PostDto
+          const { likes: updatedDtoLikes } = await getPostByIdFixture(postId) as PostDto
 
           expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length - 1)
           expect(updatedDtoLikes.map(({ userId }) => userId).includes(selectedLikeOwnerId!)).toBeFalsy()
@@ -106,7 +109,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(OK)
         .then(async () => {
-          const { likes: updatedDtoLikes } = (await Post.findById(postId))?.toJSON() as PostDto
+          const { likes: updatedDtoLikes } = await getPostByIdFixture(postId) as PostDto
 
           expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length)
         })
