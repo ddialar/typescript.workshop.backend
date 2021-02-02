@@ -5,7 +5,7 @@ import { RequestDto } from '../serverDtos'
 
 export const ensureAuthenticated = async (req: RequestDto, res: Response, next: NextFunction) => {
   try {
-    const token = (req.get('authorization') ?? '').split(' ')[1]
+    const [, token] = (req.get('authorization') ?? '').split(' ')
     if (!token) {
       throw new RequiredTokenNotProvidedError()
     }
