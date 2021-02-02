@@ -4,7 +4,7 @@ import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND } from '@errors'
-import { PostCommentOwnerDomainModel, PostDomainModel, PostLikeDomainModel, UserDomainModel } from '@domainModels'
+import { PostDomainModel, PostLikeDomainModel, UserDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
 import { UserProfileDto } from '@infrastructure/dtos'
 
@@ -19,7 +19,8 @@ import {
   cleanPostsCollectionFixture,
   saveUserFixture,
   savePostsFixture,
-  getPostByIdFixture
+  getPostByIdFixture,
+  testingNonValidPostId
 } from '@testingFixtures'
 import { mapPostFromDtoToDomainModel } from '@infrastructure/mappers'
 
@@ -34,10 +35,9 @@ describe('[API] - Posts endpoints', () => {
 
     const { connect, disconnect } = mongodb
 
-    const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
-    const originalPost = mockedPosts[0]
-    const nonValidPostId = originalPost.comments[0].id as string
-    const testingFreeUser = testingDomainModelFreeUsers[0] as PostCommentOwnerDomainModel
+    const [originalPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+    const nonValidPostId = testingNonValidPostId
+    const [testingFreeUser] = testingDomainModelFreeUsers
     const { id, username, password, email, avatar, name, surname, token: validToken } = testingUsers.find(({ id }) => id === testingFreeUser.id) as UserDomainModel
 
     const mockedUserDataToBePersisted: TestingProfileDto = {

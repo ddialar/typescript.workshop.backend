@@ -16,7 +16,8 @@ import {
   testingUsers,
   cleanUsersCollectionFixture,
   cleanPostsCollectionFixture,
-  getPostByIdFixture
+  getPostByIdFixture,
+  testingNonValidPostId
 } from '@testingFixtures'
 
 const POSTS_PATH = '/posts'
@@ -26,9 +27,9 @@ describe('[API] - Posts endpoints', () => {
     const { connect, disconnect, models: { User, Post } } = mongodb
 
     const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+    const { id: selectedPostValidId } = selectedPost
 
-    const selectedPostValidId = selectedPost.id as string
-    const nonValidPostId = selectedPost.comments[0].id as string
+    const nonValidPostId = testingNonValidPostId
     const expiredToken = testingExpiredJwtToken
     const unknownUserToken = testingValidJwtTokenForNonPersistedUser
 
@@ -82,7 +83,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return OK (200) and delete the provided post', async (done) => {
       const token = `bearer ${ownerValidToken}`
-      const postId = selectedPostValidId
+      const postId = selectedPostValidId!
 
       await request
         .delete(POSTS_PATH)

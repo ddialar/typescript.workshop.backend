@@ -23,13 +23,9 @@ describe('[API] - Posts endpoints', () => {
   describe(`[DELETE] ${POSTS_COMMENT_PATH}`, () => {
     const { connect, disconnect, models: { User, Post } } = mongodb
 
-    const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
-
-    const selectedPost = mockedPosts[0]
-    const selectedComment = selectedPost.comments[0]
-
-    const nonValidPost = mockedPosts[1]
-    const nonValidPostComment = mockedPosts[1].comments[0]
+    const [selectedPost, nonValidPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+    const [selectedComment] = selectedPost.comments
+    const [nonValidPostComment] = nonValidPost.comments
 
     const {
       id: ownerId,
