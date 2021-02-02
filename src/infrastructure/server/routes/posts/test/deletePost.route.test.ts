@@ -17,14 +17,16 @@ import {
   cleanUsersCollectionFixture,
   cleanPostsCollectionFixture,
   getPostByIdFixture,
-  testingNonValidPostId
+  testingNonValidPostId,
+  savePostsFixture,
+  saveUsersFixture
 } from '@testingFixtures'
 
 const POSTS_PATH = '/posts'
 
 describe('[API] - Posts endpoints', () => {
   describe(`[DELETE] ${POSTS_PATH}`, () => {
-    const { connect, disconnect, models: { User, Post } } = mongodb
+    const { connect, disconnect } = mongodb
 
     const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
     const { id: selectedPostValidId } = selectedPost
@@ -67,12 +69,12 @@ describe('[API] - Posts endpoints', () => {
       request = supertest(server)
       await connect()
       await cleanUsersCollectionFixture()
-      await User.insertMany([mockedPostCommentOwner, mockedUnauthorizedUserToBePersisted])
+      await saveUsersFixture([mockedPostCommentOwner, mockedUnauthorizedUserToBePersisted])
     })
 
     beforeEach(async () => {
       await cleanPostsCollectionFixture()
-      await Post.insertMany(testingLikedAndCommentedPersistedDtoPosts)
+      await savePostsFixture(testingLikedAndCommentedPersistedDtoPosts)
     })
 
     afterAll(async () => {
