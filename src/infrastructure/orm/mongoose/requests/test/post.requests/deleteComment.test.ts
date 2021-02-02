@@ -6,8 +6,8 @@ import { deleteComment } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - deleteComment', () => {
   const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const selectedPost = mockedPosts[0]
-  const selectedComment = selectedPost.comments[0]
+  const [selectedPost] = mockedPosts
+  const [selectedComment] = selectedPost.comments
 
   beforeAll(async () => {
     await connect()

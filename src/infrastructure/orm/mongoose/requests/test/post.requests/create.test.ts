@@ -21,7 +21,7 @@ describe('[ORM] MongoDB - Posts - create', () => {
 
   it('must persist the new user successfully', async (done) => {
     const body = lorem.paragraph()
-    const owner = testingDtoPostOwners[0] as PostOwnerDto
+    const [owner] = testingDtoPostOwners
     const basicPost = { body, owner, comments: [], likes: [] }
 
     const createdPost = await create(basicPost) as PostDto

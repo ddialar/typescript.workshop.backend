@@ -1,16 +1,14 @@
 import { connect, disconnect } from '../../../core'
-import { PostDto } from '@infrastructure/dtos'
 import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, getPostByIdFixture } from '@testingFixtures'
 
 import { deletePost } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - deletePost', () => {
-  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const selectedPost = mockedPosts[0]
+  const [selectedPost] = testingLikedAndCommentedPersistedDtoPosts
 
   beforeAll(async () => {
     await connect()
-    await savePostsFixture(mockedPosts)
+    await savePostsFixture(testingLikedAndCommentedPersistedDtoPosts)
   })
 
   afterAll(async () => {

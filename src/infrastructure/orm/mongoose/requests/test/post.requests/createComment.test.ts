@@ -19,7 +19,7 @@ describe('[ORM] MongoDB - Posts - createComment', () => {
   })
 
   it.only('must persist the new comment into the selected post', async (done) => {
-    const originalPost = mockedPosts[0] as PostDto
+    const [originalPost] = mockedPosts
     const { _id: postId } = originalPost
     const postComment: PostCommentDto = {
       body: lorem.paragraph(),

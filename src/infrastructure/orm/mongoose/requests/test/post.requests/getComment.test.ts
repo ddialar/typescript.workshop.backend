@@ -1,15 +1,15 @@
 import { connect, disconnect } from '../../../core'
 import { PostCommentDto, PostDto } from '@infrastructure/dtos'
-import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, testingNonValidPostCommentId, testingNonValidPostId } from '@testingFixtures'
 
 import { getComment } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - getComment', () => {
   const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const selectedPost = mockedPosts[0]
-  const selectedComment = selectedPost.comments[0]
-  const mockedNonValidPostId = mockedPosts[1]._id as string
-  const mockedNonValidCommentId = mockedPosts[1].comments[0]._id as string
+  const [selectedPost] = mockedPosts
+  const [selectedComment] = selectedPost.comments
+  const mockedNonValidPostId = testingNonValidPostId
+  const mockedNonValidCommentId = testingNonValidPostCommentId
 
   beforeAll(async () => {
     await connect()

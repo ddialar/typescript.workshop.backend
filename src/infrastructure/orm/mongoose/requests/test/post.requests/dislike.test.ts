@@ -5,13 +5,12 @@ import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPosts
 import { dislike } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - dislike', () => {
-  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const selectedPost = mockedPosts[0]
-  const selectedLike = selectedPost.likes[0]
+  const [selectedPost] = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const [selectedLike] = selectedPost.likes
 
   beforeAll(async () => {
     await connect()
-    await savePostsFixture(mockedPosts)
+    await savePostsFixture(testingLikedAndCommentedPersistedDtoPosts)
   })
 
   afterAll(async () => {

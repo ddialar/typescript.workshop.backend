@@ -1,24 +1,24 @@
 import { connect, disconnect } from '../../../core'
 import { PostDto, PostLikeDto } from '@infrastructure/dtos'
-import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, testingNonValidLikeOwnerId } from '@testingFixtures'
 
 import { getLikeByOwnerId } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
-  const mockedDtoPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const mockedCompleteDtoPost = JSON.parse(JSON.stringify(mockedDtoPosts[0]))
-  const mockedEmptyLikesDtoPost = JSON.parse(JSON.stringify(mockedDtoPosts[1]))
-  mockedEmptyLikesDtoPost.likes = []
+  const [selectedPost, completeDtoPostWithNoLikes] = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
 
-  const selectedPost = mockedCompleteDtoPost
-  const selectedLike = selectedPost.likes[0]
-  const selectedLikeOwnerId = selectedLike.userId
-  const mockedNonValidPostId = mockedEmptyLikesDtoPost._id as string
-  const mockedNonValidLikeOwnerId = mockedEmptyLikesDtoPost.owner._id as string
+  const { _id: selectedPostId } = selectedPost
+  const [selectedLike] = selectedPost.likes
+  const { userId: selectedLikeOwnerId } = selectedLike
+
+  const { _id: noLikesPostId } = completeDtoPostWithNoLikes
+  completeDtoPostWithNoLikes.likes = []
+
+  const nonValidLikeOwnerId = testingNonValidLikeOwnerId
 
   beforeAll(async () => {
     await connect()
-    await savePostsFixture([mockedCompleteDtoPost, mockedEmptyLikesDtoPost])
+    await savePostsFixture([selectedPost, completeDtoPostWithNoLikes])
   })
 
   afterAll(async () => {
@@ -27,7 +27,7 @@ describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
   })
 
   it('must retrieve the selected post like', async (done) => {
-    const postId = selectedPost._id as string
+    const postId = selectedPostId!
     const ownerId = selectedLikeOwnerId
 
     const persistedLike = await getLikeByOwnerId(postId, ownerId) as PostLikeDto
@@ -43,7 +43,7 @@ describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
   })
 
   it('must return NULL when select a post which doesn\'t contain the provided like', async (done) => {
-    const postId = mockedNonValidPostId
+    const postId = noLikesPostId!
     const ownerId = selectedLikeOwnerId
 
     await expect(getLikeByOwnerId(postId, ownerId)).resolves.toBeNull()
@@ -52,8 +52,8 @@ describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
   })
 
   it('must return NULL when provide user who has not liked the selected post', async (done) => {
-    const postId = selectedPost._id as string
-    const ownerId = mockedNonValidLikeOwnerId
+    const postId = selectedPostId!
+    const ownerId = nonValidLikeOwnerId
 
     await expect(getLikeByOwnerId(postId, ownerId)).resolves.toBeNull()
 

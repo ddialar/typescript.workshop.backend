@@ -18,9 +18,9 @@ describe('[ORM] MongoDB - Posts - like', () => {
   })
 
   it.only('must persist the new like into the selected post', async (done) => {
-    const originalPost = mockedPosts[0] as PostDto
+    const [originalPost] = mockedPosts
     const { _id: postId } = originalPost
-    const likeOwner = testingDtoFreeUsers[0] as PostLikeDto
+    const [likeOwner] = testingDtoFreeUsers
 
     const updatedPost = await like(postId as string, likeOwner) as PostDto
 
