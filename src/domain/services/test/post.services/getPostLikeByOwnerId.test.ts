@@ -1,7 +1,7 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
 import { PostDomainModel, PostLikeDomainModel } from '@domainModels'
-import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, testingDomainModelFreeUsers, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePostsFixture, cleanPostsCollectionFixture, testingNonValidPostId, testingNonValidLikeOwnerId } from '@testingFixtures'
 
 import { getPostLikeByOwnerId } from '@domainServices'
 import { GettingPostLikeError } from '@errors'
@@ -18,8 +18,8 @@ describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
   const [selectedPost] = resultPosts
   const [selectedLike] = selectedPost.likes
   const { id: selectedLikeOwnerId } = selectedLike
-  const mockedNonValidPostId = resultPosts[1].id as string
-  const mockedNonValidLikeOwnerId = testingDomainModelFreeUsers[0].id
+  const mockedNonValidPostId = testingNonValidPostId
+  const mockedNonValidLikeOwnerId = testingNonValidLikeOwnerId
 
   beforeAll(async () => {
     await connect()

@@ -6,7 +6,9 @@ import {
   testingLikedAndCommentedPersistedDomainModelPosts,
   cleanPostsCollectionFixture,
   savePostsFixture,
-  getPostByIdFixture
+  getPostByIdFixture,
+  testingNonValidPostId,
+  testingNonValidLikeOwnerId
 } from '@testingFixtures'
 
 import { dislikePost } from '@domainServices'
@@ -24,8 +26,8 @@ describe('[SERVICES] Post - dislikePost', () => {
   const [selectedPost] = resultPosts
   const [selectedLike] = selectedPost.likes
   const { id: selectedLikeOwnerId } = selectedLike
-  const mockedNonValidPostId = resultPosts[1].owner.id as string
-  const mockedNonValidLikeOwnerId = resultPosts[1].owner.id as string
+  const mockedNonValidPostId = testingNonValidPostId
+  const mockedNonValidLikeOwnerId = testingNonValidLikeOwnerId
 
   beforeAll(async () => {
     await connect()

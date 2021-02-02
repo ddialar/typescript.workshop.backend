@@ -5,7 +5,8 @@ import {
   testingLikedAndCommentedPersistedDtoPosts,
   testingLikedAndCommentedPersistedDomainModelPosts,
   savePostsFixture,
-  cleanPostsCollectionFixture
+  cleanPostsCollectionFixture,
+  testingNonValidPostId
 } from '@testingFixtures'
 
 import { getPostById } from '@domainServices'
@@ -18,7 +19,7 @@ describe('[SERVICES] Post - getPostById', () => {
   const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts
   const [selectedPost] = resultPosts
   const { id: selectedPostId } = selectedPost
-  const nonValidPostId = selectedPost.comments[0].id
+  const nonValidPostId = testingNonValidPostId
 
   beforeAll(async () => {
     await connect()
