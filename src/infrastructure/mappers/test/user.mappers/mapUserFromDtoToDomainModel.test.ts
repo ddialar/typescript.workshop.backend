@@ -8,6 +8,10 @@ import { mapUserFromDtoToDomainModel } from '@infrastructure/mappers'
 const [{ id, ...otherUserFields }] = testingUsers
 
 describe('[MAPPERS] User mapper - mapUserFromDtoToDomainModel', () => {
+  it('must return null when we provide null', () => {
+    expect(mapUserFromDtoToDomainModel(null)).toBeNull()
+  })
+
   it('maps successfully from DTO to Domain when we provide user information', () => {
     const originData: UserDto = {
       _id: id,
@@ -24,11 +28,5 @@ describe('[MAPPERS] User mapper - mapUserFromDtoToDomainModel', () => {
     const mappedData = mapUserFromDtoToDomainModel(originData)
 
     expect(mappedData).toEqual(expectedData)
-  })
-
-  it('must return null when we provide null', () => {
-    const mappedData = mapUserFromDtoToDomainModel(null)
-
-    expect(mappedData).toBeNull()
   })
 })

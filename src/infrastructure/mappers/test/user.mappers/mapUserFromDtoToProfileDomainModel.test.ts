@@ -8,6 +8,10 @@ import { mapUserFromDtoToProfileDomainModel } from '@infrastructure/mappers'
 const [{ id, username, email, name, surname, avatar, ...otherUserFields }] = testingUsers
 
 describe('[MAPPERS] User mapper - mapUserFromDtoToProfileDomainModel', () => {
+  it('must return null when we provide null', () => {
+    expect(mapUserFromDtoToProfileDomainModel(null)).toBeNull()
+  })
+
   it('maps successfully from DTO to Domain', () => {
     const originData: UserDto = {
       _id: id,
