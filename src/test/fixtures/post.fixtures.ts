@@ -18,6 +18,7 @@ import {
   likedAndCommentedDomainModelPosts
 } from './assets/posts.json'
 import { PostDomainModelFixture, PostDtoFixture, UserDomainModelFixture, UserDtoFixture } from './types'
+import { generateMockedMongoDbId } from './utils.fixtures'
 
 export const testingDtoPostOwners: UserDtoFixture[] = basicDtoPostOwners
 export const testingDtoPostCommentOwners: UserDtoFixture[] = basicDtoPostCommentOwners
@@ -36,3 +37,7 @@ export const testingLikedAndCommentedPersistedDtoPosts: PostDtoFixture[] = liked
 export const testingBasicPersistedDomainModelPosts: PostDomainModelFixture[] = basicDomainModelPosts
 export const testingCommentedPersistedDomainModelPosts: PostDomainModelFixture[] = commentedDomainModelPosts
 export const testingLikedAndCommentedPersistedDomainModelPosts: PostDomainModelFixture[] = likedAndCommentedDomainModelPosts
+
+export const testingNonValidPostId = generateMockedMongoDbId()
+export const testingNonValidPostCommentId = generateMockedMongoDbId()
+export const testingNonValidLikeOwnerId = generateMockedMongoDbId()
