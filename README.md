@@ -6,26 +6,26 @@
 
 ## 📖 Index
 
--   [Description](description)
--   [System requirements](requirements)
--   [Repository overview](repository-overview)
-    -   [Environment variables](repository-overview-environment-variables)
-    -   [Architecture](repository-overview-architecture)
-        -   [common](repository-overview-architecture-common)
-        -   [domain](repository-overview-architecture-domain)
-        -   [infrastructure](repository-overview-architecture-infrastructure)
-        -   [test](repository-overview-architecture-test)
-    -   [Execution environments](repository-overview-environments)
--   [Commands guide](commands)
-    -   [Switch Node version](commands-switch-node)
-    -   [Modules instalation process](commands-installation)
-    -   [Run tests](commands-tests)
-    -   [Run development mode](commands-dev-mode)
-    -   [Build application](commands-pro-mode)
--   [API REST documentation](apidoc)
--   [Credits and thanks](credits-and-thanks)
--   [TODO list](todo-list)
--   [Researching list](research-list)
+-   [Description](https://github.com/ddialar/typescript.workshop.backend#description)
+-   [System requirements](https://github.com/ddialar/typescript.workshop.backend#requirements)
+-   [Repository overview](https://github.com/ddialar/typescript.workshop.backend#repository-overview)
+    -   [Environment variables](https://github.com/ddialar/typescript.workshop.backend#repository-overview-environment-variables)
+    -   [Architecture](https://github.com/ddialar/typescript.workshop.backend#repository-overview-architecture)
+        -   [common](https://github.com/ddialar/typescript.workshop.backend#repository-overview-architecture-common)
+        -   [domain](https://github.com/ddialar/typescript.workshop.backend#repository-overview-architecture-domain)
+        -   [infrastructure](https://github.com/ddialar/typescript.workshop.backend#repository-overview-architecture-infrastructure)
+        -   [test](https://github.com/ddialar/typescript.workshop.backend#repository-overview-architecture-test)
+    -   [Execution environments](https://github.com/ddialar/typescript.workshop.backend#repository-overview-environments)
+-   [Commands guide](https://github.com/ddialar/typescript.workshop.backend#commands)
+    -   [Switch Node version](https://github.com/ddialar/typescript.workshop.backend#commands-switch-node)
+    -   [Modules installation process](https://github.com/ddialar/typescript.workshop.backend#commands-installation)
+    -   [Run tests](https://github.com/ddialar/typescript.workshop.backend#commands-tests)
+    -   [Run development mode](https://github.com/ddialar/typescript.workshop.backend#commands-dev-mode)
+    -   [Build application](https://github.com/ddialar/typescript.workshop.backend#commands-pro-mode)
+-   [API REST documentation](https://github.com/ddialar/typescript.workshop.backend#apidoc)
+-   [Credits and thanks](https://github.com/ddialar/typescript.workshop.backend#credits-and-thanks)
+-   [TODO list](https://github.com/ddialar/typescript.workshop.backend#todo-list)
+-   [Researching list](https://github.com/ddialar/typescript.workshop.backend#research-list)
 
 ## <a id="description"></a>🔍 Description
 
@@ -283,7 +283,7 @@ Both environments are configured in order to be run independently so we can have
 nvm use
 ```
 
-### <a id="commands-installation"></a>⬇️ Modules instalation process
+### <a id="commands-installation"></a>⬇️ Modules installation process
 
 ```sh
 npm i
@@ -330,7 +330,7 @@ Once this process is completed, the bundled code is avilable to be included from
 
 `http://localhost:3600/__/apidoc`
 
-The access port must be defined in the environment variables. Take a look to the [**environment variables**](#environment-variables) section.
+The access port must be defined in the environment variables. Take a look to the [**environment variables**](https://github.com/ddialar/typescript.workshop.backend#environment-variables) section.
 
 ## <a id="credits-and-thanks"></a>🙏 Credits and thanks
 
