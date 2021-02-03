@@ -330,7 +330,7 @@ Una vez se haya completado este proceos, el código comprimido estará disponibl
 
 `http://localhost:3600/__/apidoc`
 
-El puerto de acceso debe ser definido en las variables de entorno. Echa un vistazo a la sección [**variables de entorno**](https://github.com/ddialar/typescript.workshop.backend#environment-variables).
+El puerto de acceso debe ser definido en las variables de entorno. Echa un vistazo a la sección [**variables de entorno**](https://github.com/ddialar/typescript.workshop.backend#repository-overview-environment-variables).
 
 ## <a id="credits-and-thanks"></a>🙏 Reconocimientos y agradecimientos
 

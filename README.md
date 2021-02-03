@@ -330,7 +330,7 @@ Once this process is completed, the bundled code is avilable to be included from
 
 `http://localhost:3600/__/apidoc`
 
-The access port must be defined in the environment variables. Take a look to the [**environment variables**](https://github.com/ddialar/typescript.workshop.backend#environment-variables) section.
+The access port must be defined in the environment variables. Take a look to the [**environment variables**](https://github.com/ddialar/typescript.workshop.backend#repository-overview-environment-variables) section.
 
 ## <a id="credits-and-thanks"></a>🙏 Credits and thanks
 
