@@ -16,7 +16,7 @@ export const checkToken = (token: string): DecodedJwtToken => {
   try {
     return decodeToken(token)
   } catch ({ message }) {
-    throw (message.match(/expired/))
+    throw message.match(/expired/)
       ? new TokenExpiredError(`Token '${token}' expired`)
       : new CheckingTokenError(`Error ckecking token '${token}'. ${message}`)
   }
