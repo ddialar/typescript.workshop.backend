@@ -6,26 +6,26 @@
 
 ## 📖 Index
 
--   [Description](https://github.com/ddialar/typescript.workshop.backend#description)
--   [System requirements](https://github.com/ddialar/typescript.workshop.backend#requirements)
--   [Repository overview](https://github.com/ddialar/typescript.workshop.backend#repository-overview)
-    -   [Environment variables](https://github.com/ddialar/typescript.workshop.backend#repository-overview-environment-variables)
-    -   [Architecture](https://github.com/ddialar/typescript.workshop.backend#repository-overview-architecture)
-        -   [common](https://github.com/ddialar/typescript.workshop.backend#repository-overview-architecture-common)
-        -   [domain](https://github.com/ddialar/typescript.workshop.backend#repository-overview-architecture-domain)
-        -   [infrastructure](https://github.com/ddialar/typescript.workshop.backend#repository-overview-architecture-infrastructure)
-        -   [test](https://github.com/ddialar/typescript.workshop.backend#repository-overview-architecture-test)
-    -   [Execution environments](https://github.com/ddialar/typescript.workshop.backend#repository-overview-environments)
--   [Commands guide](https://github.com/ddialar/typescript.workshop.backend#commands)
-    -   [Switch Node version](https://github.com/ddialar/typescript.workshop.backend#commands-switch-node)
-    -   [Modules instalation process](https://github.com/ddialar/typescript.workshop.backend#commands-installation)
-    -   [Run tests](https://github.com/ddialar/typescript.workshop.backend#commands-tests)
-    -   [Run development mode](https://github.com/ddialar/typescript.workshop.backend#commands-dev-mode)
-    -   [Build application](https://github.com/ddialar/typescript.workshop.backend#commands-pro-mode)
--   [API REST documentation](https://github.com/ddialar/typescript.workshop.backend#apidoc)
--   [Credits and thanks](https://github.com/ddialar/typescript.workshop.backend#credits-and-thanks)
--   [TODO list](https://github.com/ddialar/typescript.workshop.backend#todo-list)
--   [Elementos a investigar](https://github.com/ddialar/typescript.workshop.backend#research-list)
+-   [Description](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#description)
+-   [Requisitos del sistema](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#requirements)
+-   [Visión general del repositorio](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#repository-overview)
+    -   [Variables de entorno](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#repository-overview-environment-variables)
+    -   [Arquitectura](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#repository-overview-architecture)
+        -   [common](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#repository-overview-architecture-common)
+        -   [domain](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#repository-overview-architecture-domain)
+        -   [infrastructure](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#repository-overview-architecture-infrastructure)
+        -   [test](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#repository-overview-architecture-test)
+    -   [Entornos de ejecución](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#repository-overview-environments)
+-   [Listado de comandos](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands)
+    -   [Cambiando la versión de NodeJS](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands-switch-node)
+    -   [Proceso de instalación de módulos](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands-installation)
+    -   [Ejecución de los tests](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands-tests)
+    -   [Ejecución de la aplicación en modo desarrollo](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands-dev-mode)
+    -   [Compilación de la aplicación](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands-pro-mode)
+-   [Documentación de la API REST](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#apidoc)
+-   [Reconocimientos y agradecimientos](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#credits-and-thanks)
+-   [TODO list](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#todo-list)
+-   [Elementos a investigar](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#research-list)
 
 ## <a id="description"></a>🔍 Descripción
 
@@ -330,7 +330,7 @@ Una vez se haya completado este proceos, el código comprimido estará disponibl
 
 `http://localhost:3600/__/apidoc`
 
-El puerto de acceso debe ser definido en las variables de entorno. Echa un vistazo a la sección [**variables de entorno**](https://github.com/ddialar/typescript.workshop.backend#repository-overview-environment-variables).
+El puerto de acceso debe ser definido en las variables de entorno. Echa un vistazo a la sección [**variables de entorno**](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#repository-overview-environment-variables).
 
 ## <a id="credits-and-thanks"></a>🙏 Reconocimientos y agradecimientos
 
