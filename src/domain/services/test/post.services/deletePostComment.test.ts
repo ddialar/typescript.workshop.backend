@@ -7,11 +7,12 @@ import {
   testingDomainModelFreeUsers,
   cleanPostsCollectionFixture,
   savePostsFixture,
-  getPostByIdFixture
+  getPostByIdFixture,
+  testingNonValidPostId
 } from '@testingFixtures'
 
 import { deletePostComment } from '@domainServices'
-import { DeletingPostCommentError, GettingPostCommentError, PostCommentNotFoundError, UnauthorizedPostCommentDeletingError } from '@errors'
+import { DeletingPostCommentError, GettingPostCommentError, PostCommentNotFoundError, PostNotFoundError, UnauthorizedPostCommentDeletingError } from '@errors'
 import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - deletePostComment', () => {
@@ -56,7 +57,18 @@ describe('[SERVICES] Post - deletePostComment', () => {
     done()
   })
 
-  it('must throw NOT_FOUND (404) when we select a post which doesn\'t contain the provided comment', async (done) => {
+  it('must throw NOT_FOUND (404) when the provided post does not exist', async (done) => {
+    const postId = testingNonValidPostId
+    const commentId = selectedComment.id as string
+    const commentOwnerId = selectedComment.owner.id as string
+    const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
+
+    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
+
+    done()
+  })
+
+  it('must throw NOT_FOUND (404) when we select a post which does not contain the provided comment', async (done) => {
     const postId = mockedNonValidPostId as string
     const commentId = selectedComment.id as string
     const commentOwnerId = selectedComment.owner.id as string

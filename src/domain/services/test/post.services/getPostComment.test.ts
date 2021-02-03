@@ -1,10 +1,10 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
 import { PostCommentDomainModel, PostDomainModel } from '@domainModels'
-import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePostsFixture, cleanPostsCollectionFixture, testingNonValidPostId } from '@testingFixtures'
 
 import { getPostComment } from '@domainServices'
-import { GettingPostCommentError } from '@errors'
+import { GettingPostCommentError, PostNotFoundError } from '@errors'
 import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - getPostComment', () => {
@@ -57,6 +57,16 @@ describe('[SERVICES] Post - getPostComment', () => {
     const commentId = mockedNonValidCommentId as string
 
     await expect(getPostComment(postId, commentId)).resolves.toBeNull()
+
+    done()
+  })
+
+  it('must throw a NOT_FOUND (404) when the provided post does not exist', async (done) => {
+    const postId = testingNonValidPostId
+    const commentId = selectedComment.id as string
+    const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
+
+    await expect(getPostComment(postId, commentId)).rejects.toThrowError(expectedError)
 
     done()
   })

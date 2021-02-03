@@ -12,9 +12,36 @@ import {
   PostNotFoundError,
   UnauthorizedPostCommentDeletingError,
   UnauthorizedPostDeletingError,
-  DeletingPostError
+  DeletingPostError,
+  ApiError
 } from '@errors'
 import { PostCommentDomainModel, PostDomainModel, PostLikeDomainModel, PostOwnerDomainModel } from '@domainModels'
+
+// #################################################
+// #####               POSTS                   #####
+// #################################################
+
+export const getPosts = async (): Promise<PostDomainModel[] | null> => {
+  try {
+    return await postDataSource.getPosts()
+  } catch ({ message }) {
+    throw new GettingPostError(`Error retereaving posts. ${message}`)
+  }
+}
+
+export const getPostById = async (postId: string): Promise<PostDomainModel> => {
+  try {
+    const retrievedPost = await postDataSource.getPostById(postId)
+
+    if (!retrievedPost) { throw new Error('getPostById_not_found') }
+
+    return retrievedPost
+  } catch ({ message }) {
+    throw message.match(/getPostById_not_found/)
+      ? new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
+      : new GettingPostError(`Error retereaving post '${postId}'. ${message}`)
+  }
+}
 
 export const createPost = async (owner: PostOwnerDomainModel, postBody: string): Promise<PostDomainModel> => {
   try {
@@ -26,7 +53,36 @@ export const createPost = async (owner: PostOwnerDomainModel, postBody: string):
   }
 }
 
+export const deletePost = async (postId: string, postOwnerId: string): Promise<void> => {
+  const selectedPost = await getPostById(postId)
+
+  try {
+    if (selectedPost.owner.id !== postOwnerId) { throw new Error('deletePost_owner_mismatch') }
+    await postDataSource.deletePost(postId)
+  } catch ({ message }) {
+    throw message.match(/deletePost_owner_mismatch/)
+      ? new UnauthorizedPostDeletingError(`User '${postOwnerId}' is not the owner of the post '${postId}', which is trying to delete.`)
+      : new DeletingPostError(`Error deleting '${postId}' by user '${postOwnerId}'. ${message}`)
+  }
+}
+
+// #################################################
+// #####              COMMENTS                 #####
+// #################################################
+
+export const getPostComment = async (postId: string, commentId: string): Promise<PostCommentDomainModel | null> => {
+  await getPostById(postId)
+
+  try {
+    return await postDataSource.getPostComment(postId, commentId)
+  } catch ({ message }) {
+    throw new GettingPostCommentError(`Error retereaving post comment. ${message}`)
+  }
+}
+
 export const createPostComment = async (postId: string, commentBody: string, owner: PostOwnerDomainModel): Promise<PostDomainModel> => {
+  await getPostById(postId)
+
   try {
     const createdPostComment = await postDataSource.createPostComment(postId, commentBody, owner)
     if (!createdPostComment) { throw new Error('Post comment insertion process initiated but completed with NULL result') }
@@ -36,72 +92,36 @@ export const createPostComment = async (postId: string, commentBody: string, own
   }
 }
 
-export const getPosts = async (): Promise<PostDomainModel[] | null> => {
+export const deletePostComment = async (postId: string, commentId: string, commentOwnerId: string): Promise<void> => {
+  const selectedComment = await getPostComment(postId, commentId)
+
   try {
-    return await postDataSource.getPosts()
-  } catch ({ message }) {
-    throw new GettingPostError(`Error retereaving posts. ${message}`)
+    if (!selectedComment) { throw new Error('deletePostComment_not_found') }
+    if (selectedComment.owner.id !== commentOwnerId) { throw new Error('deletePostComment_unauthorized') }
+    await postDataSource.deletePostComment(postId, commentId)
+  } catch (error) {
+    if (error instanceof Error) {
+      const { message } = error
+      const possibleErrors: Record<string, ApiError> = {
+        deletePostComment_not_found: new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`),
+        deletePostComment_unauthorized: new UnauthorizedPostCommentDeletingError(`User '${commentOwnerId}' is not the owner of the comment '${commentId}', from post '${postId}', which is trying to delete.`),
+        default: new DeletingPostCommentError(`Error deleting comment '${commentId}', from post '${postId}', by user '${commentOwnerId}'. ${message}`)
+      }
+
+      throw possibleErrors[message] || possibleErrors.default
+    }
   }
 }
 
-export const getPostById = async (postId: string): Promise<PostDomainModel | null> => {
-  let retrievedPost: PostDomainModel | null
-
-  try {
-    retrievedPost = await postDataSource.getPostById(postId)
-  } catch ({ message }) {
-    throw new GettingPostError(`Error retereaving post '${postId}'. ${message}`)
-  }
-
-  if (!retrievedPost) {
-    throw new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
-  }
-
-  return retrievedPost
-}
-
-export const deletePost = async (postId: string, postOwnerId: string): Promise<void> => {
-  const selectedPost = await getPostById(postId) as PostDomainModel
-
-  if (selectedPost.owner.id !== postOwnerId) {
-    throw new UnauthorizedPostDeletingError(`User '${postOwnerId}' is not the owner of the post '${postId}', which is trying to delete.`)
-  }
-
-  try {
-    await postDataSource.deletePost(postId)
-  } catch ({ message }) {
-    throw new DeletingPostError(`Error deleting '${postId}' by user '${postOwnerId}'. ${message}`)
-  }
-}
-
-export const getPostComment = async (postId: string, commentId: string): Promise<PostCommentDomainModel | null> => {
-  try {
-    return await postDataSource.getPostComment(postId, commentId)
-  } catch ({ message }) {
-    throw new GettingPostCommentError(`Error retereaving post comment. ${message}`)
-  }
-}
+// #################################################
+// #####                LIKES                  #####
+// #################################################
 
 export const getPostLikeByOwnerId = async (postId: string, likeOwnerId: string): Promise<PostLikeDomainModel | null> => {
   try {
     return await postDataSource.getPostLikeByOwnerId(postId, likeOwnerId)
   } catch ({ message }) {
     throw new GettingPostLikeError(`Error retereaving post comment. ${message}`)
-  }
-}
-
-export const deletePostComment = async (postId: string, commentId: string, commentOwnerId: string): Promise<void> => {
-  const selectedComment = await getPostComment(postId, commentId)
-  if (!selectedComment) { throw new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`) }
-
-  if (selectedComment.owner.id !== commentOwnerId) {
-    throw new UnauthorizedPostCommentDeletingError(`User '${commentOwnerId}' is not the owner of the comment '${commentId}', from post '${postId}', which is trying to delete.`)
-  }
-
-  try {
-    await postDataSource.deletePostComment(postId, commentId)
-  } catch ({ message }) {
-    throw new DeletingPostCommentError(`Error deleting comment '${commentId}', from post '${postId}', by user '${commentOwnerId}'. ${message}`)
   }
 }
 
