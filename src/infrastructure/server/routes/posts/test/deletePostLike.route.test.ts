@@ -90,7 +90,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(OK)
         .then(async () => {
-          const { likes: updatedDtoLikes } = await getPostByIdFixture(postId) as PostDto
+          const { likes: updatedDtoLikes } = (await getPostByIdFixture(postId))!
 
           expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length - 1)
           expect(updatedDtoLikes.map(({ userId }) => userId).includes(selectedLikeOwnerId!)).toBeFalsy()
@@ -109,7 +109,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(OK)
         .then(async () => {
-          const { likes: updatedDtoLikes } = await getPostByIdFixture(postId) as PostDto
+          const { likes: updatedDtoLikes } = (await getPostByIdFixture(postId))!
 
           expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length)
         })

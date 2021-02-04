@@ -4,7 +4,6 @@ import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
 import { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, FORBIDDEN, NOT_FOUND, BAD_REQUEST } from '@errors'
-import { PostDomainModel, UserDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
 
 import {
@@ -28,7 +27,7 @@ describe('[API] - Posts endpoints', () => {
   describe(`[DELETE] ${POSTS_PATH}`, () => {
     const { connect, disconnect } = mongodb
 
-    const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+    const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts
     const { id: selectedPostValidId } = selectedPost
 
     const nonValidPostId = testingNonValidPostId
@@ -41,7 +40,7 @@ describe('[API] - Posts endpoints', () => {
       password: ownerPassword,
       email: ownerEmail,
       token: ownerValidToken
-    } = testingUsers.find(({ id }) => id === selectedPost.owner.id) as UserDomainModel
+    } = testingUsers.find(({ id }) => id === selectedPost.owner.id)!
     const mockedPostCommentOwner = {
       _id: ownerId,
       username: ownerUsername,
@@ -55,7 +54,7 @@ describe('[API] - Posts endpoints', () => {
       password: unauthorizedPassword,
       email: unauthorizedEmail,
       token: unauthorizedValidToken
-    } = testingUsers.find(({ id }) => id === testingDomainModelFreeUsers[0].id) as UserDomainModel
+    } = testingUsers.find(({ id }) => id === testingDomainModelFreeUsers[0].id)!
     const mockedUnauthorizedUserToBePersisted = {
       _id: unauthorizedId,
       username: unauthorizedUsername,

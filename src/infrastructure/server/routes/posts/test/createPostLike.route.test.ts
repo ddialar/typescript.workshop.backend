@@ -4,7 +4,6 @@ import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND } from '@errors'
-import { PostDomainModel, PostLikeDomainModel, UserDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
 import { UserProfileDto } from '@infrastructure/dtos'
 
@@ -35,10 +34,10 @@ describe('[API] - Posts endpoints', () => {
 
     const { connect, disconnect } = mongodb
 
-    const [originalPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+    const [originalPost] = testingLikedAndCommentedPersistedDomainModelPosts
     const nonValidPostId = testingNonValidPostId
     const [testingFreeUser] = testingDomainModelFreeUsers
-    const { id, username, password, email, avatar, name, surname, token: validToken } = testingUsers.find(({ id }) => id === testingFreeUser.id) as UserDomainModel
+    const { id, username, password, email, avatar, name, surname, token: validToken } = testingUsers.find(({ id }) => id === testingFreeUser.id)!
 
     const mockedUserDataToBePersisted: TestingProfileDto = {
       _id: id,
@@ -81,7 +80,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(OK)
         .then(async () => {
-          const updatedPost = mapPostFromDtoToDomainModel(await getPostByIdFixture(postId as string)) as PostDomainModel
+          const updatedPost = mapPostFromDtoToDomainModel(await getPostByIdFixture(postId))!
 
           expect(updatedPost.id).not.toBeNull()
           expect(updatedPost.body).toBe(originalPost.body)
@@ -89,10 +88,10 @@ describe('[API] - Posts endpoints', () => {
           expect(updatedPost.comments).toStrictEqual(originalPost.comments)
 
           expect(updatedPost.likes).toHaveLength(originalPost.likes.length + 1)
-          const originalLikesIds = originalPost.likes.map(({ id }) => id as string)
-          const updatedLikesIds = updatedPost.likes.map(({ id }) => id as string)
+          const originalLikesIds = originalPost.likes.map(({ id }) => id.toString())
+          const updatedLikesIds = updatedPost.likes.map(({ id }) => id.toString())
           const newLikeId = updatedLikesIds.find((updatedId) => !originalLikesIds.includes(updatedId))
-          const newPersistedLike = updatedPost.likes.find((like) => like.id === newLikeId) as PostLikeDomainModel
+          const newPersistedLike = updatedPost.likes.find((like) => like.id === newLikeId)!
           expect(newPersistedLike.id).toBe(likeOwner.id)
           expect(newPersistedLike.name).toBe(likeOwner.name)
           expect(newPersistedLike.surname).toBe(likeOwner.surname)

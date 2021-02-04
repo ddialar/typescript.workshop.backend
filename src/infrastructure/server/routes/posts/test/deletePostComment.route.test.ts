@@ -4,9 +4,7 @@ import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
 import { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND } from '@errors'
-import { PostDomainModel, UserDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
-import { PostDto } from '@infrastructure/dtos'
 
 import {
   testingLikedAndCommentedPersistedDtoPosts,
@@ -26,7 +24,7 @@ describe('[API] - Posts endpoints', () => {
   describe(`[DELETE] ${POSTS_COMMENT_PATH}`, () => {
     const { connect, disconnect } = mongodb
 
-    const [selectedPost, nonValidPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+    const [selectedPost, nonValidPost] = testingLikedAndCommentedPersistedDomainModelPosts
     const [selectedComment] = selectedPost.comments
     const [nonValidPostComment] = nonValidPost.comments
 
@@ -36,7 +34,7 @@ describe('[API] - Posts endpoints', () => {
       password: ownerPassword,
       email: ownerEmail,
       token: ownerValidToken
-    } = testingUsers.find(({ id }) => id === selectedComment.owner.id) as UserDomainModel
+    } = testingUsers.find(({ id }) => id === selectedComment.owner.id)!
     const mockedPostCommentOwner = {
       _id: ownerId,
       username: ownerUsername,
@@ -50,7 +48,7 @@ describe('[API] - Posts endpoints', () => {
       password: unauthorizedPassword,
       email: unauthorizedEmail,
       token: unauthorizedValidToken
-    } = testingUsers.find(({ id }) => id === testingDomainModelFreeUsers[0].id) as UserDomainModel
+    } = testingUsers.find(({ id }) => id === testingDomainModelFreeUsers[0].id)!
     const mockedUnauthorizedUserToBePersisted = {
       _id: unauthorizedId,
       username: unauthorizedUsername,
@@ -80,8 +78,8 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return OK (200) and delete the provided comment', async (done) => {
       const token = `bearer ${ownerValidToken}`
-      const postId = selectedPost.id as string
-      const commentId = selectedComment.id as string
+      const postId = selectedPost.id
+      const commentId = selectedComment.id
 
       await request
         .delete(POSTS_COMMENT_PATH)
@@ -89,7 +87,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentId })
         .expect(OK)
         .then(async () => {
-          const { comments: updatedDtoComments } = await getPostByIdFixture(postId) as PostDto
+          const { comments: updatedDtoComments } = (await getPostByIdFixture(postId))!
 
           expect(updatedDtoComments).toHaveLength(selectedPost.comments.length - 1)
           expect(updatedDtoComments.map(({ _id }) => _id).includes(commentId)).toBeFalsy()
@@ -100,8 +98,8 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return NOT_FOUND (404) when we select a post which doesn\'t contain the provided comment', async (done) => {
       const token = `bearer ${ownerValidToken}`
-      const postId = nonValidPost.id as string
-      const commentId = selectedComment.id as string
+      const postId = nonValidPost.id
+      const commentId = selectedComment.id
       const expectedErrorMessage = 'Post comment not found'
 
       await request
@@ -118,8 +116,8 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return NOT_FOUND (404) when provide a comment which is not contained into the selected post', async (done) => {
       const token = `bearer ${ownerValidToken}`
-      const postId = selectedPost.id as string
-      const commentId = nonValidPostComment.id as string
+      const postId = selectedPost.id
+      const commentId = nonValidPostComment.id
       const expectedErrorMessage = 'Post comment not found'
 
       await request
@@ -136,8 +134,8 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return UNAUTHORIZED (401) when the action is performed by an user who is not the owner of the comment', async (done) => {
       const token = `bearer ${unauthorizedValidToken}`
-      const postId = selectedPost.id as string
-      const commentId = selectedComment.id as string
+      const postId = selectedPost.id
+      const commentId = selectedComment.id
       const expectedErrorMessage = 'User not authorized to delete this comment'
 
       await request
@@ -158,8 +156,8 @@ describe('[API] - Posts endpoints', () => {
       })
 
       const token = `bearer ${ownerValidToken}`
-      const postId = selectedPost.id as string
-      const commentId = selectedComment.id as string
+      const postId = selectedPost.id
+      const commentId = selectedComment.id
       const expectedErrorMessage = 'Internal Server Error'
 
       await request
@@ -182,8 +180,8 @@ describe('[API] - Posts endpoints', () => {
       })
 
       const token = `bearer ${ownerValidToken}`
-      const postId = selectedPost.id as string
-      const commentId = selectedComment.id as string
+      const postId = selectedPost.id
+      const commentId = selectedComment.id
       const expectedErrorMessage = 'Internal Server Error'
 
       await request

@@ -5,7 +5,7 @@ import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } from '@errors'
-import { PostCommentOwnerDomainModel, PostDomainModel, UserDomainModel } from '@domainModels'
+import { PostDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
 import { UserDto, UserProfileDto } from '@infrastructure/dtos'
 
@@ -33,10 +33,10 @@ describe('[API] - Posts endpoints', () => {
 
     const { connect, disconnect } = mongodb
 
-    const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+    const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts
     const [originalPost] = mockedPosts
-    const [testingFreeUser] = testingDomainModelFreeUsers as PostCommentOwnerDomainModel[]
-    const { id, username, password, email, avatar, name, surname, token: validToken } = testingUsers.find(({ id }) => id === testingFreeUser.id) as UserDomainModel
+    const [testingFreeUser] = testingDomainModelFreeUsers
+    const { id, username, password, email, avatar, name, surname, token: validToken } = testingUsers.find(({ id }) => id === testingFreeUser.id)!
 
     const mockedUserDataToBePersisted: TestingProfileDto = {
       _id: id,
@@ -95,10 +95,10 @@ describe('[API] - Posts endpoints', () => {
           expect(updatedPost.owner).toStrictEqual(originalPost.owner)
 
           expect(updatedPost.comments).toHaveLength(originalPost.comments.length + 1)
-          const originalCommentsIds = originalPost.comments.map(({ id }) => id as string)
-          const updatedCommentsIds = updatedPost.comments.map(({ id }) => id as string)
-          const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId))
-          const newPersistedComment = updatedPost.comments.find((comment) => comment.id === newPostId) as PostDomainModel
+          const originalCommentsIds = originalPost.comments.map(({ id }) => id.toString())
+          const updatedCommentsIds = updatedPost.comments.map(({ id }) => id?.toString())
+          const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId!))
+          const newPersistedComment = updatedPost.comments.find((comment) => comment.id === newPostId)!
           expect(newPersistedComment.body).toBe(commentBody)
           expect(newPersistedComment.owner.id).toBe(persistedUser._id.toString())
           expect(newPersistedComment.owner.name).toBe(persistedUser.name)
