@@ -50,7 +50,7 @@ describe('[API] - Authentication endpoints', () => {
         .then(async ({ text }) => {
           expect(text).toBe('User logged out successfully')
 
-          const editedUser = await getUserByUsernameFixture(username) as UserDto
+          const editedUser = (await getUserByUsernameFixture(username))!
 
           expect(editedUser.token).toBe('')
         })
