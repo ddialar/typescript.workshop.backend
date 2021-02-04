@@ -23,12 +23,12 @@ export const createPostComment = async (postId: string, body: string, owner: Pos
 
 export const getPosts = async (): Promise<PostDomainModel[] | null> => {
   const persistedPosts = await mongodb.requests.post.getAll()
-  return persistedPosts ? persistedPosts.map((post) => mapPostFromDtoToDomainModel(post) as PostDomainModel) : null
+  return persistedPosts ? persistedPosts.map((post) => mapPostFromDtoToDomainModel(post)!) : null
 }
 
 export const getPostById = async (postId: string): Promise<PostDomainModel | null> => {
   const persistedPost = await mongodb.requests.post.getById(postId)
-  return persistedPost ? mapPostFromDtoToDomainModel(persistedPost) as PostDomainModel : null
+  return persistedPost ? mapPostFromDtoToDomainModel(persistedPost)! : null
 }
 
 export const deletePost = async (postId: string): Promise<void> =>
@@ -36,12 +36,12 @@ export const deletePost = async (postId: string): Promise<void> =>
 
 export const getPostComment = async (postId: string, commentId: string): Promise<PostCommentDomainModel | null> => {
   const persistedComment = await mongodb.requests.post.getComment(postId, commentId)
-  return persistedComment ? mapPostCommentFromDtoToDomainModel(persistedComment) as PostCommentDomainModel : null
+  return persistedComment ? mapPostCommentFromDtoToDomainModel(persistedComment)! : null
 }
 
 export const getPostLikeByOwnerId = async (postId: string, ownerId: string): Promise<PostLikeDomainModel | null> => {
   const persistedLike = await mongodb.requests.post.getLikeByOwnerId(postId, ownerId)
-  return persistedLike ? mapOwnerFromDtoToDomainModel(persistedLike) as PostLikeDomainModel : null
+  return persistedLike ? mapOwnerFromDtoToDomainModel(persistedLike)! : null
 }
 
 export const deletePostComment = async (postId: string, commentId: string): Promise<void> =>
