@@ -53,7 +53,7 @@ describe('[API] - User endpoints', () => {
     })
 
     it('must return a OK (200) and the user\'s profile data', async (done) => {
-      const originalUser = await getUserByUsernameFixture(username) as UserDto
+      const originalUser = (await getUserByUsernameFixture(username))!
       const token = `bearer ${validToken}`
 
       await request
