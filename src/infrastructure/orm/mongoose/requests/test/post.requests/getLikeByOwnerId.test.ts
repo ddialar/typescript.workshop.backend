@@ -1,11 +1,11 @@
 import { connect, disconnect } from '../../../core'
-import { PostDto, PostLikeDto } from '@infrastructure/dtos'
+import { PostLikeDto } from '@infrastructure/dtos'
 import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, testingNonValidLikeOwnerId, testingNonValidPostId } from '@testingFixtures'
 
 import { getLikeByOwnerId } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
-  const [selectedPost, completeDtoPostWithNoLikes] = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const [selectedPost, completeDtoPostWithNoLikes] = testingLikedAndCommentedPersistedDtoPosts
 
   const { _id: selectedPostId } = selectedPost
   const [selectedLike] = selectedPost.likes
@@ -31,7 +31,7 @@ describe('[ORM] MongoDB - Posts - getLikeByOwnerId', () => {
     const postId = selectedPostId!
     const ownerId = selectedLikeOwnerId
 
-    const persistedLike = await getLikeByOwnerId(postId, ownerId) as PostLikeDto
+    const persistedLike = (await getLikeByOwnerId(postId, ownerId))!
 
     const expectedFields = ['_id', 'userId', 'name', 'surname', 'avatar', 'createdAt', 'updatedAt']
     const persistedLikeFields = Object.keys(persistedLike).sort()

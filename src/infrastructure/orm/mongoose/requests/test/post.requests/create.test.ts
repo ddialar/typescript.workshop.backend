@@ -1,6 +1,6 @@
 import { lorem } from 'faker'
 import { connect, disconnect } from '../../../core'
-import { PostDto, PostOwnerDto } from '@infrastructure/dtos'
+import { PostOwnerDto } from '@infrastructure/dtos'
 import { testingDtoPostOwners, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { create } from '../../post.mongodb.requests'
@@ -24,7 +24,7 @@ describe('[ORM] MongoDB - Posts - create', () => {
     const [owner] = testingDtoPostOwners
     const basicPost = { body, owner, comments: [], likes: [] }
 
-    const createdPost = await create(basicPost) as PostDto
+    const createdPost = (await create(basicPost))!
 
     const expectedFields = ['_id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
     const createdPostFields = Object.keys(createdPost).sort()

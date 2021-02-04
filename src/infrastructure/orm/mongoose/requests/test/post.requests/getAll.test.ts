@@ -18,7 +18,7 @@ describe('[ORM] MongoDB - Posts - getAll', () => {
   })
 
   it('must retrieve the whole persisted posts', async (done) => {
-    const persistedPosts = await getAll() as PostDto[]
+    const persistedPosts = (await getAll())!
 
     expect(persistedPosts).toHaveLength(persistedPosts.length)
 
@@ -27,7 +27,7 @@ describe('[ORM] MongoDB - Posts - getAll', () => {
       const getAlldPostFields = Object.keys(post).sort()
       expect(getAlldPostFields.sort()).toEqual(expectedFields.sort())
 
-      const expectedPost = mockedPosts.find((mockedPost) => mockedPost._id === post._id?.toString()) as PostDto
+      const expectedPost = mockedPosts.find((mockedPost) => mockedPost._id === post._id?.toString())!
 
       // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
       expect(JSON.parse(JSON.stringify(post))).toStrictEqual<PostDto>(expectedPost)

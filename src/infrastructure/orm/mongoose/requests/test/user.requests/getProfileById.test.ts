@@ -41,7 +41,7 @@ describe('[ORM] MongoDB - getProfileById', () => {
 
   it('must retrieve selected user\'s profile', async (done) => {
     const { _id: userId } = (await getUserByUsernameFixture(username))!
-    const retrievedUserProfile = await getProfileById(userId) as UserProfileDto
+    const retrievedUserProfile = (await getProfileById(userId))!
 
     const expectedFields = ['username', 'email', 'name', 'surname', 'avatar']
     const retrievedUserProfileFields = Object.keys(retrievedUserProfile).sort()

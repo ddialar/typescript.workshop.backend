@@ -1,11 +1,11 @@
 import { connect, disconnect } from '../../../core'
-import { PostCommentDto, PostDto } from '@infrastructure/dtos'
+import { PostCommentDto } from '@infrastructure/dtos'
 import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, testingNonValidPostCommentId, testingNonValidPostId } from '@testingFixtures'
 
 import { getComment } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - getComment', () => {
-  const [selectedPost, completeDtoPostWithNoComments] = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const [selectedPost, completeDtoPostWithNoComments] = testingLikedAndCommentedPersistedDtoPosts
 
   const { _id: selectedPostId } = selectedPost
   const [selectedComment] = selectedPost.comments
@@ -31,7 +31,7 @@ describe('[ORM] MongoDB - Posts - getComment', () => {
     const postId = selectedPostId!
     const commentId = selectedCommentId!
 
-    const persistedComment = await getComment(postId, commentId) as PostCommentDto
+    const persistedComment = (await getComment(postId, commentId))!
 
     const expectedFields = ['_id', 'body', 'owner', 'createdAt', 'updatedAt']
     const persistedCommentFields = Object.keys(persistedComment).sort()

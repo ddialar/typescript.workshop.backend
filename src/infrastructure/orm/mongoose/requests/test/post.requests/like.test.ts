@@ -1,11 +1,10 @@
 import { connect, disconnect } from '../../../core'
-import { PostDto, PostLikeDto } from '@infrastructure/dtos'
 import { testingLikedAndCommentedPersistedDtoPosts, testingDtoFreeUsers, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { like } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - like', () => {
-  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
 
   beforeAll(async () => {
     await connect()
@@ -22,7 +21,7 @@ describe('[ORM] MongoDB - Posts - like', () => {
     const { _id: postId } = originalPost
     const [likeOwner] = testingDtoFreeUsers
 
-    const updatedPost = await like(postId as string, likeOwner) as PostDto
+    const updatedPost = (await like(postId, likeOwner))!
 
     const expectedFields = ['_id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
     const updatedPostFields = Object.keys(updatedPost).sort()
@@ -38,7 +37,7 @@ describe('[ORM] MongoDB - Posts - like', () => {
     const originalLikesIds = originalPost.likes.map(({ _id }) => _id?.toString())
     const updatedLikesIds = updatedPost.likes.map(({ _id }) => _id?.toString())
     const newLikeId = updatedLikesIds.find((updatedId) => !originalLikesIds.includes(updatedId))
-    const newPersistedLike = updatedPost.likes.find((like) => like._id?.toString() === newLikeId) as PostLikeDto
+    const newPersistedLike = updatedPost.likes.find((like) => like._id?.toString() === newLikeId)!
     expect(newPersistedLike.userId).toBe(likeOwner.userId)
     expect(newPersistedLike.name).toBe(likeOwner.name)
     expect(newPersistedLike.surname).toBe(likeOwner.surname)

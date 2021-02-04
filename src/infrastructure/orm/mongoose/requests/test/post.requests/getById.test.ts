@@ -10,7 +10,7 @@ import {
 import { getById } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - getById', () => {
-  const [selectedPost] = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const [selectedPost] = testingLikedAndCommentedPersistedDtoPosts
   const nonValidPostId = testingNonValidPostId
 
   beforeAll(async () => {
@@ -24,9 +24,9 @@ describe('[ORM] MongoDB - Posts - getById', () => {
   })
 
   it('must retrieve the selected post', async (done) => {
-    const postId = selectedPost._id as string
+    const postId = selectedPost._id
 
-    const persistedPost = await getById(postId) as PostDto
+    const persistedPost = (await getById(postId))!
 
     // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
     expect(JSON.parse(JSON.stringify(persistedPost))).toStrictEqual<PostDto>(selectedPost)

@@ -1,6 +1,6 @@
 import { connect, disconnect } from '../../../core'
 import { User } from '../../../models'
-import { UserDto, NewUserDatabaseDto } from '@infrastructure/dtos'
+import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { testingUsers, testingNonPersistedUsername, cleanUsersCollectionFixture } from '@testingFixtures'
 
 import { getByUsername } from '../../user.mongodb.requests'
@@ -43,7 +43,7 @@ describe('[ORM] MongoDB - getByUsername', () => {
     await (new User(newUserData)).save()
 
     const username = newUserData.username
-    const retrievedUser = await getByUsername(username) as UserDto
+    const retrievedUser = (await getByUsername(username))!
 
     const expectedFields = ['_id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
     const retrievedUserFields = Object.keys(retrievedUser).sort()

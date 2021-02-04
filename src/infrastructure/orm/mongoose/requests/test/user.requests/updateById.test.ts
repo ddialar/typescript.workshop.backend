@@ -1,6 +1,6 @@
 import { connect, disconnect } from '@infrastructure/orm/mongoose/core'
 import { User } from '@infrastructure/orm/mongoose/models'
-import { UserDto, NewUserDatabaseDto } from '@infrastructure/dtos'
+import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { getUtcTimestampIsoString } from '@common'
 import { testingUsers, cleanUsersCollectionFixture, saveUserFixture } from '@testingFixtures'
 
@@ -35,7 +35,7 @@ describe('[ORM] MongoDB - updateById', () => {
     const newUserData: NewUserDatabaseDto = { ...mockedUserData }
     await saveUserFixture(newUserData)
 
-    const originalUser = (await User.findOne({ username: newUserData.username }))?.toJSON() as UserDto
+    const originalUser = (await User.findOne({ username: newUserData.username }))?.toJSON()
 
     const expectedFields = ['_id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
     const originalUserFields = Object.keys(originalUser).sort()
@@ -69,7 +69,7 @@ describe('[ORM] MongoDB - updateById', () => {
 
     await updateById(originalUser._id, payload)
 
-    const updatedUser = (await User.findOne({ username: newUserData.username }))?.toJSON() as UserDto
+    const updatedUser = (await User.findOne({ username: newUserData.username }))?.toJSON()
 
     const updatedUserFields = Object.keys(updatedUser).sort()
     expect(updatedUserFields.sort()).toEqual(expectedFields.sort())

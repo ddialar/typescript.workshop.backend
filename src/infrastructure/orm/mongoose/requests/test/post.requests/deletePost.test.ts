@@ -17,7 +17,7 @@ describe('[ORM] MongoDB - Posts - deletePost', () => {
   })
 
   it('must delete the selected post', async (done) => {
-    const postId = selectedPost._id as string
+    const postId = selectedPost._id
 
     await deletePost(postId)
 

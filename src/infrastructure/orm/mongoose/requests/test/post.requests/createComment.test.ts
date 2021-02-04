@@ -1,12 +1,12 @@
 import { lorem } from 'faker'
 import { connect, disconnect } from '../../../core'
-import { PostCommentDto, PostDto } from '@infrastructure/dtos'
+import { PostCommentDto } from '@infrastructure/dtos'
 import { testingLikedAndCommentedPersistedDtoPosts, testingDtoFreeUsers, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { createComment } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - createComment', () => {
-  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
 
   beforeAll(async () => {
     await connect()
@@ -25,7 +25,7 @@ describe('[ORM] MongoDB - Posts - createComment', () => {
       body: lorem.paragraph(),
       owner: testingDtoFreeUsers[0]
     }
-    const updatedPost = await createComment(postId as string, postComment) as PostDto
+    const updatedPost = (await createComment(postId!, postComment))!
 
     const expectedFields = ['_id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
     const updatedPostFields = Object.keys(updatedPost).sort()
@@ -43,8 +43,8 @@ describe('[ORM] MongoDB - Posts - createComment', () => {
     expect(updatedPost.comments).toHaveLength(originalPost.comments.length + 1)
     const originalCommentsIds = originalPost.comments.map(({ _id }) => _id?.toString())
     const updatedCommentsIds = updatedPost.comments.map(({ _id }) => _id?.toString())
-    const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId))!
-    const newPersistedComment = updatedPost.comments.find((comment) => comment._id?.toString() === newPostId) as PostCommentDto
+    const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId!))!
+    const newPersistedComment = updatedPost.comments.find((comment) => comment._id?.toString() === newPostId)!
 
     expect(newPersistedComment.body).toBe(postComment.body)
     // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.

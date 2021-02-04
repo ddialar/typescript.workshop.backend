@@ -1,11 +1,10 @@
 import { connect, disconnect } from '../../../core'
-import { PostDto } from '@infrastructure/dtos'
 import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, getPostByIdFixture } from '@testingFixtures'
 
 import { dislike } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - dislike', () => {
-  const [selectedPost] = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const [selectedPost] = testingLikedAndCommentedPersistedDtoPosts
   const [selectedLike] = selectedPost.likes
 
   beforeAll(async () => {
@@ -19,12 +18,12 @@ describe('[ORM] MongoDB - Posts - dislike', () => {
   })
 
   it('must delete the selected post like', async (done) => {
-    const postId = selectedPost._id as string
+    const postId = selectedPost._id
     const userId = selectedLike.userId
 
     await dislike(postId, userId)
 
-    const { likes: updatedLikes } = await getPostByIdFixture(postId) as PostDto
+    const { likes: updatedLikes } = (await getPostByIdFixture(postId))!
 
     expect(updatedLikes).toHaveLength(selectedPost.likes.length - 1)
     expect(updatedLikes.map(({ userId: updatedUserId }) => updatedUserId).includes(userId)).toBeFalsy()

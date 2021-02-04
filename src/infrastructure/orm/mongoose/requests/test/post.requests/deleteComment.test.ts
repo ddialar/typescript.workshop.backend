@@ -1,11 +1,10 @@
 import { connect, disconnect } from '../../../core'
-import { PostDto } from '@infrastructure/dtos'
 import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, getPostByIdFixture } from '@testingFixtures'
 
 import { deleteComment } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - deleteComment', () => {
-  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
   const [selectedPost] = mockedPosts
   const [selectedComment] = selectedPost.comments
 
@@ -20,12 +19,12 @@ describe('[ORM] MongoDB - Posts - deleteComment', () => {
   })
 
   it('must delete the selected post comment', async (done) => {
-    const postId = selectedPost._id as string
-    const commentId = selectedComment._id as string
+    const postId = selectedPost._id
+    const commentId = selectedComment._id
 
     await deleteComment(postId, commentId)
 
-    const { comments: updatedComments } = await getPostByIdFixture(postId) as PostDto
+    const { comments: updatedComments } = (await getPostByIdFixture(postId))!
 
     expect(updatedComments).toHaveLength(selectedPost.comments.length - 1)
     expect(updatedComments.map(({ _id }) => _id).includes(commentId)).toBeFalsy()
