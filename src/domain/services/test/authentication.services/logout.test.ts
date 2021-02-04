@@ -5,7 +5,6 @@ import { NewUserDomainModel } from '@domainModels'
 import { testingUsers, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { logout } from '@domainServices'
-import { UserDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Authentication - logout', () => {
   const { connect, disconnect } = mongodb
@@ -37,13 +36,13 @@ describe('[SERVICES] Authentication - logout', () => {
 
   it('must logout the user and remove the persisted token', async (done) => {
     const { username } = mockedUserData
-    const authenticatedUser = await getUserByUsernameFixture(username) as UserDto
+    const authenticatedUser = (await getUserByUsernameFixture(username))!
     expect(authenticatedUser.token).toBe(token)
 
     const { _id: userId } = authenticatedUser
     await logout(userId)
 
-    const unauthenticatedUser = await getUserByUsernameFixture(username) as UserDto
+    const unauthenticatedUser = (await getUserByUsernameFixture(username))!
 
     expect(unauthenticatedUser.token).toBe('')
 
@@ -56,7 +55,7 @@ describe('[SERVICES] Authentication - logout', () => {
     })
 
     const { username } = mockedUserData
-    const { _id: userId } = await getUserByUsernameFixture(username) as UserDto
+    const { _id: userId } = (await getUserByUsernameFixture(username))!
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' logout data. ${errorMessage}`)
 
     await expect(logout(userId)).rejects.toThrowError(expectedError)

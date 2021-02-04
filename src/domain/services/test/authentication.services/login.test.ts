@@ -1,4 +1,4 @@
-import { NewUserDatabaseDto, UserDto } from '@infrastructure/dtos'
+import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { verify, Secret } from 'jsonwebtoken'
 
 import { userDataSource } from '@infrastructure/dataSources'
@@ -45,7 +45,7 @@ describe('[SERVICES] Authentication - login', () => {
     const { username } = mockedUserData
     const password = plainPassword
 
-    const unauthenticatedUser = await getUserByUsernameFixture(username) as UserDto
+    const unauthenticatedUser = (await getUserByUsernameFixture(username))!
 
     expect(unauthenticatedUser.name).toBe(mockedUserData.name)
     expect(unauthenticatedUser.surname).toBe(mockedUserData.surname)
@@ -58,12 +58,12 @@ describe('[SERVICES] Authentication - login', () => {
 
     expect(authenticationData.token).not.toBe('')
 
-    const authenticatedUser = await getUserByUsernameFixture(username) as UserDto
+    const authenticatedUser = (await getUserByUsernameFixture(username))!
 
     expect(authenticatedUser.token).toBe(authenticationData.token)
     expect(authenticatedUser.lastLoginAt).not.toBe('')
 
-    const verifiedToken = verify(authenticationData.token as string, secret) as DecodedJwtToken
+    const verifiedToken = verify(authenticationData.token, secret) as DecodedJwtToken
     const expectedFields = ['exp', 'iat', 'sub', 'username']
     const retrievedTokenFields = Object.keys(verifiedToken).sort()
     expect(retrievedTokenFields.sort()).toEqual(expectedFields.sort())
@@ -151,7 +151,7 @@ describe('[SERVICES] Authentication - login', () => {
 
     const { username } = mockedUserData
     const password = plainPassword
-    const { _id: userId } = await getUserByUsernameFixture(username) as UserDto
+    const { _id: userId } = (await getUserByUsernameFixture(username))!
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' login data. ${errorMessage}`)
 
     await expect(login(username, password)).rejects.toThrowError(expectedError)
