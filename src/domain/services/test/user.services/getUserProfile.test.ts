@@ -5,7 +5,6 @@ import { GettingUserError, GettingUserProfileError } from '@errors'
 import { testingNonValidUserId, testingUsers, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { getUserProfile } from '@domainServices'
-import { UserDto } from '@infrastructure/dtos'
 
 interface TestingProfileDomainModel extends UserProfileDomainModel {
   password: string
@@ -44,8 +43,8 @@ describe('[SERVICES] User - getUserProfile', () => {
   })
 
   it('must retrieve selected user\'s profile', async (done) => {
-    const { _id: userId } = await getUserByUsernameFixture(username) as UserDto
-    const retrievedUserProfile = await getUserProfile(userId) as UserProfileDomainModel
+    const { _id: userId } = (await getUserByUsernameFixture(username))!
+    const retrievedUserProfile = (await getUserProfile(userId))!
 
     const expectedFields = ['username', 'email', 'name', 'surname', 'avatar']
     const retrievedUserProfileFields = Object.keys(retrievedUserProfile).sort()
@@ -65,7 +64,7 @@ describe('[SERVICES] User - getUserProfile', () => {
       throw new GettingUserError(errorMessage)
     })
 
-    const { _id: userId } = await getUserByUsernameFixture(username) as UserDto
+    const { _id: userId } = (await getUserByUsernameFixture(username))!
     const expectedError = new GettingUserProfileError(`Error retrieving profile for user ${userId}. ${errorMessage}`)
 
     await expect(getUserProfile(userId)).rejects.toThrowError(expectedError)

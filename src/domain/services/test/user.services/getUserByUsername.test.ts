@@ -1,6 +1,6 @@
 import { mongodb } from '@infrastructure/orm'
 import { userDataSource } from '@infrastructure/dataSources'
-import { UserDomainModel, NewUserDomainModel } from '@domainModels'
+import { NewUserDomainModel } from '@domainModels'
 import { GettingUserError } from '@errors'
 import { testingUsers, cleanUsersCollectionFixture, saveUserFixture } from '@testingFixtures'
 
@@ -46,7 +46,7 @@ describe('[SERVICES] User - getUserByUsername', () => {
     await saveUserFixture(newUserData)
 
     const username = newUserData.username
-    const retrievedUser = await getUserByUsername(username) as UserDomainModel
+    const retrievedUser = (await getUserByUsername(username))!
 
     const expectedFields = ['id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
     const retrievedUserFields = Object.keys(retrievedUser).sort()

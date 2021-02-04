@@ -1,5 +1,5 @@
 import { mongodb } from '@infrastructure/orm'
-import { NewUserDatabaseDto, UserDto } from '@infrastructure/dtos'
+import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UpdatingUserError } from '@errors'
 import { testingUsers, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
@@ -36,7 +36,7 @@ describe('[SERVICES] User - updateUserLoginData', () => {
     const newUserData: NewUserDatabaseDto = { ...mockedUserData }
     await saveUserFixture(newUserData)
 
-    const originalUser = await getUserByUsernameFixture(newUserData.username) as UserDto
+    const originalUser = (await getUserByUsernameFixture(newUserData.username))!
 
     const expectedFields = ['_id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
     const originalUserFields = Object.keys(originalUser).sort()
@@ -61,7 +61,7 @@ describe('[SERVICES] User - updateUserLoginData', () => {
 
     await updateUserLoginData(userId, token)
 
-    const updatedUser = await getUserByUsernameFixture(newUserData.username) as UserDto
+    const updatedUser = (await getUserByUsernameFixture(newUserData.username))!
 
     const updatedUserFields = Object.keys(updatedUser).sort()
     expect(updatedUserFields.sort()).toEqual(expectedFields.sort())
@@ -93,7 +93,7 @@ describe('[SERVICES] User - updateUserLoginData', () => {
     const newUserData: NewUserDatabaseDto = { ...mockedUserData }
     await saveUserFixture(newUserData)
 
-    const { _id: userId } = await getUserByUsernameFixture(username) as UserDto
+    const { _id: userId } = (await getUserByUsernameFixture(username))!
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' login data. ${errorMessage}`)
 
     await expect(updateUserLoginData(userId, token)).rejects.toThrowError(expectedError)

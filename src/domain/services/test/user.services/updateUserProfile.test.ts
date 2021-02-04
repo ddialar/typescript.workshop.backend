@@ -37,7 +37,7 @@ describe('[SERVICES] User - updateUserProfile', () => {
   })
 
   it('must update the user\'s profile and return the final result', async (done) => {
-    const originalUser = await getUserByUsernameFixture(username) as UserDto
+    const originalUser = (await getUserByUsernameFixture(username))!
 
     expect(originalUser.name).toBe(mockedUserData.name)
     expect(originalUser.surname).toBe(mockedUserData.surname)
@@ -50,7 +50,7 @@ describe('[SERVICES] User - updateUserProfile', () => {
       avatar: avatarUrl
     }
 
-    const updatedProfile = await updateUserProfile(userId, newProfileData) as UserProfileDomainModel
+    const updatedProfile = (await updateUserProfile(userId, newProfileData))!
 
     expect(updatedProfile.username).toBe(originalUser.username)
     expect(updatedProfile.email).toBe(originalUser.email)
@@ -67,7 +67,7 @@ describe('[SERVICES] User - updateUserProfile', () => {
       throw new Error(errorMessage)
     })
 
-    const { _id: userId } = await getUserByUsernameFixture(username) as UserDto
+    const { _id: userId } = (await getUserByUsernameFixture(username))!
     const newProfileData: NewUserProfileDomainModel = {
       name: 'Jane',
       surname: 'Doe',
