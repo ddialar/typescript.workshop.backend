@@ -1,6 +1,5 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
-import { PostDomainModel } from '@domainModels'
 import {
   testingLikedAndCommentedPersistedDtoPosts,
   testingLikedAndCommentedPersistedDomainModelPosts,
@@ -13,16 +12,15 @@ import {
 
 import { dislikePost } from '@domainServices'
 import { DeletingPostLikeError, GettingPostError, GettingPostLikeError, PostNotFoundError } from '@errors'
-import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - dislikePost', () => {
   const { connect, disconnect } = mongodb
   const errorMessage = 'Testing Error'
-  const mockedDtoPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const mockedDtoPosts = testingLikedAndCommentedPersistedDtoPosts
   const [mockedCompleteDtoPost, mockedEmptyLikesDtoPost] = mockedDtoPosts
   mockedEmptyLikesDtoPost.likes = []
 
-  const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+  const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts
   const [selectedPost] = resultPosts
   const [selectedLike] = selectedPost.likes
   const { id: selectedLikeOwnerId } = selectedLike
@@ -44,12 +42,12 @@ describe('[SERVICES] Post - dislikePost', () => {
   })
 
   it('must delete the selected post like', async (done) => {
-    const postId = selectedPost.id as string
+    const postId = selectedPost.id
     const likeOwnerId = selectedLikeOwnerId
 
     await dislikePost(postId, likeOwnerId)
 
-    const { likes: updatedDtoLikes } = await getPostByIdFixture(postId) as PostDto
+    const { likes: updatedDtoLikes } = (await getPostByIdFixture(postId))!
 
     expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length - 1)
     expect(updatedDtoLikes.map(({ userId }) => userId).includes(likeOwnerId)).toBeFalsy()
@@ -58,12 +56,12 @@ describe('[SERVICES] Post - dislikePost', () => {
   })
 
   it('must not modify the selected post nor throw any error when the provided user has not liked the post', async (done) => {
-    const postId = selectedPost.id as string
+    const postId = selectedPost.id
     const likeOwnerId = mockedNonValidLikeOwnerId
 
     await dislikePost(postId, likeOwnerId)
 
-    const { likes: updatedDtoLikes } = await getPostByIdFixture(postId) as PostDto
+    const { likes: updatedDtoLikes } = (await getPostByIdFixture(postId))!
 
     expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length)
 
@@ -84,7 +82,7 @@ describe('[SERVICES] Post - dislikePost', () => {
       throw new Error(errorMessage)
     })
 
-    const postId = selectedPost.id as string
+    const postId = selectedPost.id
     const likeOwnerId = selectedLikeOwnerId
     const expectedError = new GettingPostError(`Error retereaving post '${postId}'. ${errorMessage}`)
 
@@ -100,7 +98,7 @@ describe('[SERVICES] Post - dislikePost', () => {
       throw new Error(errorMessage)
     })
 
-    const postId = selectedPost.id as string
+    const postId = selectedPost.id
     const likeOwnerId = selectedLikeOwnerId
     const expectedError = new GettingPostLikeError(`Error retereaving post comment. ${errorMessage}`)
 
@@ -116,7 +114,7 @@ describe('[SERVICES] Post - dislikePost', () => {
       throw new Error(errorMessage)
     })
 
-    const postId = selectedPost.id as string
+    const postId = selectedPost.id
     const likeOwnerId = selectedLikeOwnerId
     const expectedError = new DeletingPostLikeError(`Error deleting like '${selectedLike.id}', from post '${postId}', by user '${likeOwnerId}'. ${errorMessage}`)
 

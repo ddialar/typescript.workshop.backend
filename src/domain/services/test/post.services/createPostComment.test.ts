@@ -9,14 +9,13 @@ import {
 } from '@testingFixtures'
 
 import { createPostComment } from '@domainServices'
-import { PostDomainModel } from '@domainModels'
 import { CreatingPostCommentError } from '@errors'
 import { postDataSource } from '@infrastructure/dataSources'
 
 describe('[SERVICES] Post - createPostComment', () => {
   const { connect, disconnect } = mongodb
   const errorMessage = 'Testing Error'
-  const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+  const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts
   const [originalPost] = mockedPosts
   const [newPostCommentOwner] = testingDomainModelFreeUsers
 
@@ -34,7 +33,7 @@ describe('[SERVICES] Post - createPostComment', () => {
     const { id: postId } = originalPost
     const newPostComment = lorem.paragraph()
 
-    const updatedPost = await createPostComment(postId as string, newPostComment, newPostCommentOwner) as PostDomainModel
+    const updatedPost = await createPostComment(postId, newPostComment, newPostCommentOwner)
 
     const expectedPostFields = ['id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
     const updatedPostFields = Object.keys(updatedPost).sort()
@@ -49,10 +48,10 @@ describe('[SERVICES] Post - createPostComment', () => {
     expect(updatedPost.owner).toStrictEqual(originalPost.owner)
 
     expect(updatedPost.comments).toHaveLength(originalPost.comments.length + 1)
-    const originalCommentsIds = originalPost.comments.map(({ id }) => id as string)
-    const updatedCommentsIds = updatedPost.comments.map(({ id }) => id as string)
-    const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId))
-    const newPersistedComment = updatedPost.comments.find((comment) => comment.id === newPostId) as PostDomainModel
+    const originalCommentsIds = originalPost.comments.map(({ id }) => id.toString())
+    const updatedCommentsIds = updatedPost.comments.map(({ id }) => id?.toString())
+    const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId!))
+    const newPersistedComment = updatedPost.comments.find((comment) => comment.id === newPostId)!
     expect(newPersistedComment.body).toBe(newPostComment)
     expect(newPersistedComment.owner).toStrictEqual(newPostCommentOwner)
 
@@ -72,7 +71,7 @@ describe('[SERVICES] Post - createPostComment', () => {
     const message = 'Post comment insertion process initiated but completed with NULL result'
     const expectedError = new CreatingPostCommentError(`Error creating post '${postId}' commment by user '${newPostCommentOwner.id}'. ${message}`)
 
-    await expect(createPostComment(postId as string, newPostComment, newPostCommentOwner)).rejects.toThrowError(expectedError)
+    await expect(createPostComment(postId, newPostComment, newPostCommentOwner)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'createPostComment').mockRestore()
 
@@ -88,7 +87,7 @@ describe('[SERVICES] Post - createPostComment', () => {
     const newPostComment = lorem.paragraph()
     const expectedError = new CreatingPostCommentError(`Error creating post '${postId}' commment by user '${newPostCommentOwner.id}'. ${errorMessage}`)
 
-    expect(createPostComment(postId as string, newPostComment, newPostCommentOwner)).rejects.toThrowError(expectedError)
+    expect(createPostComment(postId, newPostComment, newPostCommentOwner)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'createPostComment').mockRestore()
 

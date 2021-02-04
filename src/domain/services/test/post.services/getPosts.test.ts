@@ -1,6 +1,5 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
-import { PostDomainModel } from '@domainModels'
 import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { getPosts } from '@domainServices'
@@ -24,7 +23,7 @@ describe('[SERVICES] Post - getPosts', () => {
   })
 
   it('must retrieve the whole persisted posts', async (done) => {
-    const persistedPosts = await getPosts() as PostDomainModel[]
+    const persistedPosts = (await getPosts())!
 
     expect(persistedPosts).toHaveLength(persistedPosts.length)
 
@@ -33,7 +32,7 @@ describe('[SERVICES] Post - getPosts', () => {
       const getAlldPostFields = Object.keys(post).sort()
       expect(getAlldPostFields.sort()).toEqual(expectedFields.sort())
 
-      const expectedPost = resultPosts.find((resultPost) => resultPost.id === post.id?.toString()) as PostDomainModel
+      const expectedPost = resultPosts.find((resultPost) => resultPost.id === post.id?.toString())
 
       expect(post).toStrictEqual(expectedPost)
     })

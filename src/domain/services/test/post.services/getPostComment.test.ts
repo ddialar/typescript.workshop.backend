@@ -1,21 +1,20 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
-import { PostCommentDomainModel, PostDomainModel } from '@domainModels'
+import { PostCommentDomainModel } from '@domainModels'
 import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePostsFixture, cleanPostsCollectionFixture, testingNonValidPostId } from '@testingFixtures'
 
 import { getPostComment } from '@domainServices'
 import { GettingPostCommentError, PostNotFoundError } from '@errors'
-import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - getPostComment', () => {
   const { connect, disconnect } = mongodb
   const errorMessage = 'Testing error'
-  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
   const { 1: mockedNonValidPost } = mockedPosts
   const { _id: mockedNonValidPostId } = mockedNonValidPost
   const [{ _id: mockedNonValidCommentId }] = mockedNonValidPost.comments
 
-  const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+  const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts
   const [selectedComment] = selectedPost.comments
 
   beforeAll(async () => {
@@ -29,10 +28,10 @@ describe('[SERVICES] Post - getPostComment', () => {
   })
 
   it('must retrieve the selected post comment', async (done) => {
-    const postId = selectedPost.id as string
-    const commentId = selectedComment.id as string
+    const postId = selectedPost.id
+    const commentId = selectedComment.id
 
-    const persistedComment = await getPostComment(postId, commentId) as PostCommentDomainModel
+    const persistedComment = (await getPostComment(postId, commentId))!
 
     const expectedFields = ['id', 'body', 'owner', 'createdAt', 'updatedAt']
     const persistedCommentFields = Object.keys(persistedComment).sort()
@@ -44,8 +43,8 @@ describe('[SERVICES] Post - getPostComment', () => {
   })
 
   it('must return NULL when select a post which doesn\'t contain the provided comment', async (done) => {
-    const postId = mockedNonValidPostId as string
-    const commentId = selectedComment.id as string
+    const postId = mockedNonValidPostId
+    const commentId = selectedComment.id
 
     await expect(getPostComment(postId, commentId)).resolves.toBeNull()
 
@@ -53,8 +52,8 @@ describe('[SERVICES] Post - getPostComment', () => {
   })
 
   it('must return NULL when provide a comment which is not contained into the selected post', async (done) => {
-    const postId = selectedPost.id as string
-    const commentId = mockedNonValidCommentId as string
+    const postId = selectedPost.id
+    const commentId = mockedNonValidCommentId
 
     await expect(getPostComment(postId, commentId)).resolves.toBeNull()
 
@@ -63,7 +62,7 @@ describe('[SERVICES] Post - getPostComment', () => {
 
   it('must throw a NOT_FOUND (404) when the provided post does not exist', async (done) => {
     const postId = testingNonValidPostId
-    const commentId = selectedComment.id as string
+    const commentId = selectedComment.id
     const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
 
     await expect(getPostComment(postId, commentId)).rejects.toThrowError(expectedError)
@@ -76,8 +75,8 @@ describe('[SERVICES] Post - getPostComment', () => {
       throw new Error(errorMessage)
     })
 
-    const postId = selectedPost.id as string
-    const commentId = selectedComment.id as string
+    const postId = selectedPost.id
+    const commentId = selectedComment.id
     const expectedError = new GettingPostCommentError(`Error retereaving post comment. ${errorMessage}`)
 
     await expect(getPostComment(postId, commentId)).rejects.toThrowError(expectedError)

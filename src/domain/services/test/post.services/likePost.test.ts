@@ -10,16 +10,14 @@ import {
 } from '@testingFixtures'
 
 import { likePost } from '@domainServices'
-import { PostDomainModel, PostLikeDomainModel } from '@domainModels'
 import { GettingPostCommentError, LikingPostError, PostNotFoundError } from '@errors'
 import { postDataSource } from '@infrastructure/dataSources'
 import { mapPostFromDtoToDomainModel } from '@infrastructure/mappers'
-import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - likePost', () => {
   const { connect, disconnect } = mongodb
   const errorMessage = 'Testing Error'
-  const [originalPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+  const [originalPost] = testingLikedAndCommentedPersistedDomainModelPosts
   const nonValidPostId = testingNonValidPostId
 
   beforeAll(async () => {
@@ -33,30 +31,30 @@ describe('[SERVICES] Post - likePost', () => {
   })
 
   it('must persist the new like into the selected post', async (done) => {
-    const postId = originalPost.id as string
+    const postId = originalPost.id
     const [likeOwner] = testingDomainModelFreeUsers
 
     await likePost(postId, likeOwner)
 
-    const updatedPost = mapPostFromDtoToDomainModel(await getPostByIdFixture(postId) as PostDto) as PostDomainModel
+    const updatedPost = mapPostFromDtoToDomainModel((await getPostByIdFixture(postId))!)
 
-    expect(updatedPost.id).not.toBeNull()
-    expect(updatedPost.body).toBe(originalPost.body)
-    expect(updatedPost.owner).toStrictEqual(originalPost.owner)
-    expect(updatedPost.comments).toStrictEqual(originalPost.comments)
+    expect(updatedPost?.id).not.toBeNull()
+    expect(updatedPost?.body).toBe(originalPost.body)
+    expect(updatedPost?.owner).toStrictEqual(originalPost.owner)
+    expect(updatedPost?.comments).toStrictEqual(originalPost.comments)
 
-    expect(updatedPost.likes).toHaveLength(originalPost.likes.length + 1)
-    const originalLikesIds = originalPost.likes.map(({ id }) => id as string)
-    const updatedLikesIds = updatedPost.likes.map(({ id }) => id as string)
-    const newLikeId = updatedLikesIds.find((updatedId) => !originalLikesIds.includes(updatedId))
-    const newPersistedLike = updatedPost.likes.find((like) => like.id === newLikeId) as PostLikeDomainModel
-    expect(newPersistedLike.id).toBe(likeOwner.id)
-    expect(newPersistedLike.name).toBe(likeOwner.name)
-    expect(newPersistedLike.surname).toBe(likeOwner.surname)
-    expect(newPersistedLike.avatar).toBe(likeOwner.avatar)
+    expect(updatedPost?.likes).toHaveLength(originalPost.likes.length + 1)
+    const originalLikesIds = originalPost.likes.map(({ id }) => id.toString())
+    const updatedLikesIds = updatedPost?.likes.map(({ id }) => id.toString())
+    const newLikeId = updatedLikesIds?.find((updatedId) => !originalLikesIds.includes(updatedId))
+    const newPersistedLike = updatedPost?.likes.find((like) => like.id === newLikeId)
+    expect(newPersistedLike?.id).toBe(likeOwner.id)
+    expect(newPersistedLike?.name).toBe(likeOwner.name)
+    expect(newPersistedLike?.surname).toBe(likeOwner.surname)
+    expect(newPersistedLike?.avatar).toBe(likeOwner.avatar)
 
-    expect(updatedPost.createdAt).toBe(originalPost.createdAt)
-    expect(updatedPost.updatedAt).not.toBe(originalPost.updatedAt)
+    expect(updatedPost?.createdAt).toBe(originalPost.createdAt)
+    expect(updatedPost?.updatedAt).not.toBe(originalPost.updatedAt)
 
     done()
   })
@@ -75,7 +73,7 @@ describe('[SERVICES] Post - likePost', () => {
       throw new Error(errorMessage)
     })
 
-    const postId = originalPost.id as string
+    const postId = originalPost.id
     const [likeOwner] = testingDomainModelFreeUsers
     const expectedError = new GettingPostCommentError(`Error retereaving post comment. ${errorMessage}`)
 
@@ -91,7 +89,7 @@ describe('[SERVICES] Post - likePost', () => {
       throw new Error(errorMessage)
     })
 
-    const postId = originalPost.id as string
+    const postId = originalPost.id
     const [likeOwner] = testingDomainModelFreeUsers
     const expectedError = new LikingPostError(`Error setting like to post '${postId}' by user '${likeOwner.id}'. ${errorMessage}`)
 

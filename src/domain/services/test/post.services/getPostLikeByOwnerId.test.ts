@@ -1,20 +1,19 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
-import { PostDomainModel, PostLikeDomainModel } from '@domainModels'
+import { PostLikeDomainModel } from '@domainModels'
 import { testingLikedAndCommentedPersistedDtoPosts, testingLikedAndCommentedPersistedDomainModelPosts, savePostsFixture, cleanPostsCollectionFixture, testingNonValidPostId, testingNonValidLikeOwnerId } from '@testingFixtures'
 
 import { getPostLikeByOwnerId } from '@domainServices'
 import { GettingPostLikeError } from '@errors'
-import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
   const { connect, disconnect } = mongodb
   const errorMessage = 'Testing error'
-  const mockedDtoPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
+  const mockedDtoPosts = testingLikedAndCommentedPersistedDtoPosts
   const [mockedCompleteDtoPost, mockedEmptyLikesDtoPost] = mockedDtoPosts
   mockedEmptyLikesDtoPost.likes = []
 
-  const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+  const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts
   const [selectedPost] = resultPosts
   const [selectedLike] = selectedPost.likes
   const { id: selectedLikeOwnerId } = selectedLike
@@ -32,10 +31,10 @@ describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
   })
 
   it('must retrieve the selected post like', async (done) => {
-    const postId = selectedPost.id as string
+    const postId = selectedPost.id
     const ownerId = selectedLikeOwnerId
 
-    const persistedLike = await getPostLikeByOwnerId(postId, ownerId) as PostLikeDomainModel
+    const persistedLike = (await getPostLikeByOwnerId(postId, ownerId))!
 
     const expectedFields = ['id', 'name', 'surname', 'avatar']
     const persistedLikeFields = Object.keys(persistedLike).sort()
@@ -56,7 +55,7 @@ describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
   })
 
   it('must return NULL when provide user who has not liked the selected post', async (done) => {
-    const postId = selectedPost.id as string
+    const postId = selectedPost.id
     const ownerId = mockedNonValidLikeOwnerId
 
     await expect(getPostLikeByOwnerId(postId, ownerId)).resolves.toBeNull()
@@ -69,8 +68,8 @@ describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
       throw new Error(errorMessage)
     })
 
-    const postId = selectedPost.id as string
-    const commentId = selectedLike.id as string
+    const postId = selectedPost.id
+    const commentId = selectedLike.id
     const expectedError = new GettingPostLikeError(`Error retereaving post comment. ${errorMessage}`)
 
     await expect(getPostLikeByOwnerId(postId, commentId)).rejects.toThrowError(expectedError)

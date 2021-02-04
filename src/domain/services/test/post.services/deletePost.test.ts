@@ -1,6 +1,5 @@
 import { mongodb } from '@infrastructure/orm'
 import { postDataSource } from '@infrastructure/dataSources'
-import { PostDomainModel, UserDomainModel } from '@domainModels'
 import {
   testingLikedAndCommentedPersistedDtoPosts,
   testingLikedAndCommentedPersistedDomainModelPosts,
@@ -13,16 +12,15 @@ import {
 
 import { deletePost } from '@domainServices'
 import { DeletingPostError, GettingPostError, PostNotFoundError, UnauthorizedPostDeletingError } from '@errors'
-import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - deletePost', () => {
   const { connect, disconnect } = mongodb
   const errorMessage = 'Testing Error'
-  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts as PostDto[]
-  const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts as PostDomainModel[]
+  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
+  const [selectedPost] = testingLikedAndCommentedPersistedDomainModelPosts
   const { id: selectedPostOwnerId } = selectedPost.owner
   const mockedNonValidPostId = testingNonValidPostId
-  const [{ id: unauthorizedUserId }] = testingDomainModelFreeUsers as UserDomainModel[]
+  const [{ id: unauthorizedUserId }] = testingDomainModelFreeUsers
 
   beforeAll(async () => {
     await connect()
@@ -39,8 +37,8 @@ describe('[SERVICES] Post - deletePost', () => {
   })
 
   it('must delete the selected post', async (done) => {
-    const postId = selectedPost.id as string
-    const postOwnerId = selectedPostOwnerId as string
+    const postId = selectedPost.id
+    const postOwnerId = selectedPostOwnerId
 
     await deletePost(postId, postOwnerId)
 
@@ -53,7 +51,7 @@ describe('[SERVICES] Post - deletePost', () => {
 
   it('must throw NOT_FOUND (404) when we select a post which does not exist', async (done) => {
     const postId = mockedNonValidPostId
-    const postOwnerId = selectedPostOwnerId as string
+    const postOwnerId = selectedPostOwnerId
     const expectedError = new PostNotFoundError(`Post with id '${postId}' was not found to be deleted by user with id '${postOwnerId}'.`)
 
     await expect(deletePost(postId, postOwnerId)).rejects.toThrowError(expectedError)
@@ -62,7 +60,7 @@ describe('[SERVICES] Post - deletePost', () => {
   })
 
   it('must throw UNAUTHORIZED (401) when the action is performed by an user who is not the owner of the post', async (done) => {
-    const postId = selectedPost.id as string
+    const postId = selectedPost.id
     const postOwnerId = unauthorizedUserId
     const expectedError = new UnauthorizedPostDeletingError(`User '${postOwnerId}' is not the owner of the post '${postId}', which is trying to delete.`)
 
@@ -76,8 +74,8 @@ describe('[SERVICES] Post - deletePost', () => {
       throw new Error(errorMessage)
     })
 
-    const postId = selectedPost.id as string
-    const postOwnerId = selectedPostOwnerId as string
+    const postId = selectedPost.id
+    const postOwnerId = selectedPostOwnerId
     const expectedError = new GettingPostError(`Error retereaving post '${postId}'. ${errorMessage}`)
 
     await expect(deletePost(postId, postOwnerId)).rejects.toThrowError(expectedError)
@@ -92,8 +90,8 @@ describe('[SERVICES] Post - deletePost', () => {
       throw new Error(errorMessage)
     })
 
-    const postId = selectedPost.id as string
-    const postOwnerId = selectedPostOwnerId as string
+    const postId = selectedPost.id
+    const postOwnerId = selectedPostOwnerId
     const expectedError = new DeletingPostError(`Error deleting '${postId}' by user '${postOwnerId}'. ${errorMessage}`)
 
     await expect(deletePost(postId, postOwnerId)).rejects.toThrowError(expectedError)
