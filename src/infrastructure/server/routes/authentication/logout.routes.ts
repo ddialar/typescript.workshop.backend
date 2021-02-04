@@ -4,7 +4,6 @@ import { OK } from '@errors'
 
 import { RequestDto } from '../../serverDtos'
 import { ensureAuthenticated } from '../../middlewares'
-import { UserDomainModel } from '@domainModels'
 
 import { createLogger } from '@common'
 const logger = createLogger('auth.endpoints')
@@ -12,7 +11,7 @@ const logger = createLogger('auth.endpoints')
 const logoutRoutes: Router = express.Router()
 
 logoutRoutes.post('/logout', ensureAuthenticated, async (req: RequestDto, res, next) => {
-  const { id: userId, username } = req.user as UserDomainModel
+  const { id: userId, username } = req.user!
 
   logger.debug(`Logout process started for username: '${username}'.`)
 

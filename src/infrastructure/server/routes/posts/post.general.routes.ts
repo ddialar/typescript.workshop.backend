@@ -2,7 +2,6 @@ import express from 'express'
 import { getPosts, getPostById, createPost, deletePost } from '@domainServices'
 import { ensureAuthenticated } from '../../middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
-import { UserDomainModel } from '@domainModels'
 
 import { createLogger } from '@common'
 const logger = createLogger('post.endpoints')
@@ -20,7 +19,7 @@ postGeneralRoutes.get('/', async (req, res, next) => {
 })
 
 postGeneralRoutes.post('/', ensureAuthenticated, async (req: RequestDto, res, next) => {
-  const { id, name, surname, avatar } = req.user as UserDomainModel
+  const { id, name, surname, avatar } = req.user!
   const { postBody } = req.body
 
   logger.debug(`Creating new post by user '${id}'.`)
@@ -33,20 +32,20 @@ postGeneralRoutes.post('/', ensureAuthenticated, async (req: RequestDto, res, ne
 })
 
 postGeneralRoutes.delete('/', ensureAuthenticated, async (req: RequestDto, res, next) => {
-  const { id: postOwnerId } = req.user as UserDomainModel
+  const { id: postOwnerId } = req.user!
   const { postId } = req.body
 
   logger.debug(`Deleting post '${postId}' by user '${postOwnerId}'.`)
 
   try {
-    res.json(await deletePost(postId, postOwnerId))
+    res.json(await deletePost(postId as string, postOwnerId))
   } catch (error) {
     next(error)
   }
 })
 
 postGeneralRoutes.get('/:id', async (req, res, next) => {
-  const postId = req.params.id as string
+  const postId = req.params.id
 
   logger.debug(`Retrieving post with id '${postId}'.`)
 

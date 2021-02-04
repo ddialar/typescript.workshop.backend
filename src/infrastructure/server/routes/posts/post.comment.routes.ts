@@ -1,7 +1,6 @@
 import express from 'express'
 import { createPostComment, deletePostComment } from '@domainServices'
 import { ensureAuthenticated } from '../../middlewares'
-import { UserDomainModel } from '@domainModels'
 import { RequestDto } from '@infrastructure/server/serverDtos'
 
 import { createLogger } from '@common'
@@ -10,7 +9,7 @@ const logger = createLogger('post.endpoints')
 const postCommentRoutes = express.Router()
 
 postCommentRoutes.post('/comment', ensureAuthenticated, async (req: RequestDto, res, next) => {
-  const { id, name, surname, avatar } = req.user as UserDomainModel
+  const { id, name, surname, avatar } = req.user!
   const { postId, commentBody } = req.body
 
   logger.debug(`Commenting post '${postId}' by user '${id}'.`)
@@ -23,7 +22,7 @@ postCommentRoutes.post('/comment', ensureAuthenticated, async (req: RequestDto, 
 })
 
 postCommentRoutes.delete('/comment', ensureAuthenticated, async (req: RequestDto, res, next) => {
-  const { id: commentOwnerId } = req.user as UserDomainModel
+  const { id: commentOwnerId } = req.user!
   const { postId, commentId } = req.body
 
   logger.debug(`Removing comment '${commentId}' from post '${postId}' by user '${commentOwnerId}'.`)

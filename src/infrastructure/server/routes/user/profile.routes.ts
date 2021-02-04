@@ -1,7 +1,6 @@
 import express, { Router } from 'express'
 
 import { getUserProfile, updateUserProfile } from '@domainServices'
-import { UserDomainModel } from '@domainModels'
 
 import { NewUserProfileDto } from '@infrastructure/dtos'
 import { ensureAuthenticated } from '../../middlewares'
@@ -13,7 +12,7 @@ const logger = createLogger('user.endpoints')
 const profileRoutes: Router = express.Router()
 
 profileRoutes.get('/profile', ensureAuthenticated, async (req: RequestDto, res, next) => {
-  const { id } = req.user as UserDomainModel
+  const { id } = req.user!
 
   logger.debug(`Retrieving profile for user '${id}'.`)
 
@@ -25,7 +24,7 @@ profileRoutes.get('/profile', ensureAuthenticated, async (req: RequestDto, res, 
 })
 
 profileRoutes.put('/profile', ensureAuthenticated, async (req: RequestDto, res, next) => {
-  const { id } = req.user as UserDomainModel
+  const { id } = req.user!
   const newProfileData = req.body as NewUserProfileDto
 
   logger.debug(`Updating profile for user '${id}'.`)
