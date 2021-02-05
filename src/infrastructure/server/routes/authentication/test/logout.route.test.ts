@@ -8,7 +8,6 @@ import { BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from 
 import { userDataSource } from '@infrastructure/dataSources'
 
 import { testingUsers, testingExpiredJwtToken, testingValidJwtTokenForNonPersistedUser, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
-import { UserDto } from '@infrastructure/dtos'
 
 const [{ username, password, email, token }] = testingUsers
 

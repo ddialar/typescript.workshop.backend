@@ -4,7 +4,7 @@ import { verify, Secret } from 'jsonwebtoken'
 import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
-import { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, GettingUserError, CheckingPasswordError } from '@errors'
+import { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, GettingUserError, CheckingPasswordError, BAD_REQUEST } from '@errors'
 import { NewUserDatabaseDto } from '@infrastructure/dtos'
 import { DecodedJwtToken, LoginInputParams } from '@infrastructure/types'
 import { userDataSource } from '@infrastructure/dataSources'
@@ -74,6 +74,94 @@ describe('[API] - Authentication endpoints', () => {
           expect(verifiedToken.iat).toBeGreaterThan(0)
           expect(verifiedToken.sub).toBe(userId)
           expect(verifiedToken.username).toBe(loginData.username)
+        })
+
+      done()
+    })
+
+    it('must throw a BAD_REQUEST (400) when username is not provided', async (done) => {
+      const loginData = {
+        password: testingValidPlainPassword
+      }
+      const expectedErrorMessage = 'Wrong login data'
+
+      await request
+        .post(LOGIN_PATH)
+        .send(loginData)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must throw a BAD_REQUEST (400) when the provided username has not a valid structure', async (done) => {
+      const loginData = {
+        username: '@wrong.mail.com',
+        password: testingValidPlainPassword
+      }
+      const expectedErrorMessage = 'Wrong login data'
+
+      await request
+        .post(LOGIN_PATH)
+        .send(loginData)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must throw a BAD_REQUEST (400) when the provided password has not a valid structure', async (done) => {
+      const loginData = {
+        username: testingUsername,
+        password: '123' // Password too short.
+      }
+      const expectedErrorMessage = 'Wrong login data'
+
+      await request
+        .post(LOGIN_PATH)
+        .send(loginData)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must throw a BAD_REQUEST (400) when the provided password contains not valid elements', async (done) => {
+      const loginData = {
+        username: testingUsername,
+        password: '123$#%'
+      }
+      const expectedErrorMessage = 'Wrong login data'
+
+      await request
+        .post(LOGIN_PATH)
+        .send(loginData)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must throw a BAD_REQUEST (400) when when password is not provided', async (done) => {
+      const loginData = {
+        username: testingUsername
+      }
+      const expectedErrorMessage = 'Wrong login data'
+
+      await request
+        .post(LOGIN_PATH)
+        .send(loginData)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
