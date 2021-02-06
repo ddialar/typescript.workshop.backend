@@ -57,7 +57,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must return a FORBIDDEN (403) error when we send an expired token', async (done) => {
+    it('must return a FORBIDDEN (403) error when we do not provide any token', async (done) => {
       const token = ''
       const expectedErrorMessage = 'Required token was not provided'
 
@@ -65,6 +65,36 @@ describe('[API] - Authentication endpoints', () => {
         .post(LOGOUT_PATH)
         .set('Authorization', token)
         .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return a BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+      const token = `bearer ${mockedUserData.token}$`
+      const expectedErrorMessage = 'Wrong token format'
+
+      await request
+        .post(LOGOUT_PATH)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return a BAD_REQUEST (400) error when we send a wrong formatted token because it is incomplete', async (done) => {
+      const token = `bearer ${mockedUserData.token.split('.').shift()}`
+      const expectedErrorMessage = 'Wrong token format'
+
+      await request
+        .post(LOGOUT_PATH)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
