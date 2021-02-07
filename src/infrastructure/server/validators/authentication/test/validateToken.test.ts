@@ -1,6 +1,6 @@
 import { testingValidJwtTokenForNonPersistedUser, testingMalformedJwtToken } from '@testingFixtures'
 
-import { validateToken } from '@infrastructure/server/validation'
+import { validateToken } from '@infrastructure/server/validators'
 
 describe('[API] - Validation - validateToken', () => {
   it('must validate the provided token successfully', () => {

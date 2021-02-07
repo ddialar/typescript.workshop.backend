@@ -1,7 +1,7 @@
 import { LoginInputParams } from '@infrastructure/types'
 import { testingUsers, testingValidPlainPassword } from '@testingFixtures'
 
-import { validateLoginParams } from '@infrastructure/server/validation'
+import { validateLoginParams } from '@infrastructure/server/validators'
 
 const [{ username }] = testingUsers
 

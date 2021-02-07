@@ -1,10 +1,10 @@
 import Joi from 'joi'
 
-const token = Joi.string().pattern(/^[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.[a-zA-Z0-9-_]+$/).required()
+import { token } from '../validation.rules'
 
 const schema = Joi.object({ token })
 
-export const validateToken = (token: string | undefined) => {
+export const validateToken = (token?: string) => {
   const { error } = schema.validate({ token })
 
   return {
