@@ -2,7 +2,7 @@ import { Response, NextFunction } from 'express'
 import { RequiredTokenNotProvidedError, UserDoesNotExistError, TokenFormatError } from '@errors'
 import { checkToken, getUserByUsername } from '@domainServices'
 import { RequestDto } from '../serverDtos'
-import { validateToken } from '@infrastructure/server/validation'
+import { validateToken } from '@infrastructure/server/validators'
 
 export const ensureAuthenticated = async (req: RequestDto, res: Response, next: NextFunction) => {
   try {
