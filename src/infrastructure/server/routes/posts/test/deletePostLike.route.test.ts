@@ -182,6 +182,74 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
+    it('must return BAD_REQUEST (400) error when we send a token of non recorded user', async (done) => {
+      const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
+      const { _id: postId } = selectedPost
+      const expectedErrorMessage = 'User does not exist'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) error when we do not provide post ID', async (done) => {
+      const token = `bearer ${likeOwnerValidToken}`
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) error when we provide a wrong post ID that has more characters than allowed ones', async (done) => {
+      const token = `bearer ${likeOwnerValidToken}`
+      const { _id: originalPostId } = selectedPost
+      const postId = originalPostId.concat('abcde')
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) error when we provide a wrong post ID that has less characters than required ones', async (done) => {
+      const token = `bearer ${likeOwnerValidToken}`
+      const { _id: originalPostId } = selectedPost
+      const postId = originalPostId.substring(1)
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
     it('must return NOT_FOUND (404) when the provided post ID doesn\'t exist', async (done) => {
       const token = `bearer ${likeOwnerValidToken}`
       const postId = nonValidPostId
