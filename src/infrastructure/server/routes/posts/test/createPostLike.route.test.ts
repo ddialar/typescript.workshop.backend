@@ -3,7 +3,7 @@ import supertest, { SuperTest, Test } from 'supertest'
 import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
-import { BAD_REQUEST, OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND } from '@errors'
+import { BAD_REQUEST, OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND, FORBIDDEN } from '@errors'
 import { postDataSource } from '@infrastructure/dataSources'
 import { UserProfileDto } from '@infrastructure/dtos'
 
@@ -134,6 +134,19 @@ describe('[API] - Posts endpoints', () => {
         .set('Authorization', token)
         .send({ postId })
         .expect(UNAUTHORIZED)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .post(POSTS_LIKE_PATH)
+        .expect(FORBIDDEN)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })

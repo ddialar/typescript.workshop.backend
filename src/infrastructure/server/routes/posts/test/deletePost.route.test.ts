@@ -168,6 +168,19 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
+    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .delete(POSTS_PATH)
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
     it('must return NOT_FOUND (404) when we select a post which does not exist', async (done) => {
       const token = `bearer ${ownerValidToken}`
       const postId = nonValidPostId

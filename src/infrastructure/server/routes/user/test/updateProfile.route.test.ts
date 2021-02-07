@@ -5,7 +5,7 @@ import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } from '@errors'
 import { userDataSource } from '@infrastructure/dataSources'
-import { NewUserDatabaseDto, NewUserProfileDto, UserDto, UserProfileDto } from '@infrastructure/dtos'
+import { NewUserDatabaseDto, NewUserProfileDto, UserProfileDto } from '@infrastructure/dtos'
 
 import { testingUsers, testingValidJwtTokenForNonPersistedUser, testingExpiredJwtToken, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
@@ -86,6 +86,20 @@ describe('[API] - User endpoints', () => {
       await request
         .put(PROFILE_PATH)
         .set('Authorization', token)
+        .send(payload)
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .put(PROFILE_PATH)
         .send(payload)
         .expect(FORBIDDEN)
         .then(({ text }) => {

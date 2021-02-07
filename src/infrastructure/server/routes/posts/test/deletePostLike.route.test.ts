@@ -3,9 +3,8 @@ import supertest, { SuperTest, Test } from 'supertest'
 import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
-import { BAD_REQUEST, OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND } from '@errors'
+import { BAD_REQUEST, OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND, FORBIDDEN } from '@errors'
 import { postDataSource } from '@infrastructure/dataSources'
-import { PostDto } from '@infrastructure/dtos'
 
 import {
   testingLikedAndCommentedPersistedDtoPosts,
@@ -144,6 +143,38 @@ describe('[API] - Posts endpoints', () => {
         .set('Authorization', token)
         .send({ postId })
         .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return FORBIDDEN (403) when the sent token is empty', async (done) => {
+      const token = `bearer ${''}`
+      const { _id: postId } = selectedPost!
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+      const { _id: postId } = selectedPost!
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .send({ postId })
+        .expect(FORBIDDEN)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })

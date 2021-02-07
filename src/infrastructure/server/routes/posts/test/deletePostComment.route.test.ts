@@ -3,7 +3,7 @@ import supertest, { SuperTest, Test } from 'supertest'
 import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
-import { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND } from '@errors'
+import { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND, FORBIDDEN } from '@errors'
 import { postDataSource } from '@infrastructure/dataSources'
 
 import {
@@ -91,6 +91,40 @@ describe('[API] - Posts endpoints', () => {
 
           expect(updatedDtoComments).toHaveLength(selectedPost.comments.length - 1)
           expect(updatedDtoComments.map(({ _id }) => _id).includes(commentId)).toBeFalsy()
+        })
+
+      done()
+    })
+
+    it('must return FORBIDDEN (403) when the sent token is empty', async (done) => {
+      const token = `bearer ${''}`
+      const postId = selectedPost.id
+      const commentId = selectedComment.id
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentId })
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+      const postId = selectedPost.id
+      const commentId = selectedComment.id
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .send({ postId, commentId })
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()
