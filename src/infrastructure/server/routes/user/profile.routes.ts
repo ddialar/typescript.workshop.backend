@@ -2,8 +2,7 @@ import express, { Router } from 'express'
 
 import { getUserProfile, updateUserProfile } from '@domainServices'
 
-import { NewUserProfileDto } from '@infrastructure/dtos'
-import { ensureAuthenticated } from '../../middlewares'
+import { ensureAuthenticated, validateProfileData } from '../../middlewares'
 import { RequestDto } from '../../serverDtos'
 
 import { createLogger } from '@common'
@@ -23,9 +22,9 @@ profileRoutes.get('/profile', ensureAuthenticated, async (req: RequestDto, res, 
   }
 })
 
-profileRoutes.put('/profile', ensureAuthenticated, async (req: RequestDto, res, next) => {
+profileRoutes.put('/profile', ensureAuthenticated, validateProfileData, async (req: RequestDto, res, next) => {
   const { id } = req.user!
-  const newProfileData = req.body as NewUserProfileDto
+  const newProfileData = req.newProfileData!
 
   logger.debug(`Updating profile for user '${id}'.`)
 
