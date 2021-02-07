@@ -1,3 +1,5 @@
 export * from './UserDoesNotExistError'
 export * from './NewUserAlreadyExistsError'
 export * from './SigninDataError'
+export * from './ProfileDataError'
+export * from './EmptyProfileDataError'
