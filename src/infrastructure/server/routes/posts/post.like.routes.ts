@@ -1,6 +1,6 @@
 import express from 'express'
 import { likePost, dislikePost } from '@domainServices'
-import { ensureAuthenticated } from '../../middlewares'
+import { ensureAuthenticated, validatePostLike } from '@infrastructure/server/middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
 
 import { createLogger } from '@common'
@@ -8,9 +8,9 @@ const logger = createLogger('post.endpoints')
 
 const postLikeRoutes = express.Router()
 
-postLikeRoutes.post('/like', ensureAuthenticated, async (req: RequestDto, res, next) => {
+postLikeRoutes.post('/like', ensureAuthenticated, validatePostLike, async (req: RequestDto, res, next) => {
   const { id, name, surname, avatar } = req.user!
-  const { postId } = req.body
+  const postId = req.postId!
 
   logger.debug(`Liking post '${postId}' by user '${id}'.`)
 
@@ -21,9 +21,9 @@ postLikeRoutes.post('/like', ensureAuthenticated, async (req: RequestDto, res, n
   }
 })
 
-postLikeRoutes.delete('/like', ensureAuthenticated, async (req: RequestDto, res, next) => {
+postLikeRoutes.delete('/like', ensureAuthenticated, validatePostLike, async (req: RequestDto, res, next) => {
   const { id: likeOwnerId } = req.user!
-  const { postId } = req.body
+  const postId = req.postId!
 
   logger.debug(`Disliking post '${postId}' by user '${likeOwnerId}'.`)
 
