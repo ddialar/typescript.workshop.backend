@@ -5,10 +5,16 @@ import { email, password, requiredName, requiredSurname, requiredAvatar } from '
 
 const schema = Joi.object({ email, password, name: requiredName, surname: requiredSurname, avatar: requiredAvatar })
 
-export const validateSigninParams = ({ email, password, name, surname, avatar }: Partial<NewUserInputDto>) => {
-  const { error } = schema.validate({ email, password, name, surname, avatar })
+interface ValidationResult {
+  error?: string
+  value?: NewUserInputDto
+}
+
+export const validateSigninParams = ({ email, password, name, surname, avatar }: Partial<NewUserInputDto>): ValidationResult => {
+  const { error, value } = schema.validate({ email, password, name, surname, avatar })
 
   return {
-    error: error && error.details[0].message
+    error: error && error.details[0].message,
+    value
   }
 }
