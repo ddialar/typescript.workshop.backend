@@ -8,7 +8,7 @@ const schema = Joi.object({ username, password })
 
 interface ValidationResult {
   error?: string
-  value?: {
+  value: {
     username: UserDto['username'],
     password: UserDto['password']
   }

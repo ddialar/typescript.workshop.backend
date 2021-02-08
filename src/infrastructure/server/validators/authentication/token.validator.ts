@@ -7,7 +7,7 @@ const schema = Joi.object({ token })
 
 interface ValidationResult {
   error?: string
-  value?: {
+  value: {
     token: UserDto['token']
   }
 }

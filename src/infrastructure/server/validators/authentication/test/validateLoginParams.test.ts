@@ -33,9 +33,9 @@ describe('[API] - Validation - validateLoginParams', () => {
 
     expect(value).not.toBeUndefined()
     expect(value).toHaveProperty<string>('username')
-    expect(value?.username).toBeUndefined()
+    expect(value.username).toBeUndefined()
     expect(value).toHaveProperty<string>('password')
-    expect(value?.password).toBe(loginData.password)
+    expect(value.password).toBe(loginData.password)
   })
 
   it('must return an error when the provided username has not a valid structure', () => {
@@ -67,9 +67,9 @@ describe('[API] - Validation - validateLoginParams', () => {
 
     expect(value).not.toBeUndefined()
     expect(value).toHaveProperty<string>('username')
-    expect(value?.username).toBe(loginData.username)
+    expect(value.username).toBe(loginData.username)
     expect(value).toHaveProperty<string>('password')
-    expect(value?.password).toBeUndefined()
+    expect(value.password).toBeUndefined()
   })
 
   it('must return an error when the provided password has not a valid structure', () => {

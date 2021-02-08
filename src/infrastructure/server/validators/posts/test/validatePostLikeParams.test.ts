@@ -14,7 +14,7 @@ describe('[API] - Validation - validatePostLikeParams', () => {
 
     expect(value).not.toBeUndefined()
     expect(value).toHaveProperty('postId')
-    expect(value?.postId).toBe<string>(postId)
+    expect(value.postId).toBe<string>(postId)
   })
 
   it('must return an error when postId is not provided', () => {
@@ -28,7 +28,7 @@ describe('[API] - Validation - validatePostLikeParams', () => {
 
     expect(value).not.toBeUndefined()
     expect(value).toHaveProperty('postId')
-    expect(value?.postId).toBeUndefined()
+    expect(value.postId).toBeUndefined()
   })
 
   it('must return an error when postId has more characters than allowed ones', () => {
@@ -42,7 +42,7 @@ describe('[API] - Validation - validatePostLikeParams', () => {
 
     expect(value).not.toBeUndefined()
     expect(value).toHaveProperty('postId')
-    expect(value?.postId).toBe<string>(postId)
+    expect(value.postId).toBe<string>(postId)
   })
 
   it('must return an error when postId has less characters than required ones', () => {
@@ -56,7 +56,7 @@ describe('[API] - Validation - validatePostLikeParams', () => {
 
     expect(value).not.toBeUndefined()
     expect(value).toHaveProperty('postId')
-    expect(value?.postId).toBe<string>(postId)
+    expect(value.postId).toBe<string>(postId)
   })
 
   it('must return an error when postId has non allowed characters', () => {
@@ -70,6 +70,6 @@ describe('[API] - Validation - validatePostLikeParams', () => {
 
     expect(value).not.toBeUndefined()
     expect(value).toHaveProperty('postId')
-    expect(value?.postId).toBe<string>(postId)
+    expect(value.postId).toBe<string>(postId)
   })
 })

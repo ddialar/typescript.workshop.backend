@@ -7,7 +7,7 @@ const schema = Joi.object({ postId })
 
 interface ValidationResult {
   error?: string
-  value?: {
+  value: {
     postId: Required<PostDto>['_id']
   }
 }

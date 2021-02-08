@@ -32,11 +32,11 @@ describe('[API] - Validation - validateProfileParams', () => {
 
     expect(value).not.toBeUndefined()
     expect(value).toHaveProperty('name')
-    expect(value?.name).toBe(profileData.name)
+    expect(value.name).toBe(profileData.name)
     expect(value).toHaveProperty('surname')
-    expect(value?.surname).toBeUndefined()
+    expect(value.surname).toBeUndefined()
     expect(value).toHaveProperty('avatar')
-    expect(value?.avatar).toBeUndefined()
+    expect(value.avatar).toBeUndefined()
   })
 
   it('must return an error when the provided name has not the minimum amount of characters', () => {
@@ -67,11 +67,11 @@ describe('[API] - Validation - validateProfileParams', () => {
 
     expect(value).not.toBeUndefined()
     expect(value).toHaveProperty('name')
-    expect(value?.name).toBeUndefined()
+    expect(value.name).toBeUndefined()
     expect(value).toHaveProperty('surname')
-    expect(value?.surname).toBe(profileData.surname)
+    expect(value.surname).toBe(profileData.surname)
     expect(value).toHaveProperty('avatar')
-    expect(value?.avatar).toBeUndefined()
+    expect(value.avatar).toBeUndefined()
   })
 
   it('must return an error when the provided surname has not the minimum amount of characters', () => {
@@ -102,11 +102,11 @@ describe('[API] - Validation - validateProfileParams', () => {
 
     expect(value).not.toBeUndefined()
     expect(value).toHaveProperty('name')
-    expect(value?.name).toBeUndefined()
+    expect(value.name).toBeUndefined()
     expect(value).toHaveProperty('surname')
-    expect(value?.surname).toBeUndefined()
+    expect(value.surname).toBeUndefined()
     expect(value).toHaveProperty('avatar')
-    expect(value?.avatar).toBe(profileData.avatar)
+    expect(value.avatar).toBe(profileData.avatar)
   })
 
   it('must return an error when the provided avatar is an empty string', () => {

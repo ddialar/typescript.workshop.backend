@@ -7,7 +7,7 @@ const schema = Joi.object({ name: optionalName, surname: optionalSurname, avatar
 
 interface ValidationResult {
   error?: string
-  value?: NewUserProfileDto
+  value: NewUserProfileDto
 }
 
 export const validateProfileParams = (profileParams: NewUserProfileDto): ValidationResult => {

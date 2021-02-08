@@ -7,7 +7,7 @@ const schema = Joi.object({ email, password, name: requiredName, surname: requir
 
 interface ValidationResult {
   error?: string
-  value?: NewUserInputDto
+  value: NewUserInputDto
 }
 
 export const validateSigninParams = ({ email, password, name, surname, avatar }: Partial<NewUserInputDto>): ValidationResult => {
