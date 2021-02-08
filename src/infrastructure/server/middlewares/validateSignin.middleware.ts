@@ -8,13 +8,13 @@ export const validateSignin = async (req: RequestDto, res: Response, next: NextF
   try {
     const { email, password, name, surname, avatar } = req.body
 
-    const { error } = validateSigninParams({ email, password, name, surname, avatar })
+    const { error, value } = validateSigninParams({ email, password, name, surname, avatar })
 
     if (error) {
       throw new SigninDataError(error)
     }
 
-    req.signinData = { email, password, name, surname, avatar }
+    req.signinData = { ...value }
 
     return next()
   } catch (error) {

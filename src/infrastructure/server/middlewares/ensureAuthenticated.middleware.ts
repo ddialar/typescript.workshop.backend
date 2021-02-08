@@ -11,12 +11,12 @@ export const ensureAuthenticated = async (req: RequestDto, res: Response, next: 
       throw new RequiredTokenNotProvidedError()
     }
 
-    const { error } = validateToken(token)
+    const { error, value } = validateToken(token)
     if (error) {
       throw new TokenFormatError(error)
     }
 
-    const { username } = checkToken(token)
+    const { username } = checkToken(value.token)
 
     // TODO: To retrieve the user by the token
     const persistedUser = await getUserByUsername(username)

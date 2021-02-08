@@ -14,7 +14,7 @@ export const validatePostLike = async (req: RequestDto, res: Response, next: Nex
       throw new PostIdentificationError(error)
     }
 
-    req.postId = value?.postId
+    req.postId = value.postId
 
     return next()
   } catch (error) {

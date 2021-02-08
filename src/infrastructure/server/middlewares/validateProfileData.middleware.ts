@@ -12,14 +12,14 @@ export const validateProfileData = async (req: RequestDto, res: Response, next: 
       throw new EmptyProfileDataError('No one of the allowed fields were provided.')
     }
 
-    const { error } = validateProfileParams({ name, surname, avatar })
+    const { error, value } = validateProfileParams({ name, surname, avatar })
 
     if (error) {
       throw new ProfileDataError(error)
     }
 
     req.newProfileData = Object
-      .entries({ name, surname, avatar })
+      .entries(value)
       .reduce((result, [key, value]) => value ? { ...result, [key]: value } : result, {})
 
     return next()
