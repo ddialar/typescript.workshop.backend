@@ -1,6 +1,7 @@
 import Joi from 'joi'
 
 export const mongodbId = Joi.string().pattern(/^[a-zA-Z0-9]{24}$/)
+export const body = Joi.string()
 export const email = Joi.string().email({ minDomainSegments: 2, tlds: { allow: true } }).required()
 export const url = Joi.string().uri({
   scheme: ['http', 'https'],
@@ -22,3 +23,5 @@ export const requiredAvatar = url.required()
 export const token = Joi.string().pattern(/^[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.[a-zA-Z0-9-_]+$/).required()
 
 export const postId = mongodbId.required()
+
+export const commentBody = body.required()
