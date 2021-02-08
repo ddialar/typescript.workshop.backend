@@ -5,11 +5,17 @@ import { optionalName, optionalSurname, optionalAvatar } from '../validation.rul
 
 const schema = Joi.object({ name: optionalName, surname: optionalSurname, avatar: optionalAvatar })
 
-export const validateProfileParams = (profileParams: Partial<NewUserProfileDto>) => {
+interface ValidationResult {
+  error?: string
+  value?: NewUserProfileDto
+}
+
+export const validateProfileParams = (profileParams: NewUserProfileDto): ValidationResult => {
   const { name, surname, avatar } = profileParams
-  const { error } = schema.validate({ name, surname, avatar })
+  const { error, value } = schema.validate({ name, surname, avatar })
 
   return {
-    error: error && error.details[0].message
+    error: error && error.details[0].message,
+    value
   }
 }

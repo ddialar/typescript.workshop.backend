@@ -1,6 +1,7 @@
 import { testingUsers } from '@testingFixtures'
 
 import { validateProfileParams } from '@infrastructure/server/validators'
+import { NewUserProfileDto } from '@infrastructure/dtos'
 
 const [{ name, surname, avatar }] = testingUsers
 
@@ -12,9 +13,12 @@ describe('[API] - Validation - validateProfileParams', () => {
       avatar
     }
 
-    const { error } = validateProfileParams(profileData)
+    const { error, value } = validateProfileParams(profileData)
 
     expect(error).toBeUndefined()
+
+    expect(value).not.toBeUndefined()
+    expect(value).toStrictEqual<NewUserProfileDto>(profileData)
   })
 
   it('must validate successfully the provided data when only the name is updated', () => {
@@ -22,9 +26,17 @@ describe('[API] - Validation - validateProfileParams', () => {
       name
     }
 
-    const { error } = validateProfileParams(profileData)
+    const { error, value } = validateProfileParams(profileData)
 
     expect(error).toBeUndefined()
+
+    expect(value).not.toBeUndefined()
+    expect(value).toHaveProperty('name')
+    expect(value?.name).toBe(profileData.name)
+    expect(value).toHaveProperty('surname')
+    expect(value?.surname).toBeUndefined()
+    expect(value).toHaveProperty('avatar')
+    expect(value?.avatar).toBeUndefined()
   })
 
   it('must return an error when the provided name has not the minimum amount of characters', () => {
@@ -35,10 +47,13 @@ describe('[API] - Validation - validateProfileParams', () => {
     }
     const expectedErrorMessage = '"name" length must be at least 2 characters long'
 
-    const { error } = validateProfileParams(profileData)
+    const { error, value } = validateProfileParams(profileData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toStrictEqual<NewUserProfileDto>(profileData)
   })
 
   it('must validate successfully the provided data when only the surname is updated', () => {
@@ -46,9 +61,17 @@ describe('[API] - Validation - validateProfileParams', () => {
       surname
     }
 
-    const { error } = validateProfileParams(profileData)
+    const { error, value } = validateProfileParams(profileData)
 
     expect(error).toBeUndefined()
+
+    expect(value).not.toBeUndefined()
+    expect(value).toHaveProperty('name')
+    expect(value?.name).toBeUndefined()
+    expect(value).toHaveProperty('surname')
+    expect(value?.surname).toBe(profileData.surname)
+    expect(value).toHaveProperty('avatar')
+    expect(value?.avatar).toBeUndefined()
   })
 
   it('must return an error when the provided surname has not the minimum amount of characters', () => {
@@ -59,10 +82,13 @@ describe('[API] - Validation - validateProfileParams', () => {
     }
     const expectedErrorMessage = '"surname" length must be at least 2 characters long'
 
-    const { error } = validateProfileParams(profileData)
+    const { error, value } = validateProfileParams(profileData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toStrictEqual<NewUserProfileDto>(profileData)
   })
 
   it('must validate successfully the provided data when only the avatar is updated', () => {
@@ -70,9 +96,17 @@ describe('[API] - Validation - validateProfileParams', () => {
       avatar
     }
 
-    const { error } = validateProfileParams(profileData)
+    const { error, value } = validateProfileParams(profileData)
 
     expect(error).toBeUndefined()
+
+    expect(value).not.toBeUndefined()
+    expect(value).toHaveProperty('name')
+    expect(value?.name).toBeUndefined()
+    expect(value).toHaveProperty('surname')
+    expect(value?.surname).toBeUndefined()
+    expect(value).toHaveProperty('avatar')
+    expect(value?.avatar).toBe(profileData.avatar)
   })
 
   it('must return an error when the provided avatar is an empty string', () => {
@@ -83,10 +117,13 @@ describe('[API] - Validation - validateProfileParams', () => {
     }
     const expectedErrorMessage = '"avatar" is not allowed to be empty'
 
-    const { error } = validateProfileParams(profileData)
+    const { error, value } = validateProfileParams(profileData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toStrictEqual<NewUserProfileDto>(profileData)
   })
 
   it('must return an error when the provided avatar has a schema different to http or https', () => {
@@ -97,10 +134,13 @@ describe('[API] - Validation - validateProfileParams', () => {
     }
     const expectedErrorMessage = '"avatar" must be a valid uri with a scheme matching the http|https pattern'
 
-    const { error } = validateProfileParams(profileData)
+    const { error, value } = validateProfileParams(profileData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toStrictEqual<NewUserProfileDto>(profileData)
   })
 
   it('must return an error when the provided avatar has less than two domains', () => {
@@ -111,9 +151,12 @@ describe('[API] - Validation - validateProfileParams', () => {
     }
     const expectedErrorMessage = '"avatar" must contain a valid domain name'
 
-    const { error } = validateProfileParams(profileData)
+    const { error, value } = validateProfileParams(profileData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toStrictEqual<NewUserProfileDto>(profileData)
   })
 })
