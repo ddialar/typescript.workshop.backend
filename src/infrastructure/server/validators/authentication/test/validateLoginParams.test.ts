@@ -12,9 +12,12 @@ describe('[API] - Validation - validateLoginParams', () => {
       password: testingValidPlainPassword
     }
 
-    const { error } = validateLoginParams(loginData)
+    const { error, value } = validateLoginParams(loginData)
 
     expect(error).toBeUndefined()
+
+    expect(value).not.toBeUndefined()
+    expect(value).toStrictEqual<LoginInputParams>(loginData)
   })
 
   it('must return an error when username is not provided', () => {
@@ -23,10 +26,16 @@ describe('[API] - Validation - validateLoginParams', () => {
     }
     const expectedErrorMessage = '"username" is required'
 
-    const { error } = validateLoginParams(loginData)
+    const { error, value } = validateLoginParams(loginData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toHaveProperty<string>('username')
+    expect(value?.username).toBeUndefined()
+    expect(value).toHaveProperty<string>('password')
+    expect(value?.password).toBe(loginData.password)
   })
 
   it('must return an error when the provided username has not a valid structure', () => {
@@ -36,10 +45,13 @@ describe('[API] - Validation - validateLoginParams', () => {
     }
     const expectedErrorMessage = '"username" must be a valid email'
 
-    const { error } = validateLoginParams(loginData)
+    const { error, value } = validateLoginParams(loginData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toStrictEqual<LoginInputParams>(loginData)
   })
 
   it('must return an error when password is not provided', () => {
@@ -48,10 +60,16 @@ describe('[API] - Validation - validateLoginParams', () => {
     }
     const expectedErrorMessage = '"password" is required'
 
-    const { error } = validateLoginParams(loginData)
+    const { error, value } = validateLoginParams(loginData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toHaveProperty<string>('username')
+    expect(value?.username).toBe(loginData.username)
+    expect(value).toHaveProperty<string>('password')
+    expect(value?.password).toBeUndefined()
   })
 
   it('must return an error when the provided password has not a valid structure', () => {
@@ -61,10 +79,13 @@ describe('[API] - Validation - validateLoginParams', () => {
     }
     const expectedErrorMessage = `"password" with value "${loginData.password}" fails to match the required pattern: /^[a-zA-Z0-9]{4,}$/`
 
-    const { error } = validateLoginParams(loginData)
+    const { error, value } = validateLoginParams(loginData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toStrictEqual<LoginInputParams>(loginData)
   })
 
   it('must return an error when the provided password contains not valid elements', () => {
@@ -74,9 +95,12 @@ describe('[API] - Validation - validateLoginParams', () => {
     }
     const expectedErrorMessage = `"password" with value "${loginData.password}" fails to match the required pattern: /^[a-zA-Z0-9]{4,}$/`
 
-    const { error } = validateLoginParams(loginData)
+    const { error, value } = validateLoginParams(loginData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toStrictEqual<LoginInputParams>(loginData)
   })
 })
