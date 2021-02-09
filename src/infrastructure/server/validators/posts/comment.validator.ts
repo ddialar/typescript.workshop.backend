@@ -15,7 +15,7 @@ interface NewCommentParams {
   commentBody: Required<PostDto>['body']
 }
 
-export const validateNewPostComment = ({ postId, commentBody }: Partial<NewCommentParams>): ValidationResult<NewCommentParams> => {
+export const validateNewPostCommentParams = ({ postId, commentBody }: Partial<NewCommentParams>): ValidationResult<NewCommentParams> => {
   const { error, value } = newCommentSchema.validate({ postId, commentBody })
 
   return {

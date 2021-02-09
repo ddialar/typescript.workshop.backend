@@ -1,18 +1,18 @@
 import { generateMockedMongoDbId } from '@testingFixtures'
 
-import { validateNewPostComment } from '@infrastructure/server/validators'
+import { validateNewPostCommentParams } from '@infrastructure/server/validators'
 
 const testingPostId = generateMockedMongoDbId()
 const testingPostCommentBody = 'This is a post comment'
 
-describe('[API] - Validation - validateNewPostComment', () => {
+describe('[API] - Validation - validateNewPostCommentParams', () => {
   it('must validate the provided data successfully', () => {
     const postCommentData = {
       postId: testingPostId,
       commentBody: testingPostCommentBody
     }
 
-    const { error, value } = validateNewPostComment(postCommentData)
+    const { error, value } = validateNewPostCommentParams(postCommentData)
 
     expect(error).toBeUndefined()
 
@@ -26,7 +26,7 @@ describe('[API] - Validation - validateNewPostComment', () => {
     }
     const expectedErrorMessage = '"postId" is required'
 
-    const { error, value } = validateNewPostComment(postCommentData)
+    const { error, value } = validateNewPostCommentParams(postCommentData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
@@ -45,7 +45,7 @@ describe('[API] - Validation - validateNewPostComment', () => {
     }
     const expectedErrorMessage = `"postId" with value "${postCommentData.postId}" fails to match the required pattern: /^[a-zA-Z0-9]{24}$/`
 
-    const { error, value } = validateNewPostComment(postCommentData)
+    const { error, value } = validateNewPostCommentParams(postCommentData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
@@ -64,7 +64,7 @@ describe('[API] - Validation - validateNewPostComment', () => {
     }
     const expectedErrorMessage = `"postId" with value "${postCommentData.postId}" fails to match the required pattern: /^[a-zA-Z0-9]{24}$/`
 
-    const { error, value } = validateNewPostComment(postCommentData)
+    const { error, value } = validateNewPostCommentParams(postCommentData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
@@ -83,7 +83,7 @@ describe('[API] - Validation - validateNewPostComment', () => {
     }
     const expectedErrorMessage = `"postId" with value "${postCommentData.postId}" fails to match the required pattern: /^[a-zA-Z0-9]{24}$/`
 
-    const { error, value } = validateNewPostComment(postCommentData)
+    const { error, value } = validateNewPostCommentParams(postCommentData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
@@ -101,7 +101,7 @@ describe('[API] - Validation - validateNewPostComment', () => {
     }
     const expectedErrorMessage = '"commentBody" is required'
 
-    const { error, value } = validateNewPostComment(postCommentData)
+    const { error, value } = validateNewPostCommentParams(postCommentData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
@@ -120,7 +120,7 @@ describe('[API] - Validation - validateNewPostComment', () => {
     }
     const expectedErrorMessage = '"commentBody" is not allowed to be empty'
 
-    const { error, value } = validateNewPostComment(postCommentData)
+    const { error, value } = validateNewPostCommentParams(postCommentData)
 
     expect(error).not.toBeUndefined()
     expect(error).toBe(expectedErrorMessage)
