@@ -38,6 +38,25 @@ describe('[API] - Validation - validateNewPostCommentParams', () => {
     expect(value.commentBody).toBe<string>(postCommentData.commentBody)
   })
 
+  it('must return an error when postId is empty', () => {
+    const postCommentData = {
+      postId: '',
+      commentBody: testingPostCommentBody
+    }
+    const expectedErrorMessage = '"postId" is not allowed to be empty'
+
+    const { error, value } = validateNewPostCommentParams(postCommentData)
+
+    expect(error).not.toBeUndefined()
+    expect(error).toBe(expectedErrorMessage)
+
+    expect(value).not.toBeUndefined()
+    expect(value).toHaveProperty('postId')
+    expect(value.postId).toBe<string>(postCommentData.postId)
+    expect(value).toHaveProperty('commentBody')
+    expect(value.commentBody).toBe<string>(postCommentData.commentBody)
+  })
+
   it('must return an error when postId has more characters than allowed ones', () => {
     const postCommentData = {
       postId: testingPostId.concat('abcde'),
