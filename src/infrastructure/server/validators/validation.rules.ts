@@ -24,4 +24,5 @@ export const token = Joi.string().pattern(/^[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.[a-zA-Z0
 
 export const postId = mongodbId.required()
 
+export const commentId = mongodbId.required()
 export const commentBody = body.required()
