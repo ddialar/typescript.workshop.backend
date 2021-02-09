@@ -3,7 +3,7 @@ import supertest, { SuperTest, Test } from 'supertest'
 import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
-import { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND, FORBIDDEN } from '@errors'
+import { OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND, FORBIDDEN, BAD_REQUEST } from '@errors'
 import { postDataSource } from '@infrastructure/dataSources'
 
 import {
@@ -177,6 +177,184 @@ describe('[API] - Posts endpoints', () => {
         .set('Authorization', token)
         .send({ postId, commentId })
         .expect(UNAUTHORIZED)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId is not provided', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const commentId = selectedComment.id
+      const expectedErrorMessage = 'Post comment data error.'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ commentId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId is empty', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = ''
+      const commentId = selectedComment.id
+      const expectedErrorMessage = 'Post comment data error.'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId has more characters than allowed ones', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPost.id.concat('abcde')
+      const commentId = selectedComment.id
+      const expectedErrorMessage = 'Post comment data error.'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId has less characters than required ones', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPost.id.substring(1)
+      const commentId = selectedComment.id
+      const expectedErrorMessage = 'Post comment data error.'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId has non allowed characters', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPost.id.substring(3).concat('$%#')
+      const commentId = selectedComment.id
+      const expectedErrorMessage = 'Post comment data error.'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when commentId is not provided', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPost.id
+      const expectedErrorMessage = 'Post comment data error.'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when commentId is empty', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPost.id
+      const commentId = ''
+      const expectedErrorMessage = 'Post comment data error.'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when commentId has more characters than allowed ones', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPost.id
+      const commentId = selectedComment.id.concat('abcde')
+      const expectedErrorMessage = 'Post comment data error.'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when commentId has less characters than required ones', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPost.id
+      const commentId = selectedComment.id.substring(1)
+      const expectedErrorMessage = 'Post comment data error.'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when commentId has non allowed characters', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPost.id
+      const commentId = selectedComment.id.substring(3).concat('$%#')
+      const expectedErrorMessage = 'Post comment data error.'
+
+      await request
+        .delete(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentId })
+        .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })

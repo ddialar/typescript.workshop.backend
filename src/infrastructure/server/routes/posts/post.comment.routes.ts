@@ -1,6 +1,6 @@
 import express from 'express'
 import { createPostComment, deletePostComment } from '@domainServices'
-import { ensureAuthenticated, validateNewPostComment } from '../../middlewares'
+import { ensureAuthenticated, validateNewPostComment, validatePostComment } from '../../middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
 
 import { createLogger } from '@common'
@@ -21,9 +21,9 @@ postCommentRoutes.post('/comment', ensureAuthenticated, validateNewPostComment, 
   }
 })
 
-postCommentRoutes.delete('/comment', ensureAuthenticated, async (req: RequestDto, res, next) => {
+postCommentRoutes.delete('/comment', ensureAuthenticated, validatePostComment, async (req: RequestDto, res, next) => {
   const { id: commentOwnerId } = req.user!
-  const { postId, commentId } = req.body
+  const { postId, commentId } = req.postComment!
 
   logger.debug(`Removing comment '${commentId}' from post '${postId}' by user '${commentOwnerId}'.`)
 
