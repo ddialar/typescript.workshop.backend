@@ -1,6 +1,6 @@
 import express from 'express'
 import { createPostComment, deletePostComment } from '@domainServices'
-import { ensureAuthenticated } from '../../middlewares'
+import { ensureAuthenticated, validateNewPostComment } from '../../middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
 
 import { createLogger } from '@common'
@@ -8,14 +8,14 @@ const logger = createLogger('post.endpoints')
 
 const postCommentRoutes = express.Router()
 
-postCommentRoutes.post('/comment', ensureAuthenticated, async (req: RequestDto, res, next) => {
+postCommentRoutes.post('/comment', ensureAuthenticated, validateNewPostComment, async (req: RequestDto, res, next) => {
   const { id, name, surname, avatar } = req.user!
-  const { postId, commentBody } = req.body
+  const { postId, commentBody } = req.newPostComment!
 
   logger.debug(`Commenting post '${postId}' by user '${id}'.`)
 
   try {
-    res.json(await createPostComment(postId as string, commentBody as string, { id, name, surname, avatar }))
+    res.json(await createPostComment(postId, commentBody, { id, name, surname, avatar }))
   } catch (error) {
     next(error)
   }

@@ -181,6 +181,114 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
+    it('must return BAD_REQUEST (400) error when postId is not provided', async (done) => {
+      const token = `bearer ${validToken}`
+      const commentBody = lorem.paragraph()
+      const expectedErrorMessage = 'New post comment data error.'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ commentBody })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) error when postId has more characters than allowed ones', async (done) => {
+      const token = `bearer ${validToken}`
+      const { id: originalPostId } = originalPost
+      const postId = originalPostId.concat('abcde')
+      const commentBody = lorem.paragraph()
+      const expectedErrorMessage = 'New post comment data error.'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentBody })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) error when postId has less characters than required ones', async (done) => {
+      const token = `bearer ${validToken}`
+      const { id: originalPostId } = originalPost
+      const postId = originalPostId.substring(1)
+      const commentBody = lorem.paragraph()
+      const expectedErrorMessage = 'New post comment data error.'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentBody })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) error when postId has non allowed characters', async (done) => {
+      const token = `bearer ${validToken}`
+      const { id: originalPostId } = originalPost
+      const postId = originalPostId.substring(3).concat('$%#')
+      const commentBody = lorem.paragraph()
+      const expectedErrorMessage = 'New post comment data error.'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentBody })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) error when commentBody is not provided', async (done) => {
+      const token = `bearer ${validToken}`
+      const { id: postId } = originalPost
+      const expectedErrorMessage = 'New post comment data error.'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) error when commentBody is empty', async (done) => {
+      const token = `bearer ${validToken}`
+      const postId = ''
+      const expectedErrorMessage = 'New post comment data error.'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
     it('must return INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
       jest.spyOn(postDataSource, 'createPostComment').mockImplementation(() => Promise.resolve(null))
 
