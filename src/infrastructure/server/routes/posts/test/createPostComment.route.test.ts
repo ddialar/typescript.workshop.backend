@@ -198,6 +198,24 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
+    it('must return BAD_REQUEST (400) error when postId is empty', async (done) => {
+      const token = `bearer ${validToken}`
+      const postId = ''
+      const commentBody = lorem.paragraph()
+      const expectedErrorMessage = 'New post comment data error.'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentBody })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
     it('must return BAD_REQUEST (400) error when postId has more characters than allowed ones', async (done) => {
       const token = `bearer ${validToken}`
       const { id: originalPostId } = originalPost
