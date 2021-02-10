@@ -23,6 +23,7 @@ export const requiredAvatar = url.required()
 export const token = Joi.string().pattern(/^[a-zA-Z0-9]+\.[a-zA-Z0-9]+\.[a-zA-Z0-9-_]+$/).required()
 
 export const postId = mongodbId.required()
+export const postBody = body.required()
 
 export const commentId = mongodbId.required()
 export const commentBody = body.required()
