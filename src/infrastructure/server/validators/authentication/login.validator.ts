@@ -2,16 +2,12 @@ import { LoginInputParams } from '@infrastructure/types'
 import Joi from 'joi'
 
 import { username, password } from '../validation.rules'
-import { UserDto } from '@infrastructure/dtos'
 
 const schema = Joi.object({ username, password })
 
 interface ValidationResult {
   error?: string
-  value: {
-    username: UserDto['username'],
-    password: UserDto['password']
-  }
+  value: LoginInputParams
 }
 
 export const validateLoginParams = ({ username, password }: Partial<LoginInputParams>): ValidationResult => {
