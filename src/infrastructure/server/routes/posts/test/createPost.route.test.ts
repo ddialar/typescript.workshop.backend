@@ -53,11 +53,12 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return OK (200) and the created post', async (done) => {
       const token = `bearer ${validToken}`
+      const payload = { postBody }
 
       await request
         .post(POSTS_CREATE_PATH)
         .set('Authorization', token)
-        .send({ postBody })
+        .send(payload)
         .expect(OK)
         .then(async ({ body }) => {
           const createdPost: PostDomainModel = body
@@ -90,12 +91,13 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return FORBIDDEN (403) when we send an empty token', async (done) => {
       const token = ''
+      const payload = { postBody }
       const expectedErrorMessage = 'Required token was not provided'
 
       await request
         .post(POSTS_CREATE_PATH)
         .set('Authorization', token)
-        .send({ postBody })
+        .send(payload)
         .expect(FORBIDDEN)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
@@ -105,10 +107,12 @@ describe('[API] - Posts endpoints', () => {
     })
 
     it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+      const payload = { postBody }
       const expectedErrorMessage = 'Required token was not provided'
 
       await request
         .post(POSTS_CREATE_PATH)
+        .send(payload)
         .expect(FORBIDDEN)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
@@ -119,12 +123,13 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
+      const payload = { postBody }
       const expectedErrorMessage = 'Token expired'
 
       await request
         .post(POSTS_CREATE_PATH)
         .set('Authorization', token)
-        .send({ postBody })
+        .send(payload)
         .expect(UNAUTHORIZED)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
@@ -135,12 +140,13 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return BAD_REQUEST (400) error when we send an expired token', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
+      const payload = { postBody }
       const expectedErrorMessage = 'User does not exist'
 
       await request
         .post(POSTS_CREATE_PATH)
         .set('Authorization', token)
-        .send({ postBody })
+        .send(payload)
         .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
@@ -166,12 +172,13 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return BAD_REQUEST (400) error when postBody is empty', async (done) => {
       const token = `bearer ${validToken}`
+      const payload = { postBody: '' }
       const expectedErrorMessage = 'New post data error.'
 
       await request
         .post(POSTS_CREATE_PATH)
         .set('Authorization', token)
-        .send({ postBody: '' })
+        .send(payload)
         .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
@@ -184,12 +191,13 @@ describe('[API] - Posts endpoints', () => {
       jest.spyOn(postDataSource, 'createPost').mockImplementation(() => Promise.resolve(null))
 
       const token = `bearer ${validToken}`
+      const payload = { postBody }
       const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(POSTS_CREATE_PATH)
         .set('Authorization', token)
-        .send({ postBody })
+        .send(payload)
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
@@ -206,12 +214,13 @@ describe('[API] - Posts endpoints', () => {
       })
 
       const token = `bearer ${validToken}`
+      const payload = { postBody }
       const expectedErrorMessage = 'Internal Server Error'
 
       await request
         .post(POSTS_CREATE_PATH)
         .set('Authorization', token)
-        .send({ postBody })
+        .send(payload)
         .expect(INTERNAL_SERVER_ERROR)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
