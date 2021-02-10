@@ -1,15 +1,15 @@
 import express, { Router } from 'express'
 import { login } from '@domainServices'
 
-import { LoginInputParams } from '@infrastructure/types'
-
 import { createLogger } from '@common'
+import { validateLogin } from '@infrastructure/server/middlewares'
+import { RequestDto } from '@infrastructure/server/serverDtos'
 const logger = createLogger('auth.endpoints')
 
 const loginRoutes: Router = express.Router()
 
-loginRoutes.post('/login', async (req, res, next) => {
-  const { username, password } = req.body as LoginInputParams
+loginRoutes.post('/login', validateLogin, async (req: RequestDto, res, next) => {
+  const { username, password } = req.loginData!
 
   logger.debug(`Login process started for username: '${username}'.`)
 
