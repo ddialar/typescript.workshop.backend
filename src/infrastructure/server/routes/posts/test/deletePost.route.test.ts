@@ -84,7 +84,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return OK (200) and delete the provided post', async (done) => {
       const token = `bearer ${ownerValidToken}`
-      const postId = selectedPostValidId!
+      const postId = selectedPostValidId
 
       await request
         .delete(POSTS_PATH)
@@ -95,6 +95,89 @@ describe('[API] - Posts endpoints', () => {
           const retrievedPost = await getPostByIdFixture(postId)
 
           expect(retrievedPost).toBeNull()
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId is not provided', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .delete(POSTS_PATH)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId is empty', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = ''
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .delete(POSTS_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId has more characters than allowed ones', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPostValidId.concat('abcde')
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .delete(POSTS_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId has less characters than required ones', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPostValidId.substring(1)
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .delete(POSTS_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId has non allowed characters', async (done) => {
+      const token = `bearer ${ownerValidToken}`
+      const postId = selectedPostValidId.substring(3).concat('$%#')
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .delete(POSTS_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()

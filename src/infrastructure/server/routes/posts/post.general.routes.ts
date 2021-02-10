@@ -32,9 +32,9 @@ postGeneralRoutes.post('/', ensureAuthenticated, validateNewPost, async (req: Re
   }
 })
 
-postGeneralRoutes.delete('/', ensureAuthenticated, async (req: RequestDto, res, next) => {
+postGeneralRoutes.delete('/', ensureAuthenticated, validatePost('body'), async (req: RequestDto, res, next) => {
   const { id: postOwnerId } = req.user!
-  const { postId } = req.body
+  const postId = req.postId!
 
   logger.debug(`Deleting post '${postId}' by user '${postOwnerId}'.`)
 
