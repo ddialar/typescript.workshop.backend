@@ -1,4 +1,3 @@
-import { LoginInputParams } from '@infrastructure/types'
 import { testingUsers, testingValidPlainPassword } from '@testingFixtures'
 
 import { validateLoginParams } from '@infrastructure/server/validators'
@@ -7,7 +6,7 @@ const [{ username }] = testingUsers
 
 describe('[API] - Validation - validateLoginParams', () => {
   it('must validate the provided data successfully', () => {
-    const loginData: LoginInputParams = {
+    const loginData = {
       username,
       password: testingValidPlainPassword
     }
@@ -17,7 +16,7 @@ describe('[API] - Validation - validateLoginParams', () => {
     expect(error).toBeUndefined()
 
     expect(value).not.toBeUndefined()
-    expect(value).toStrictEqual<LoginInputParams>(loginData)
+    expect(value).toStrictEqual(loginData)
   })
 
   it('must return an error when username is not provided', () => {
@@ -32,10 +31,7 @@ describe('[API] - Validation - validateLoginParams', () => {
     expect(error).toBe(expectedErrorMessage)
 
     expect(value).not.toBeUndefined()
-    expect(value).toHaveProperty<string>('username')
-    expect(value.username).toBeUndefined()
-    expect(value).toHaveProperty<string>('password')
-    expect(value.password).toBe(loginData.password)
+    expect(value).toStrictEqual({ ...loginData, username: undefined })
   })
 
   it('must return an error when the provided username has not a valid structure', () => {
@@ -51,7 +47,7 @@ describe('[API] - Validation - validateLoginParams', () => {
     expect(error).toBe(expectedErrorMessage)
 
     expect(value).not.toBeUndefined()
-    expect(value).toStrictEqual<LoginInputParams>(loginData)
+    expect(value).toStrictEqual(loginData)
   })
 
   it('must return an error when password is not provided', () => {
@@ -66,10 +62,7 @@ describe('[API] - Validation - validateLoginParams', () => {
     expect(error).toBe(expectedErrorMessage)
 
     expect(value).not.toBeUndefined()
-    expect(value).toHaveProperty<string>('username')
-    expect(value.username).toBe(loginData.username)
-    expect(value).toHaveProperty<string>('password')
-    expect(value.password).toBeUndefined()
+    expect(value).toStrictEqual({ ...loginData, password: undefined })
   })
 
   it('must return an error when the provided password has not a valid structure', () => {
@@ -85,7 +78,7 @@ describe('[API] - Validation - validateLoginParams', () => {
     expect(error).toBe(expectedErrorMessage)
 
     expect(value).not.toBeUndefined()
-    expect(value).toStrictEqual<LoginInputParams>(loginData)
+    expect(value).toStrictEqual(loginData)
   })
 
   it('must return an error when the provided password contains not valid elements', () => {
@@ -101,6 +94,6 @@ describe('[API] - Validation - validateLoginParams', () => {
     expect(error).toBe(expectedErrorMessage)
 
     expect(value).not.toBeUndefined()
-    expect(value).toStrictEqual<LoginInputParams>(loginData)
+    expect(value).toStrictEqual(loginData)
   })
 })
