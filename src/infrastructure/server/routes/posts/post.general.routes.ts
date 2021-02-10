@@ -4,6 +4,7 @@ import { ensureAuthenticated } from '../../middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
 
 import { createLogger } from '@common'
+import { validateNewPost, validatePost } from '@infrastructure/server/middlewares'
 const logger = createLogger('post.endpoints')
 
 const postGeneralRoutes = express.Router()
@@ -18,9 +19,9 @@ postGeneralRoutes.get('/', async (req, res, next) => {
   }
 })
 
-postGeneralRoutes.post('/', ensureAuthenticated, async (req: RequestDto, res, next) => {
+postGeneralRoutes.post('/', ensureAuthenticated, validateNewPost, async (req: RequestDto, res, next) => {
   const { id, name, surname, avatar } = req.user!
-  const { postBody } = req.body
+  const postBody = req.postBody!
 
   logger.debug(`Creating new post by user '${id}'.`)
 

@@ -149,6 +149,37 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
+    it('must return BAD_REQUEST (400) error when postBody is not sent', async (done) => {
+      const token = `bearer ${validToken}`
+      const expectedErrorMessage = 'New post data error.'
+
+      await request
+        .post(POSTS_CREATE_PATH)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) error when postBody is empty', async (done) => {
+      const token = `bearer ${validToken}`
+      const expectedErrorMessage = 'New post data error.'
+
+      await request
+        .post(POSTS_CREATE_PATH)
+        .set('Authorization', token)
+        .send({ postBody: '' })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
     it('must return INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
       jest.spyOn(postDataSource, 'createPost').mockImplementation(() => Promise.resolve(null))
 
