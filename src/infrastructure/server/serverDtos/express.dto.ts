@@ -9,6 +9,7 @@ export interface RequestDto extends Request {
     signinData?: NewUserInputDto
     newProfileData?: NewUserProfileDto
     postId?: Required<PostDto>['_id']
+    postBody?: PostDto['body']
     postComment?: {
         postId: Required<PostDto>['_id']
         commentId: Required<PostCommentDto>['_id']
