@@ -3,7 +3,7 @@ import supertest, { SuperTest, Test } from 'supertest'
 import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
-import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } from '@errors'
+import { OK, NOT_FOUND, INTERNAL_SERVER_ERROR, BAD_REQUEST } from '@errors'
 import { PostDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
 
@@ -47,6 +47,62 @@ describe('[API] - Posts endpoints', () => {
         .then(async ({ body: persistedPost }) => {
           expect(persistedPost).not.toBeNull()
           expect(persistedPost).toStrictEqual<PostDomainModel>(selectedPost)
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId has more characters than allowed ones', async (done) => {
+      const postId = selectedPost.id.concat('abcde')
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .get(`${POSTS_PATH}/${postId}`)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId has less characters than required ones', async (done) => {
+      const postId = selectedPost.id.substring(1)
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .get(`${POSTS_PATH}/${postId}`)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId has characters non allowed by the ID regex definition', async (done) => {
+      const postId = selectedPost.id.substring(3).concat('-_')
+      const expectedErrorMessage = 'Post identification not valid'
+
+      await request
+        .get(`${POSTS_PATH}/${postId}`)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) when postId has characters non allowed by Express', async (done) => {
+      const postId = selectedPost.id.substring(3).concat('$%')
+      const expectedErrorMessage = `Failed to decode param '${postId}'`
+
+      await request
+        .get(`${POSTS_PATH}/${postId}`)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
 
       done()

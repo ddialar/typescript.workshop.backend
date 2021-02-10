@@ -45,8 +45,8 @@ postGeneralRoutes.delete('/', ensureAuthenticated, validatePost('body'), async (
   }
 })
 
-postGeneralRoutes.get('/:id', async (req, res, next) => {
-  const postId = req.params.id
+postGeneralRoutes.get('/:id', validatePost('params'), async (req: RequestDto, res, next) => {
+  const postId = req.postId!
 
   logger.debug(`Retrieving post with id '${postId}'.`)
 
