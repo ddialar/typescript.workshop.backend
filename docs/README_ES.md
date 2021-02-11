@@ -348,13 +348,13 @@ Muchísimas gracias por el incalculable apoyo prestado por:
 
 ## <a id="todo-list"></a>📝 TODO list
 
--   Incluir [Husky](https://github.com/typicode/husky).
 -   Incluir [Helmet](https://github.com/helmetjs/helmet).
 -   Incluir la configuración para 'producción' para compilar y generar el conenedor de Docker listo para ser desplegado.
 -   Incluir peticiones de testing a la API basadas en Postman.
 -   Incluir peticiones de testing a la API basadas en Insomnia.
 -   Incluir el archivo `manifest.json`.
 -   ✅ Incluir [Joi](https://joi.dev/).
+-   ✅ Incluir [Husky v5](https://github.com/typicode/husky).
 
 ## <a id="research-list"></a>🔬 Elementos a investigar
 
