@@ -1,7 +1,6 @@
 import { connect, disconnect } from '../../../core'
-import { User } from '../../../models'
 import { NewUserDatabaseDto } from '@infrastructure/dtos'
-import { testingUsers, testingNonPersistedUsername, cleanUsersCollectionFixture } from '@testingFixtures'
+import { testingUsers, testingNonPersistedUsername, cleanUsersCollectionFixture, saveUserFixture } from '@testingFixtures'
 
 import { getByUsername } from '../../user.mongodb.requests'
 
@@ -40,7 +39,7 @@ describe('[ORM] MongoDB - getByUsername', () => {
 
   it('must retrieve the persisted user', async (done) => {
     const newUserData: NewUserDatabaseDto = { ...mockedUserData }
-    await (new User(newUserData)).save()
+    await saveUserFixture(newUserData)
 
     const username = newUserData.username
     const retrievedUser = (await getByUsername(username))!
