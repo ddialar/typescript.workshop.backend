@@ -1,5 +1,6 @@
 import { createServer } from 'http'
 import express from 'express'
+import helmet from 'helmet'
 import bodyParser from 'body-parser'
 
 import { serve as swaggerServe, setup as swaggerSetup } from 'swagger-ui-express'
@@ -14,6 +15,8 @@ const logger = createLogger('server')
 
 const app = express()
 const port = parseInt(process.env.SERVER_PORT ?? '3000', 10)
+
+app.use(helmet())
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())

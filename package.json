@@ -23,13 +23,6 @@
         "test_infra:down": "docker-compose --env-file docker/test/.docker.env -f docker/docker-compose.yml down -v",
         "test_mock:data": "npx ts-node src/test/fixtures/mockers/runMockers.ts"
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged",
-            "pre-push": "npm t",
-            "post-merge": "npm i && npm i --package-lock-only && npm run deps"
-        }
-    },
     "lint-staged": {
         "*.ts": "npm run lint:fix"
     },
@@ -85,6 +78,7 @@
         "bluebird": "^3.7.2",
         "body-parser": "^1.19.0",
         "express": "^4.17.1",
+        "helmet": "^4.4.1",
         "joi": "^17.3.0",
         "jsonwebtoken": "^8.5.1",
         "log4js": "^6.3.0",
