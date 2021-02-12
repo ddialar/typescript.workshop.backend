@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm i && npm i --package-lock-only && npm run deps
+npm install && npm install --package-lock-only && npm run deps
