@@ -4,7 +4,7 @@ import { PostCommentDto, PostDto, PostLikeDto } from '@infrastructure/dtos'
 
 export const create = async (post: PostDto): Promise<PostDto | null> => {
   const createdPost = await (new Post(post)).save()
-  return createdPost ? createdPost.toJSON() : null
+  return createdPost ? createdPost.toJSON() as PostDto : null
 }
 
 // Official documentation: https://mongoosejs.com/docs/api.html#model_Model.findOneAndUpdate
@@ -16,7 +16,7 @@ export const createComment = async (postId: string, postComment: PostCommentDto)
 }
 
 export const getAll = async (): Promise<PostDto[] | null> =>
-  Post.find({}).lean<PostDto>()
+  Post.find({}).lean<PostDto[]>()
 
 export const getById = async (postId: string): Promise<PostDto | null> =>
   Post.findById(postId).lean<PostDto>()
