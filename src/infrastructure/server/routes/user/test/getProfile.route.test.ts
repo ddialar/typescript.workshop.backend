@@ -14,6 +14,7 @@ const [{ username, password, email, avatar, name, surname, token: validToken }] 
 
 interface TestingProfileDto extends UserProfileDto {
   password: string
+  token: string
 }
 
 const PROFILE_PATH = '/profile'
@@ -39,7 +40,8 @@ describe('[API] - User endpoints', () => {
       email,
       avatar,
       name,
-      surname
+      surname,
+      token: validToken
     }
 
     beforeEach(async () => {
