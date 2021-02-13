@@ -58,7 +58,13 @@ describe('[SERVICES] Authentication - logout', () => {
     const { _id: userId } = (await getUserByUsernameFixture(username))!
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' logout data. ${errorMessage}`)
 
-    await expect(logout(userId)).rejects.toThrowError(expectedError)
+    try {
+      await logout(userId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(userDataSource, 'updateUserById').mockRestore()
 
