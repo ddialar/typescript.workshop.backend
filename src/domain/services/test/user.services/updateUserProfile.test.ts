@@ -1,11 +1,10 @@
 import { mongodb } from '@infrastructure/orm'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UpdatingUserError } from '@errors'
-import { NewUserProfileDomainModel, UserProfileDomainModel } from '@domainModels'
+import { NewUserProfileDomainModel } from '@domainModels'
 import { testingUsers, testingAvatarUrls, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { updateUserProfile } from '@domainServices'
-import { UserDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] User - updateUserProfile', () => {
   const { connect, disconnect } = mongodb
@@ -75,7 +74,13 @@ describe('[SERVICES] User - updateUserProfile', () => {
     }
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' profile. ${errorMessage}`)
 
-    await expect(updateUserProfile(userId, newProfileData)).rejects.toThrowError(expectedError)
+    try {
+      await updateUserProfile(userId, newProfileData)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(userDataSource, 'updateUserProfileById').mockRestore()
 
