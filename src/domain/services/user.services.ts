@@ -12,6 +12,14 @@ export const getUserByUsername = async (username: string): Promise<UserDomainMod
   }
 }
 
+export const getUserByToken = async (token: string): Promise<UserDomainModel | null> => {
+  try {
+    return await userDataSource.getUserByToken(token)
+  } catch ({ message }) {
+    throw new GettingUserError(`Error retrieving user with token '${token}' login data. ${message}`)
+  }
+}
+
 const saveUser = async (newUserData: NewUserDomainModel): Promise<void> => userDataSource.createUser(newUserData)
 
 const checkIfNewUserAlreadyExists = async (username: string) => {
