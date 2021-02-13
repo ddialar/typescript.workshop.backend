@@ -4,7 +4,6 @@ import { UpdatingUserError } from '@errors'
 import { testingUsers, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { updateUserLogoutData } from '@domainServices'
-import { UserDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] User - updateUserLogoutData', () => {
   const { connect, disconnect } = mongodb
@@ -47,13 +46,19 @@ describe('[SERVICES] User - updateUserLogoutData', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
     jest.spyOn(userDataSource, 'updateUserById').mockImplementation(() => {
-      throw new UpdatingUserError(errorMessage)
+      throw new Error(errorMessage)
     })
 
     const { _id: userId } = (await getUserByUsernameFixture(username))!
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' logout data. ${errorMessage}`)
 
-    await expect(updateUserLogoutData(userId)).rejects.toThrowError(expectedError)
+    try {
+      await updateUserLogoutData(userId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(userDataSource, 'updateUserById').mockRestore()
 
