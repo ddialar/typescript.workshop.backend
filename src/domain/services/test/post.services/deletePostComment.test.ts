@@ -12,7 +12,6 @@ import {
 
 import { deletePostComment } from '@domainServices'
 import { DeletingPostCommentError, GettingPostCommentError, PostCommentNotFoundError, PostNotFoundError, UnauthorizedPostCommentDeletingError } from '@errors'
-import { PostDto } from '@infrastructure/dtos'
 
 describe('[SERVICES] Post - deletePostComment', () => {
   const { connect, disconnect } = mongodb
@@ -100,7 +99,7 @@ describe('[SERVICES] Post - deletePostComment', () => {
     done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the retrieving post comment datasource throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'getPostComment').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -110,14 +109,20 @@ describe('[SERVICES] Post - deletePostComment', () => {
     const commentOwnerId = selectedComment.owner.id
     const expectedError = new GettingPostCommentError(`Error retereaving post comment. ${errorMessage}`)
 
-    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
+    try {
+      await deletePostComment(postId, commentId, commentOwnerId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
-    jest.spyOn(postDataSource, 'deletePostComment').mockRestore()
+    jest.spyOn(postDataSource, 'getPostComment').mockRestore()
 
     done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the deleting process throws an unexpected error', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the deleting process datasource throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'deletePostComment').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -127,7 +132,13 @@ describe('[SERVICES] Post - deletePostComment', () => {
     const commentOwnerId = selectedComment.owner.id
     const expectedError = new DeletingPostCommentError(`Error deleting comment '${commentId}', from post '${postId}', by user '${commentOwnerId}'. ${errorMessage}`)
 
-    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
+    try {
+      await deletePostComment(postId, commentId, commentOwnerId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'deletePostComment').mockRestore()
 
