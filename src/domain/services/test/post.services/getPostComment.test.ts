@@ -79,7 +79,13 @@ describe('[SERVICES] Post - getPostComment', () => {
     const commentId = selectedComment.id
     const expectedError = new GettingPostCommentError(`Error retereaving post comment. ${errorMessage}`)
 
-    await expect(getPostComment(postId, commentId)).rejects.toThrowError(expectedError)
+    try {
+      await getPostComment(postId, commentId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'getPostComment').mockRestore()
 
