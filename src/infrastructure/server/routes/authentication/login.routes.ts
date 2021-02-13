@@ -4,15 +4,14 @@ import { login } from '@domainServices'
 
 import { validateLogin } from '@infrastructure/server/middlewares'
 
-import { createLogger } from '@common'
-const logger = createLogger('auth.endpoints')
+import { authEndpointsLogger } from '@logger'
 
 const loginRoutes: Router = Router()
 
 loginRoutes.post('/login', validateLogin, async (req: RequestDto, res, next) => {
   const { username, password } = req.loginData!
 
-  logger.debug(`Login process started for username: '${username}'.`)
+  authEndpointsLogger('debug', `Login process started for username: '${username}'.`)
 
   try {
     res.json(await login(username, password))

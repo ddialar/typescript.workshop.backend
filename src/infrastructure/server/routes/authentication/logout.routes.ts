@@ -5,15 +5,14 @@ import { OK } from '@errors'
 import { RequestDto } from '../../serverDtos'
 import { ensureAuthenticated } from '../../middlewares'
 
-import { createLogger } from '@common'
-const logger = createLogger('auth.endpoints')
+import { authEndpointsLogger } from '@logger'
 
 const logoutRoutes: Router = Router()
 
 logoutRoutes.post('/logout', ensureAuthenticated, async (req: RequestDto, res, next) => {
   const { id: userId, username } = req.user!
 
-  logger.debug(`Logout process started for username: '${username}'.`)
+  authEndpointsLogger('debug', `Logout process started for username: '${username}'.`)
 
   try {
     await logout(userId)
