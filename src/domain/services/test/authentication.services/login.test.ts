@@ -98,14 +98,20 @@ describe('[SERVICES] Authentication - login', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the retrieving user process fails', async (done) => {
     jest.spyOn(userDataSource, 'getUserByUsername').mockImplementation(() => {
-      throw new GettingUserError(errorMessage)
+      throw new Error(errorMessage)
     })
 
     const { username } = mockedUserData
     const password = plainPassword
     const expectedError = new GettingUserError(`Error retrieving user with username '${username}' login data. ${errorMessage}`)
 
-    await expect(login(username, password)).rejects.toThrowError(expectedError)
+    try {
+      await login(username, password)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(userDataSource, 'getUserByUsername').mockRestore()
 
@@ -113,15 +119,21 @@ describe('[SERVICES] Authentication - login', () => {
   })
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the checking password process fails', async (done) => {
-    jest.spyOn(hashServices, 'checkPassword').mockImplementation(() => {
-      throw new CheckingPasswordError(errorMessage)
-    })
-
     const { username } = mockedUserData
     const password = plainPassword
-    const expectedError = new CheckingPasswordError(`Error checking password. ${errorMessage}`)
+    const expectedError = new CheckingPasswordError('Error checking password.')
 
-    await expect(login(username, password)).rejects.toThrowError(expectedError)
+    jest.spyOn(hashServices, 'checkPassword').mockImplementation(() => {
+      throw expectedError
+    })
+
+    try {
+      await login(username, password)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(hashServices, 'checkPassword').mockRestore()
 
@@ -137,7 +149,13 @@ describe('[SERVICES] Authentication - login', () => {
     const password = plainPassword
     const expectedError = new GettingTokenError(`Error getting token for username '${username}'. ${errorMessage}`)
 
-    await expect(login(username, password)).rejects.toThrowError(expectedError)
+    try {
+      await login(username, password)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(token, 'generateToken').mockRestore()
 
@@ -154,7 +172,13 @@ describe('[SERVICES] Authentication - login', () => {
     const { _id: userId } = (await getUserByUsernameFixture(username))!
     const expectedError = new UpdatingUserError(`Error updating user '${userId}' login data. ${errorMessage}`)
 
-    await expect(login(username, password)).rejects.toThrowError(expectedError)
+    try {
+      await login(username, password)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(userDataSource, 'updateUserById').mockRestore()
 
