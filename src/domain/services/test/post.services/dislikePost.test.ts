@@ -86,7 +86,13 @@ describe('[SERVICES] Post - dislikePost', () => {
     const likeOwnerId = selectedLikeOwnerId
     const expectedError = new GettingPostError(`Error retereaving post '${postId}'. ${errorMessage}`)
 
-    await expect(dislikePost(postId, likeOwnerId)).rejects.toThrowError(expectedError)
+    try {
+      await dislikePost(postId, likeOwnerId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
 
@@ -102,7 +108,13 @@ describe('[SERVICES] Post - dislikePost', () => {
     const likeOwnerId = selectedLikeOwnerId
     const expectedError = new GettingPostLikeError(`Error retereaving post comment. ${errorMessage}`)
 
-    await expect(dislikePost(postId, likeOwnerId)).rejects.toThrowError(expectedError)
+    try {
+      await dislikePost(postId, likeOwnerId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'getPostLikeByOwnerId').mockRestore()
 
@@ -118,7 +130,13 @@ describe('[SERVICES] Post - dislikePost', () => {
     const likeOwnerId = selectedLikeOwnerId
     const expectedError = new DeletingPostLikeError(`Error deleting like '${selectedLike.id}', from post '${postId}', by user '${likeOwnerId}'. ${errorMessage}`)
 
-    await expect(dislikePost(postId, likeOwnerId)).rejects.toThrowError(expectedError)
+    try {
+      await dislikePost(postId, likeOwnerId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'dislikePost').mockRestore()
 
