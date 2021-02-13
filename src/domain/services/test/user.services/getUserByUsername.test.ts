@@ -72,13 +72,19 @@ describe('[SERVICES] User - getUserByUsername', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
     jest.spyOn(userDataSource, 'getUserByUsername').mockImplementation(() => {
-      throw new GettingUserError(errorMessage)
+      throw new Error(errorMessage)
     })
 
     const { username } = mockedUserData
     const expectedError = new GettingUserError(`Error retrieving user with username '${username}' login data. ${errorMessage}`)
 
-    await expect(getUserByUsername(username)).rejects.toThrowError(expectedError)
+    try {
+      await getUserByUsername(username)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(userDataSource, 'getUserByUsername').mockRestore()
 
