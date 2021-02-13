@@ -1,4 +1,4 @@
-import express, { Router } from 'express'
+import { Router } from 'express'
 import { logout } from '@domainServices'
 import { OK } from '@errors'
 
@@ -8,7 +8,7 @@ import { ensureAuthenticated } from '../../middlewares'
 import { createLogger } from '@common'
 const logger = createLogger('auth.endpoints')
 
-const logoutRoutes: Router = express.Router()
+const logoutRoutes: Router = Router()
 
 logoutRoutes.post('/logout', ensureAuthenticated, async (req: RequestDto, res, next) => {
   const { id: userId, username } = req.user!

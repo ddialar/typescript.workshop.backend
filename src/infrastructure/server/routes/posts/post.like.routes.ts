@@ -1,4 +1,4 @@
-import express from 'express'
+import { Router } from 'express'
 import { likePost, dislikePost } from '@domainServices'
 import { ensureAuthenticated, validatePostLike } from '@infrastructure/server/middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
@@ -6,7 +6,7 @@ import { RequestDto } from '@infrastructure/server/serverDtos'
 import { createLogger } from '@common'
 const logger = createLogger('post.endpoints')
 
-const postLikeRoutes = express.Router()
+const postLikeRoutes = Router()
 
 postLikeRoutes.post('/like', ensureAuthenticated, validatePostLike, async (req: RequestDto, res, next) => {
   const { id, name, surname, avatar } = req.user!

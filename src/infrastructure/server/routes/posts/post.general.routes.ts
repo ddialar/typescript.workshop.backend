@@ -1,4 +1,4 @@
-import express from 'express'
+import { Router } from 'express'
 import { getPosts, getPostById, createPost, deletePost } from '@domainServices'
 import { ensureAuthenticated } from '../../middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
@@ -7,7 +7,7 @@ import { createLogger } from '@common'
 import { validateNewPost, validatePost } from '@infrastructure/server/middlewares'
 const logger = createLogger('post.endpoints')
 
-const postGeneralRoutes = express.Router()
+const postGeneralRoutes = Router()
 
 postGeneralRoutes.get('/', async (req, res, next) => {
   logger.debug('Retrieving all posts')

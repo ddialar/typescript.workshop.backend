@@ -1,4 +1,4 @@
-import express, { Router } from 'express'
+import { Router } from 'express'
 
 import { getUserProfile, updateUserProfile } from '@domainServices'
 
@@ -8,7 +8,7 @@ import { RequestDto } from '../../serverDtos'
 import { createLogger } from '@common'
 const logger = createLogger('user.endpoints')
 
-const profileRoutes: Router = express.Router()
+const profileRoutes: Router = Router()
 
 profileRoutes.get('/profile', ensureAuthenticated, async (req: RequestDto, res, next) => {
   const { id } = req.user!

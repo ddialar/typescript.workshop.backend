@@ -1,4 +1,4 @@
-import express, { Router } from 'express'
+import { Router } from 'express'
 import { RequestDto } from '@infrastructure/server/serverDtos'
 
 import { createUser } from '@domainServices'
@@ -7,7 +7,7 @@ import { CREATED } from '@errors'
 import { mapNewUserFromDtoToDomainModel } from '@infrastructure/mappers'
 import { validateSignin } from '@infrastructure/server/middlewares'
 
-const signinRoutes: Router = express.Router()
+const signinRoutes: Router = Router()
 
 signinRoutes.post('/signin', validateSignin, async (req: RequestDto, res, next) => {
   const newUserData = req.signinData!

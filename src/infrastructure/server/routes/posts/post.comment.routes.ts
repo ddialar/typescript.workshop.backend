@@ -1,4 +1,4 @@
-import express from 'express'
+import { Router } from 'express'
 import { createPostComment, deletePostComment } from '@domainServices'
 import { ensureAuthenticated, validateNewPostComment, validatePostComment } from '../../middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
@@ -6,7 +6,7 @@ import { RequestDto } from '@infrastructure/server/serverDtos'
 import { createLogger } from '@common'
 const logger = createLogger('post.endpoints')
 
-const postCommentRoutes = express.Router()
+const postCommentRoutes = Router()
 
 postCommentRoutes.post('/comment', ensureAuthenticated, validateNewPostComment, async (req: RequestDto, res, next) => {
   const { id, name, surname, avatar } = req.user!

@@ -1,5 +1,5 @@
 import { RequestDto } from '@infrastructure/server/serverDtos'
-import express, { Router } from 'express'
+import { Router } from 'express'
 import { login } from '@domainServices'
 
 import { validateLogin } from '@infrastructure/server/middlewares'
@@ -7,7 +7,7 @@ import { validateLogin } from '@infrastructure/server/middlewares'
 import { createLogger } from '@common'
 const logger = createLogger('auth.endpoints')
 
-const loginRoutes: Router = express.Router()
+const loginRoutes: Router = Router()
 
 loginRoutes.post('/login', validateLogin, async (req: RequestDto, res, next) => {
   const { username, password } = req.loginData!
