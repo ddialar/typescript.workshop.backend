@@ -72,7 +72,13 @@ describe('[SERVICES] Post - getPostLikeByOwnerId', () => {
     const commentId = selectedLike.id
     const expectedError = new GettingPostLikeError(`Error retereaving post comment. ${errorMessage}`)
 
-    await expect(getPostLikeByOwnerId(postId, commentId)).rejects.toThrowError(expectedError)
+    try {
+      await getPostLikeByOwnerId(postId, commentId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'getPostLikeByOwnerId').mockRestore()
 
