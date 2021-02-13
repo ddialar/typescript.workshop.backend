@@ -87,7 +87,13 @@ describe('[SERVICES] Post - createPostComment', () => {
     const newPostComment = lorem.paragraph()
     const expectedError = new CreatingPostCommentError(`Error creating post '${postId}' commment by user '${newPostCommentOwner.id}'. ${errorMessage}`)
 
-    expect(createPostComment(postId, newPostComment, newPostCommentOwner)).rejects.toThrowError(expectedError)
+    try {
+      await createPostComment(postId, newPostComment, newPostCommentOwner)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'createPostComment').mockRestore()
 
