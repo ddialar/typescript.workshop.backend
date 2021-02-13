@@ -42,7 +42,8 @@ describe('[API] - Posts endpoints', () => {
       _id: selectedLikeOwnerId,
       username: likeOwnerUsername,
       password: likeOwnerPassword,
-      email: likeOwnerEmail
+      email: likeOwnerEmail,
+      token: likeOwnerValidToken
     }
 
     const [{ userId: freeUserId }] = testingDtoFreeUsers
@@ -56,7 +57,8 @@ describe('[API] - Posts endpoints', () => {
       _id: freeUserId,
       username: freeUserUsername,
       password: freeUserPassword,
-      email: freeUserEmail
+      email: freeUserEmail,
+      token: noLikeOwnerToken
     }
 
     let request: SuperTest<Test>
