@@ -10,7 +10,7 @@ import {
 } from '@testingFixtures'
 
 import { likePost } from '@domainServices'
-import { GettingPostCommentError, LikingPostError, PostNotFoundError } from '@errors'
+import { GettingPostError, LikingPostError, PostNotFoundError } from '@errors'
 import { postDataSource } from '@infrastructure/dataSources'
 import { mapPostFromDtoToDomainModel } from '@infrastructure/mappers'
 
@@ -68,16 +68,22 @@ describe('[SERVICES] Post - likePost', () => {
     done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the retrieving post pocess throws an error', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the retrieving post process throws an error', async (done) => {
     jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
 
     const postId = originalPost.id
     const [likeOwner] = testingDomainModelFreeUsers
-    const expectedError = new GettingPostCommentError(`Error retereaving post comment. ${errorMessage}`)
+    const expectedError = new GettingPostError(`Error retereaving post '${postId}'. ${errorMessage}`)
 
-    await expect(likePost(postId, likeOwner)).rejects.toThrowError(expectedError)
+    try {
+      await likePost(postId, likeOwner)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
 
@@ -93,7 +99,13 @@ describe('[SERVICES] Post - likePost', () => {
     const [likeOwner] = testingDomainModelFreeUsers
     const expectedError = new LikingPostError(`Error setting like to post '${postId}' by user '${likeOwner.id}'. ${errorMessage}`)
 
-    await expect(likePost(postId, likeOwner)).rejects.toThrowError(expectedError)
+    try {
+      await likePost(postId, likeOwner)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'likePost').mockRestore()
 
