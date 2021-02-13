@@ -39,7 +39,8 @@ describe('[API] - Posts endpoints', () => {
       _id: ownerId,
       username: ownerUsername,
       password: ownerPassword,
-      email: ownerEmail
+      email: ownerEmail,
+      token: ownerValidToken
     }
 
     const {
@@ -53,7 +54,8 @@ describe('[API] - Posts endpoints', () => {
       _id: unauthorizedId,
       username: unauthorizedUsername,
       password: unauthorizedPassword,
-      email: unauthorizedEmail
+      email: unauthorizedEmail,
+      token: unauthorizedValidToken
     }
 
     let request: SuperTest<Test>
