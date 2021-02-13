@@ -1,6 +1,10 @@
-import { configure, getLogger } from 'log4js'
-import { config } from './config'
+import { logger } from './config'
 
-configure(config)
+type LogTypes = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal' | 'mark'
 
-export const createLogger = (section: string | undefined) => getLogger(section)
+export const appLogger = (logType: LogTypes, message: string) => logger[logType](`[app] - ${message}`)
+export const serverLogger = (logType: LogTypes, message: string) => logger[logType](`[server] - ${message}`)
+export const mongooseLogger = (logType: LogTypes, message: string) => logger[logType](`[mongoose] - ${message}`)
+export const authEndpointsLogger = (logType: LogTypes, message: string) => logger[logType](`[auth.endpoints] - ${message}`)
+export const postEndpointsLogger = (logType: LogTypes, message: string) => logger[logType](`[post.endpoints] - ${message}`)
+export const userEndpointsLogger = (logType: LogTypes, message: string) => logger[logType](`[user.endpoints] - ${message}`)

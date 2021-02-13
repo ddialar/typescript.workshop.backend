@@ -1,10 +1,12 @@
-export const config = {
+import { configure } from 'log4js'
+
+const config = {
   appenders: {
     console: {
       type: 'console',
       layout: {
         type: 'pattern',
-        pattern: '[%r] (%20.20c) - [%[%5.5p%]] - %m%'
+        pattern: '[%[%5.5p%]] - %m%'
       }
     }
   },
@@ -15,3 +17,5 @@ export const config = {
     }
   }
 }
+
+export const logger = configure(config).getLogger()

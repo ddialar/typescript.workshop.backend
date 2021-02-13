@@ -17,6 +17,9 @@
       "@infrastructure/*": [
         "src/infrastructure/*"
       ],
+      "@logger": [
+        "src/common/logger"
+      ],
       "@testingFixtures": [
         "src/test/fixtures"
       ]
