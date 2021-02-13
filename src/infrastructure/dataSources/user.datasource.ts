@@ -9,6 +9,9 @@ export const createUser = async (newUserData: NewUserDomainModel): Promise<void>
 export const getUserByUsername = async (username: string): Promise<UserDomainModel | null> =>
   mapUserFromDtoToDomainModel(await mongodb.requests.user.getByUsername(username))
 
+export const getUserByToken = async (token: string): Promise<UserDomainModel | null> =>
+  mapUserFromDtoToDomainModel(await mongodb.requests.user.getByToken(token))
+
 export const getUserProfileById = async (userId: string): Promise<UserProfileDomainModel | null> =>
   mongodb.requests.user.getProfileById(userId)
 
