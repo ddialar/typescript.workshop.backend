@@ -63,27 +63,39 @@ describe('[SERVICES] User - createUser', () => {
     done()
   })
 
+  it('must throw a BAD_REQUEST (400) error when we try to persist the same username', async (done) => {
+    const newUserData = { ...mockedUserData }
+    const expectedError = new NewUserAlreadyExistsError(`User with username '${newUserData.username}' already exists.`)
+
+    try {
+      await createUser(newUserData)
+      await createUser(newUserData)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
+
+    done()
+  })
+
   it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
     jest.spyOn(userDataSource, 'createUser').mockImplementation(() => {
-      throw new CreatingUserError(errorMessage)
+      throw new Error(errorMessage)
     })
 
     const newUserData: NewUserDomainModel = { ...mockedUserData }
     const expectedError = new CreatingUserError(`Error updating user with username '${newUserData.username}' login data. ${errorMessage}`)
 
-    await expect(createUser(newUserData)).rejects.toThrowError(expectedError)
+    try {
+      await createUser(newUserData)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(userDataSource, 'createUser').mockRestore()
-
-    done()
-  })
-
-  it('must throw a BAD_REQUEST (400) error when we try to persist the same username', async (done) => {
-    const newUserData = { ...mockedUserData }
-    const expectedError = new NewUserAlreadyExistsError(`User with username '${newUserData.username}' already exists.`)
-
-    await createUser(newUserData)
-    await expect(createUser(newUserData)).rejects.toThrowError(expectedError)
 
     done()
   })
