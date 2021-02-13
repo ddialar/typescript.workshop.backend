@@ -47,7 +47,13 @@ describe('[SERVICES] Post - getPosts', () => {
 
     const expectedError = new GettingPostError(`Error retereaving posts. ${errorMessage}`)
 
-    await expect(getPosts()).rejects.toThrowError(expectedError)
+    try {
+      await getPosts()
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'getPosts').mockRestore()
 
