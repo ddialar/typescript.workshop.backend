@@ -66,7 +66,13 @@ describe('[SERVICES] Post - createPost', () => {
 
     const expectedError = new CreatingPostError(`Error creating post for user '${owner.id}'. ${errorMessage}`)
 
-    await expect(createPost(owner, postBody)).rejects.toThrowError(expectedError)
+    try {
+      await createPost(owner, postBody)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'createPost').mockRestore()
 
