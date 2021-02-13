@@ -1,7 +1,3 @@
 import { InternalServerError } from '@errors'
 
-export class CheckingTokenError extends InternalServerError {
-  constructor (description?: string) {
-    super()
-  }
-}
+export class CheckingTokenError extends InternalServerError {}
