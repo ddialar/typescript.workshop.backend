@@ -1,9 +1,7 @@
-import { createLogger } from '@common'
+import { appLogger } from '@logger'
 
 import { runServer, stopServer } from '@infrastructure/server'
 import { runOrm, stopOrm } from '@infrastructure/orm'
-
-const logger = createLogger('app')
 
 const startApplication = async () => {
   await runOrm()
@@ -13,7 +11,7 @@ const startApplication = async () => {
 const closeApplication = async () => {
   await stopOrm()
   stopServer()
-  logger.info('Service successfully closed.')
+  appLogger('info', 'Service successfully closed.')
 }
 
 process.on('SIGINT', async () => closeApplication())
