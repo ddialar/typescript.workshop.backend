@@ -5,7 +5,7 @@ import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } from '@errors'
 import { userDataSource } from '@infrastructure/dataSources'
-import { NewUserDatabaseDto, UserProfileDto } from '@infrastructure/dtos'
+import { UserProfileDto } from '@infrastructure/dtos'
 
 import { testingUsers, testingValidJwtTokenForNonPersistedUser, testingExpiredJwtToken, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
@@ -28,13 +28,14 @@ describe('[API] - User endpoints', () => {
   })
 
   describe(`[PUT] ${PROFILE_PATH}`, () => {
-    const mockedUserData: NewUserDatabaseDto = {
+    const mockedUserData = {
       username,
       password,
       email,
       name,
       surname,
-      avatar
+      avatar,
+      token: validToken
     }
 
     const profileData = {
