@@ -1,22 +1,20 @@
-import { createLogger } from '@common'
+import { mongooseLogger } from '@logger'
 
 import mongoose, { ConnectionOptions } from 'mongoose'
 import Bluebird from 'bluebird'
 
-const logger = createLogger('mongoose')
-
 mongoose.Promise = Bluebird
 
 mongoose.connection.on('connected', () => {
-  logger.info(`DDBB '${mongoose.connection.db.databaseName}' connection success.`)
+  mongooseLogger('info', `DDBB '${mongoose.connection.db.databaseName}' connection success.`)
 })
 
 mongoose.connection.on('disconnected', () => {
-  logger.info('DDBB connection successfully closed.')
+  mongooseLogger('info', 'DDBB connection successfully closed.')
 })
 
 mongoose.connection.on('error', ({ message }) => {
-  logger.error(`Initialization error. ${message}`)
+  mongooseLogger('error', `Initialization error. ${message}`)
 })
 
 const MONGO_USER = process.env.MONGO_USER
