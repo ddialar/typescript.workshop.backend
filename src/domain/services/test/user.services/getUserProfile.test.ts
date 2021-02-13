@@ -1,7 +1,7 @@
 import { mongodb } from '@infrastructure/orm'
 import { userDataSource } from '@infrastructure/dataSources'
 import { UserProfileDomainModel } from '@domainModels'
-import { GettingUserError, GettingUserProfileError } from '@errors'
+import { GettingUserProfileError } from '@errors'
 import { testingNonValidUserId, testingUsers, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
 import { getUserProfile } from '@domainServices'
@@ -61,13 +61,19 @@ describe('[SERVICES] User - getUserProfile', () => {
 
   it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
     jest.spyOn(userDataSource, 'getUserProfileById').mockImplementation(() => {
-      throw new GettingUserError(errorMessage)
+      throw new Error(errorMessage)
     })
 
     const { _id: userId } = (await getUserByUsernameFixture(username))!
     const expectedError = new GettingUserProfileError(`Error retrieving profile for user ${userId}. ${errorMessage}`)
 
-    await expect(getUserProfile(userId)).rejects.toThrowError(expectedError)
+    try {
+      await getUserProfile(userId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(userDataSource, 'getUserProfileById').mockRestore()
 
