@@ -5,15 +5,14 @@ import { getUserProfile, updateUserProfile } from '@domainServices'
 import { ensureAuthenticated, validateProfileData } from '../../middlewares'
 import { RequestDto } from '../../serverDtos'
 
-import { createLogger } from '@common'
-const logger = createLogger('user.endpoints')
+import { userEndpointsLogger } from '@logger'
 
 const profileRoutes: Router = Router()
 
 profileRoutes.get('/profile', ensureAuthenticated, async (req: RequestDto, res, next) => {
   const { id } = req.user!
 
-  logger.debug(`Retrieving profile for user '${id}'.`)
+  userEndpointsLogger('debug', `Retrieving profile for user '${id}'.`)
 
   try {
     res.json(await getUserProfile(id))
@@ -26,7 +25,7 @@ profileRoutes.put('/profile', ensureAuthenticated, validateProfileData, async (r
   const { id } = req.user!
   const newProfileData = req.newProfileData!
 
-  logger.debug(`Updating profile for user '${id}'.`)
+  userEndpointsLogger('debug', `Updating profile for user '${id}'.`)
 
   try {
     res.json(await updateUserProfile(id, newProfileData))
