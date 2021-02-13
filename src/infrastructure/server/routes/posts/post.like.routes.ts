@@ -3,8 +3,7 @@ import { likePost, dislikePost } from '@domainServices'
 import { ensureAuthenticated, validatePostLike } from '@infrastructure/server/middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
 
-import { createLogger } from '@common'
-const logger = createLogger('post.endpoints')
+import { postEndpointsLogger } from '@logger'
 
 const postLikeRoutes = Router()
 
@@ -12,7 +11,7 @@ postLikeRoutes.post('/like', ensureAuthenticated, validatePostLike, async (req: 
   const { id, name, surname, avatar } = req.user!
   const postId = req.postId!
 
-  logger.debug(`Liking post '${postId}' by user '${id}'.`)
+  postEndpointsLogger('debug', `Liking post '${postId}' by user '${id}'.`)
 
   try {
     res.json(await likePost(postId as string, { id, name, surname, avatar }))
@@ -25,7 +24,7 @@ postLikeRoutes.delete('/like', ensureAuthenticated, validatePostLike, async (req
   const { id: likeOwnerId } = req.user!
   const postId = req.postId!
 
-  logger.debug(`Disliking post '${postId}' by user '${likeOwnerId}'.`)
+  postEndpointsLogger('debug', `Disliking post '${postId}' by user '${likeOwnerId}'.`)
 
   try {
     await dislikePost(postId as string, likeOwnerId)

@@ -3,14 +3,13 @@ import { getPosts, getPostById, createPost, deletePost } from '@domainServices'
 import { ensureAuthenticated } from '../../middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
 
-import { createLogger } from '@common'
+import { postEndpointsLogger } from '@logger'
 import { validateNewPost, validatePost } from '@infrastructure/server/middlewares'
-const logger = createLogger('post.endpoints')
 
 const postGeneralRoutes = Router()
 
 postGeneralRoutes.get('/', async (req, res, next) => {
-  logger.debug('Retrieving all posts')
+  postEndpointsLogger('debug', 'Retrieving all posts')
 
   try {
     res.json(await getPosts())
@@ -23,7 +22,7 @@ postGeneralRoutes.post('/', ensureAuthenticated, validateNewPost, async (req: Re
   const { id, name, surname, avatar } = req.user!
   const postBody = req.postBody!
 
-  logger.debug(`Creating new post by user '${id}'.`)
+  postEndpointsLogger('debug', `Creating new post by user '${id}'.`)
 
   try {
     res.json(await createPost({ id, name, surname, avatar }, postBody as string))
@@ -36,7 +35,7 @@ postGeneralRoutes.delete('/', ensureAuthenticated, validatePost('body'), async (
   const { id: postOwnerId } = req.user!
   const postId = req.postId!
 
-  logger.debug(`Deleting post '${postId}' by user '${postOwnerId}'.`)
+  postEndpointsLogger('debug', `Deleting post '${postId}' by user '${postOwnerId}'.`)
 
   try {
     res.json(await deletePost(postId as string, postOwnerId))
@@ -48,7 +47,7 @@ postGeneralRoutes.delete('/', ensureAuthenticated, validatePost('body'), async (
 postGeneralRoutes.get('/:id', validatePost('params'), async (req: RequestDto, res, next) => {
   const postId = req.postId!
 
-  logger.debug(`Retrieving post with id '${postId}'.`)
+  postEndpointsLogger('debug', `Retrieving post with id '${postId}'.`)
 
   try {
     res.json(await getPostById(postId))
