@@ -14,6 +14,7 @@ import { testingUsers, testingValidJwtTokenForNonPersistedUser, testingExpiredJw
 const [{ username, password, email, avatar, name, surname, token: validToken }] = testingUsers
 interface TestingProfileDto extends UserProfileDto {
   password: string
+  token: string
 }
 
 const POSTS_CREATE_PATH = '/posts'
@@ -29,7 +30,8 @@ describe('[API] - Posts endpoints', () => {
       email,
       avatar,
       name,
-      surname
+      surname,
+      token: validToken
     }
 
     let request: SuperTest<Test>
