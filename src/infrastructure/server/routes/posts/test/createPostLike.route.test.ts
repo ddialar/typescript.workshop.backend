@@ -30,6 +30,7 @@ describe('[API] - Posts endpoints', () => {
     interface TestingProfileDto extends UserProfileDto {
       _id: string
       password: string
+      token: string
     }
 
     const { connect, disconnect } = mongodb
@@ -46,7 +47,8 @@ describe('[API] - Posts endpoints', () => {
       email,
       name,
       surname,
-      avatar
+      avatar,
+      token: validToken
     }
 
     let request: SuperTest<Test>
