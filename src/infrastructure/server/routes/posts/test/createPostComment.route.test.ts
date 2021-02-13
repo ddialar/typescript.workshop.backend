@@ -29,6 +29,7 @@ describe('[API] - Posts endpoints', () => {
     interface TestingProfileDto extends UserProfileDto {
       _id: string
       password: string
+      token: string
     }
 
     const { connect, disconnect } = mongodb
@@ -45,7 +46,8 @@ describe('[API] - Posts endpoints', () => {
       email,
       avatar,
       name,
-      surname
+      surname,
+      token: validToken
     }
     let persistedUser: UserDto
 
