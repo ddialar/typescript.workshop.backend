@@ -78,9 +78,15 @@ describe('[SERVICES] Post - deletePost', () => {
     const postOwnerId = selectedPostOwnerId
     const expectedError = new GettingPostError(`Error retereaving post '${postId}'. ${errorMessage}`)
 
-    await expect(deletePost(postId, postOwnerId)).rejects.toThrowError(expectedError)
+    try {
+      await deletePost(postId, postOwnerId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
-    jest.spyOn(postDataSource, 'deletePost').mockRestore()
+    jest.spyOn(postDataSource, 'getPostById').mockRestore()
 
     done()
   })
@@ -92,9 +98,15 @@ describe('[SERVICES] Post - deletePost', () => {
 
     const postId = selectedPost.id
     const postOwnerId = selectedPostOwnerId
-    const expectedError = new DeletingPostError(`Error deleting '${postId}' by user '${postOwnerId}'. ${errorMessage}`)
+    const expectedError = new DeletingPostError(`Error deleting post '${postId}' by user '${postOwnerId}'. ${errorMessage}`)
 
-    await expect(deletePost(postId, postOwnerId)).rejects.toThrowError(expectedError)
+    try {
+      await deletePost(postId, postOwnerId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     jest.spyOn(postDataSource, 'deletePost').mockRestore()
 

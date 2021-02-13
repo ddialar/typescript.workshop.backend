@@ -62,7 +62,7 @@ export const deletePost = async (postId: string, postOwnerId: string): Promise<v
   } catch ({ message }) {
     throw message.match(/deletePost_owner_mismatch/)
       ? new UnauthorizedPostDeletingError(`User '${postOwnerId}' is not the owner of the post '${postId}', which is trying to delete.`)
-      : new DeletingPostError(`Error deleting '${postId}' by user '${postOwnerId}'. ${message}`)
+      : new DeletingPostError(`Error deleting post '${postId}' by user '${postOwnerId}'. ${message}`)
   }
 }
 
