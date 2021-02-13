@@ -9,6 +9,9 @@ export const create = async (newUserData: NewUserDatabaseDto): Promise<void> => 
 export const getByUsername = async (username: string): Promise<UserDto | null> =>
   User.findOne({ username }).lean<UserDto>()
 
+export const getByToken = async (token: string): Promise<UserDto | null> =>
+  User.findOne({ token }).lean<UserDto>()
+
 export const getProfileById = async (id: string): Promise<UserProfileDto | null> =>
   User.findById(id).select('-_id username email name surname avatar').lean<UserProfileDto>()
 
