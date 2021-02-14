@@ -41,15 +41,17 @@ La mayor parte del código está creada siguiendo el paradigma de la **programac
 
 Algunas de las herramientas usadas en este repositorio son las siguientes:
 
--   `Webpack` para transpilar y empaquetar el código TypeScript.
--   `JWT` como servicio de tokens.
--   `dotenv` para las variables de entorno.
--   `Swagger` para la documentación de la API REST.
--   `Log4JS` para las tareas de logging.
--   `Jest` para el testing unitario, así como `supertest` para los tests de integración de la API.
--   `ESLint` para la revisión y formateado del código.
--   `Docker` para la gestión de imágenes de contenedores.
--   `MongoDB` como motor de base de datos.
+-   📦 `Webpack` para transpilar y empaquetar el código TypeScript.
+-   🔒 `JWT` como servicio de tokens.
+-   ⚙️ `dotenv` para las variables de entorno.
+-   📝 `Swagger` para la documentación de la API REST.
+-   💾 `Log4JS` para las tareas de logging.
+-   ✅ `Joi` para la validación de los datos de entrada.
+-   🧪 `Jest` para el testing unitario, así como `supertest` para los tests de integración de la API.
+-   🔍 `ESLint` para la revisión y formateado del código.
+-   🐶 `Husky` para la gestión de los Git Hooks.
+-   🐳 `Docker` para la gestión de imágenes de contenedores.
+-   🌱 `MongoDB` como motor de base de datos.
 
 Además este repositorio está diseñado para trabajar con `NodeJS 14.15.0 LTS`.
 

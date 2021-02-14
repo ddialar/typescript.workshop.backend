@@ -41,15 +41,17 @@ Most part of this code is created following the **functional programming** parad
 
 Some tools used on this repository are next:
 
--   `Webpack` for transpiling and bundling the TypeScript code.
--   `JWT` as token service.
--   `dotenv` for environment variables.
--   `Swagger` for API REST documentation.
--   `Log4JS` for logging tasks.
--   `Jest` for unit testing, as well as `supertest` for API enpoints integration tests.
--   `ESLint` for code linting and formating.
--   `Docker` for container image management.
--   `MongoDB` as database engine.
+-   📦 `Webpack` for transpiling and bundling the TypeScript code.
+-   🔒 `JWT` as token service.
+-   ⚙️ `dotenv` for environment variables.
+-   📝 `Swagger` for API REST documentation.
+-   💾 `Log4JS` for logging tasks.
+-   ✅ `Joi` for validating input data.
+-   🧪 `Jest` for unit testing, as well as `supertest` for API enpoints integration tests.
+-   🔍 `ESLint` for code linting and formating.
+-   🐶 `Husky` for managing the Git Hooks.
+-   🐳 `Docker` for container image management.
+-   🌱 `MongoDB` as database engine.
 
 Therefore this repository is defined to work with `NodeJS 14.15.0 LTS`.
 
