@@ -25,7 +25,7 @@ postGeneralRoutes.post('/', ensureAuthenticated, validateNewPost, async (req: Re
   postEndpointsLogger('debug', `Creating new post by user '${id}'.`)
 
   try {
-    res.json(await createPost({ id, name, surname, avatar }, postBody as string))
+    res.json(await createPost({ id, name, surname, avatar }, postBody))
   } catch (error) {
     next(error)
   }
@@ -38,7 +38,7 @@ postGeneralRoutes.delete('/', ensureAuthenticated, validatePost('body'), async (
   postEndpointsLogger('debug', `Deleting post '${postId}' by user '${postOwnerId}'.`)
 
   try {
-    res.json(await deletePost(postId as string, postOwnerId))
+    res.json(await deletePost(postId, postOwnerId))
   } catch (error) {
     next(error)
   }
