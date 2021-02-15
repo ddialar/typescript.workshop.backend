@@ -21,7 +21,7 @@ import { PostCommentDomainModel, PostDomainModel, PostLikeDomainModel, PostOwner
 // #####               POSTS                   #####
 // #################################################
 
-export const getPosts = async (): Promise<PostDomainModel[] | null> => {
+export const getPosts = async (): Promise<PostDomainModel[]> => {
   try {
     return await postDataSource.getPosts()
   } catch ({ message }) {

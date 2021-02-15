@@ -21,9 +21,9 @@ export const createPost = async (owner: PostOwnerDomainModel, body: string): Pro
 export const createPostComment = async (postId: string, body: string, owner: PostOwnerDomainModel) =>
   mapPostFromDtoToDomainModel(await mongodb.requests.post.createComment(postId, postCommentFactory(mapPostOwnerFromDomainModelToDto(owner), body)))
 
-export const getPosts = async (): Promise<PostDomainModel[] | null> => {
+export const getPosts = async (): Promise<PostDomainModel[]> => {
   const persistedPosts = await mongodb.requests.post.getAll()
-  return persistedPosts ? persistedPosts.map((post) => mapPostFromDtoToDomainModel(post)!) : null
+  return persistedPosts ? persistedPosts.map((post) => mapPostFromDtoToDomainModel(post)!) : []
 }
 
 export const getPostById = async (postId: string): Promise<PostDomainModel | null> => {

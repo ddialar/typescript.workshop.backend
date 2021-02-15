@@ -14,7 +14,10 @@ describe('[SERVICES] Post - getPosts', () => {
 
   beforeAll(async () => {
     await connect()
-    await savePostsFixture(mockedPosts)
+  })
+
+  afterEach(async () => {
+    await cleanPostsCollectionFixture()
   })
 
   afterAll(async () => {
@@ -22,8 +25,16 @@ describe('[SERVICES] Post - getPosts', () => {
     await disconnect()
   })
 
+  it('must retrieve an empty array when there are no posts', async (done) => {
+    await expect(getPosts()).resolves.toHaveLength(0)
+
+    done()
+  })
+
   it('must retrieve the whole persisted posts', async (done) => {
-    const persistedPosts = (await getPosts())!
+    await savePostsFixture(mockedPosts)
+
+    const persistedPosts = await getPosts()
 
     expect(persistedPosts).toHaveLength(persistedPosts.length)
 
