@@ -152,6 +152,36 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
+    it('must return a BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+      const token = `bearer ${likeOwnerValidToken}$`
+      const expectedErrorMessage = 'Wrong token format'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return a BAD_REQUEST (400) error when we send a wrong formatted token because it is incomplete', async (done) => {
+      const token = `bearer ${likeOwnerValidToken.split('.').shift()}`
+      const expectedErrorMessage = 'Wrong token format'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
     it('must return FORBIDDEN (403) when the sent token is empty', async (done) => {
       const token = `bearer ${''}`
       const { _id: postId } = selectedPost!
@@ -177,23 +207,6 @@ describe('[API] - Posts endpoints', () => {
         .delete(POSTS_LIKE_PATH)
         .send({ postId })
         .expect(FORBIDDEN)
-        .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
-        })
-
-      done()
-    })
-
-    it('must return BAD_REQUEST (400) error when we send a token of non recorded user', async (done) => {
-      const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
-      const { _id: postId } = selectedPost
-      const expectedErrorMessage = 'User does not exist'
-
-      await request
-        .delete(POSTS_LIKE_PATH)
-        .set('Authorization', token)
-        .send({ postId })
-        .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
