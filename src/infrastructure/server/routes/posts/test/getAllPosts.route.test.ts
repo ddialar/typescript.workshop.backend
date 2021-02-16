@@ -31,6 +31,21 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
+    it('must return OK (200) and an empty array in the body when no posts have been found', async (done) => {
+      jest.spyOn(postDataSource, 'getPosts').mockImplementation(() => Promise.resolve([]))
+
+      await request
+        .get(POSTS_PATH)
+        .expect(OK)
+        .then(({ body }) => {
+          expect(body).toStrictEqual([])
+        })
+
+      jest.spyOn(postDataSource, 'getPosts').mockRestore()
+
+      done()
+    })
+
     it('must return OK (200) and the whole persisted post', async (done) => {
       await request
         .get(POSTS_PATH)
@@ -50,21 +65,6 @@ describe('[API] - Posts endpoints', () => {
             expect(post).toStrictEqual<PostDomainModel>(expectedPost!)
           })
         })
-
-      done()
-    })
-
-    it('must return OK (200) and NULL in the body when no posts have been found', async (done) => {
-      jest.spyOn(postDataSource, 'getPosts').mockImplementation(() => Promise.resolve(null))
-
-      await request
-        .get(POSTS_PATH)
-        .expect(OK)
-        .then(({ body }) => {
-          expect(body).toBeNull()
-        })
-
-      jest.spyOn(postDataSource, 'getPosts').mockRestore()
 
       done()
     })
