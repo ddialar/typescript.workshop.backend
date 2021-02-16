@@ -15,7 +15,7 @@ export type OwnerBasicStructure = Pick<UserDomainModel, 'name' | 'surname' | 'av
 export type PostOwnerDomainModel = OwnerBasicStructure & Pick<UserDomainModel, 'id'>
 export type PostCommentOwnerDomainModel = PostOwnerDomainModel
 
-export interface PostCommentDomainModel extends BasicContentStructure {
+export type PostCommentDomainModel = BasicContentStructure & {
   owner: PostCommentOwnerDomainModel
 }
 
@@ -25,4 +25,10 @@ export interface PostDomainModel extends BasicContentStructure {
   owner: PostOwnerDomainModel
   comments: PostCommentDomainModel[]
   likes: PostLikeDomainModel[]
+}
+
+export interface ExtendedPostDomainModel extends PostDomainModel {
+  userIsOwner?: boolean
+  userHasLiked?: boolean
+  comments: (PostCommentDomainModel & { userIsOwner?: boolean })[]
 }
