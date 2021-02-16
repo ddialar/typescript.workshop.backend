@@ -15,7 +15,7 @@ import {
   DeletingPostError,
   ApiError
 } from '@errors'
-import { PostCommentDomainModel, PostDomainModel, PostLikeDomainModel, PostOwnerDomainModel } from '@domainModels'
+import { ExtendedPostDomainModel, PostCommentDomainModel, PostDomainModel, PostLikeDomainModel, PostOwnerDomainModel } from '@domainModels'
 
 // #################################################
 // #####               POSTS                   #####
@@ -24,6 +24,15 @@ import { PostCommentDomainModel, PostDomainModel, PostLikeDomainModel, PostOwner
 export const getPosts = async (): Promise<PostDomainModel[]> => {
   try {
     return await postDataSource.getPosts()
+  } catch ({ message }) {
+    throw new GettingPostError(`Error retereaving posts. ${message}`)
+  }
+}
+
+export const getExtendedPosts = async (userId: string): Promise<ExtendedPostDomainModel[]> => {
+  try {
+    const retrievedPosts = await postDataSource.getPosts()
+    return retrievedPosts.length ? extendPosts(userId, retrievedPosts) : retrievedPosts
   } catch ({ message }) {
     throw new GettingPostError(`Error retereaving posts. ${message}`)
   }
@@ -147,3 +156,29 @@ export const dislikePost = async (postId: string, likeOwnerId: string): Promise<
     }
   }
 }
+
+// #################################################
+// #####                UTILS                  #####
+// #################################################
+
+const identifyIfUserIsPostOwner = (userId: string, post: PostDomainModel): ExtendedPostDomainModel => ({
+  ...post,
+  userIsOwner: userId === post.owner.id
+})
+
+const identifyIfUserHasLikedPost = (userId: string, post: ExtendedPostDomainModel): ExtendedPostDomainModel => ({
+  ...post,
+  userHasLiked: !!post.likes.find(({ id }) => userId === id)
+})
+
+const identifyUserPostComments = (userId: string, post: ExtendedPostDomainModel): ExtendedPostDomainModel => {
+  const analyzedComments = post.comments.map(comment => ({ ...comment, userIsOwner: userId === comment.owner.id }))
+
+  return {
+    ...post,
+    comments: analyzedComments
+  }
+}
+
+const extendPosts = (userId: string, posts: PostDomainModel[]): ExtendedPostDomainModel[] =>
+  posts.map(post => identifyUserPostComments(userId, identifyIfUserHasLikedPost(userId, identifyIfUserIsPostOwner(userId, post))))
