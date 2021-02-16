@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getPosts, getPostById, createPost, deletePost } from '@domainServices'
+import { getPosts, getPostById, createPost, deletePost, getExtendedPosts } from '@domainServices'
 import { ensureAuthenticated } from '../../middlewares'
 import { RequestDto } from '@infrastructure/server/serverDtos'
 
@@ -13,6 +13,18 @@ postGeneralRoutes.get('/', async (req, res, next) => {
 
   try {
     res.json(await getPosts())
+  } catch (error) {
+    next(error)
+  }
+})
+
+postGeneralRoutes.get('/ext', ensureAuthenticated, async (req: RequestDto, res, next) => {
+  const { id: userId } = req.user!
+
+  postEndpointsLogger('debug', `Retrieving all posts requested by user '${userId}'`)
+
+  try {
+    res.json(await getExtendedPosts(userId))
   } catch (error) {
     next(error)
   }
