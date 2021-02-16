@@ -36,7 +36,7 @@ describe('[SERVICES] Post - getPosts', () => {
 
     const persistedPosts = await getPosts()
 
-    expect(persistedPosts).toHaveLength(persistedPosts.length)
+    expect(persistedPosts).toHaveLength(mockedPosts.length)
 
     persistedPosts.forEach((post) => {
       const expectedFields = ['id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
