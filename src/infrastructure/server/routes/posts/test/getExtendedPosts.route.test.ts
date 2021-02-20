@@ -1,10 +1,9 @@
-import { UNAUTHORIZED } from './../../../../../common/errors/httpCodes'
 import supertest, { SuperTest, Test } from 'supertest'
 
 import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
-import { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST, FORBIDDEN } from '@errors'
+import { OK, INTERNAL_SERVER_ERROR, BAD_REQUEST, FORBIDDEN, UNAUTHORIZED } from '@errors'
 import { PostCommentDomainModel, PostDomainModel } from '@domainModels'
 import { PostCommentDto, PostLikeDto, PostOwnerDto } from '@infrastructure/dtos'
 import { postDataSource } from '@infrastructure/dataSources'
