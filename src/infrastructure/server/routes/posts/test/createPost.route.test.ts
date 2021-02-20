@@ -5,7 +5,7 @@ import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } from '@errors'
-import { PostDomainModel } from '@domainModels'
+import { ExtendedPostDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
 import { UserProfileDto } from '@infrastructure/dtos'
 
@@ -63,9 +63,9 @@ describe('[API] - Posts endpoints', () => {
         .send(payload)
         .expect(OK)
         .then(async ({ body }) => {
-          const createdPost: PostDomainModel = body
+          const createdPost: ExtendedPostDomainModel = body
 
-          const expectedFields = ['id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
+          const expectedFields = ['id', 'body', 'owner', 'userIsOwner', 'userHasLiked', 'comments', 'likes', 'createdAt', 'updatedAt']
           const createdPostFields = Object.keys(createdPost).sort()
           expect(createdPostFields.sort()).toEqual(expectedFields.sort())
 
@@ -81,6 +81,9 @@ describe('[API] - Posts endpoints', () => {
           expect(postOwner.name).toBe(mockedUserData.name)
           expect(postOwner.surname).toBe(mockedUserData.surname)
           expect(postOwner.avatar).toBe(mockedUserData.avatar)
+
+          expect(createdPost.userIsOwner).toBeTruthy()
+          expect(createdPost.userHasLiked).toBeFalsy()
 
           expect(createdPost.comments).toHaveLength(0)
           expect(createdPost.likes).toHaveLength(0)
