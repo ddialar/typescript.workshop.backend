@@ -28,7 +28,7 @@ describe('[SERVICES] Post - createPost', () => {
   it('must create the post and return the final result', async (done) => {
     const persistedPost = await createPost(owner, postBody)
 
-    const expectedPostFields = ['id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
+    const expectedPostFields = ['id', 'body', 'owner', 'userIsOwner', 'userHasLiked', 'comments', 'likes', 'createdAt', 'updatedAt']
     const createdPostFields = Object.keys(persistedPost).sort()
     expect(createdPostFields.sort()).toEqual(expectedPostFields.sort())
 
@@ -39,6 +39,9 @@ describe('[SERVICES] Post - createPost', () => {
     expect(createdPostOwnerFields.sort()).toEqual(expectedPostOwnerFields.sort())
 
     expect(persistedPost.owner).toStrictEqual(owner)
+
+    expect(persistedPost.userIsOwner).toBeTruthy()
+    expect(persistedPost.userHasLiked).toBeFalsy()
 
     expect(persistedPost.comments).toHaveLength(0)
     expect(persistedPost.likes).toHaveLength(0)

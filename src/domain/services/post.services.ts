@@ -52,11 +52,11 @@ export const getPostById = async (postId: string): Promise<PostDomainModel> => {
   }
 }
 
-export const createPost = async (owner: PostOwnerDomainModel, postBody: string): Promise<PostDomainModel> => {
+export const createPost = async (owner: PostOwnerDomainModel, postBody: string): Promise<ExtendedPostDomainModel> => {
   try {
     const createdPost = await postDataSource.createPost(owner, postBody)
     if (!createdPost) { throw new Error('Post creation process initiated but completed with NULL result') }
-    return createdPost
+    return extendSinglePost(owner.id, createdPost)
   } catch ({ message }) {
     throw new CreatingPostError(`Error creating post for user '${owner.id}'. ${message}`)
   }
@@ -180,5 +180,8 @@ const identifyUserPostComments = (userId: string, post: ExtendedPostDomainModel)
   }
 }
 
+const extendSinglePost = (userId: string, post: PostDomainModel): ExtendedPostDomainModel =>
+  identifyUserPostComments(userId, identifyIfUserHasLikedPost(userId, identifyIfUserIsPostOwner(userId, post)))
+
 const extendPosts = (userId: string, posts: PostDomainModel[]): ExtendedPostDomainModel[] =>
-  posts.map(post => identifyUserPostComments(userId, identifyIfUserHasLikedPost(userId, identifyIfUserIsPostOwner(userId, post))))
+  posts.map(post => extendSinglePost(userId, post))
