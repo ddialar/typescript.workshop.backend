@@ -31,7 +31,7 @@ describe('[SERVICES] Post - getPostById', () => {
     await disconnect()
   })
 
-  it('must retrieve the whole persisted posts', async (done) => {
+  it('must retrieve the persisted posts based on the provided ID', async (done) => {
     const postId = selectedPostId
 
     const persistedPost = await getPostById(postId)
