@@ -52,6 +52,11 @@ export const getPostById = async (postId: string): Promise<PostDomainModel> => {
   }
 }
 
+export const getExtendedPostById = async (postId: string, userId: string): Promise<ExtendedPostDomainModel> => {
+  const retrievedPost = await getPostById(postId)
+  return extendSinglePost(userId, retrievedPost)
+}
+
 export const createPost = async (owner: PostOwnerDomainModel, postBody: string): Promise<ExtendedPostDomainModel> => {
   try {
     const createdPost = await postDataSource.createPost(owner, postBody)
