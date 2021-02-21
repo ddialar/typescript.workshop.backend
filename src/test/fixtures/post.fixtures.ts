@@ -39,6 +39,7 @@ export const testingCommentedPersistedDomainModelPosts: PostDomainModelFixture[]
 export const testingLikedAndCommentedPersistedDomainModelPosts: PostDomainModelFixture[] = likedAndCommentedDomainModelPosts
 
 export const testingNonValidPostId = generateMockedMongoDbId()
+export const testingNonValidPostOwnerId = generateMockedMongoDbId()
 export const testingNonValidPostCommentId = generateMockedMongoDbId()
 export const testingNonValidCommentOwnerId = generateMockedMongoDbId()
 export const testingNonValidLikeOwnerId = generateMockedMongoDbId()
