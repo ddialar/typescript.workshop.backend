@@ -325,21 +325,6 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return an BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async (done) => {
-      const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
-      const expectedErrorMessage = 'User does not exist'
-
-      await request
-        .get(POSTS_EXTENDED_PATH)
-        .set('Authorization', token)
-        .expect(BAD_REQUEST)
-        .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
-        })
-
-      done()
-    })
-
     it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
       const expectedErrorMessage = 'Token expired'
