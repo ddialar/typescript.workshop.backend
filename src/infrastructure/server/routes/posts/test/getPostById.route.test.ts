@@ -11,13 +11,14 @@ import {
   testingLikedAndCommentedPersistedDtoPosts,
   testingLikedAndCommentedPersistedDomainModelPosts,
   savePostsFixture,
-  cleanPostsCollectionFixture
+  cleanPostsCollectionFixture,
+  testingNonValidPostId
 } from '@testingFixtures'
 
 const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
 const resultPosts = testingLikedAndCommentedPersistedDomainModelPosts
 const [selectedPost] = resultPosts
-const nonValidPostId = selectedPost.owner.id
+const nonValidPostId = testingNonValidPostId
 
 const POSTS_PATH = '/posts'
 
@@ -81,7 +82,7 @@ describe('[API] - Posts endpoints', () => {
     })
 
     it('must return BAD_REQUEST (400) when postId has characters non allowed by the ID regex definition', async (done) => {
-      const postId = selectedPost.id.substring(3).concat('-_')
+      const postId = selectedPost.id.substring(2).concat('-_')
       const expectedErrorMessage = 'Post identification not valid'
 
       await request
@@ -95,7 +96,7 @@ describe('[API] - Posts endpoints', () => {
     })
 
     it('must return BAD_REQUEST (400) when postId has characters non allowed by Express', async (done) => {
-      const postId = selectedPost.id.substring(3).concat('$%')
+      const postId = selectedPost.id.substring(2).concat('$%')
       const expectedErrorMessage = `Failed to decode param '${postId}'`
 
       await request
