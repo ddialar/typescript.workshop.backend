@@ -16,7 +16,7 @@ import { GettingPostError, PostNotFoundError } from '@errors'
 import { PostCommentDto, PostLikeDto, PostOwnerDto } from '@infrastructure/dtos'
 import { PostCommentDomainModel } from '@domainModels'
 
-const [selectedPostDto, secondaryPost] = testingLikedAndCommentedPersistedDtoPosts
+const [selectedPostDto, secondaryPostDto] = testingLikedAndCommentedPersistedDtoPosts
 const [selectedPostDomainModel, secondaryPostDomainModel] = testingLikedAndCommentedPersistedDomainModelPosts
 
 const { id: userId, name, surname, avatar, createdAt, updatedAt } = testingUsers.find(({ id }) => id === selectedPostDto.owner.userId)!
@@ -66,19 +66,19 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
     await disconnect()
   })
 
-  it('must retrieve the indicated post, not owned nor liked by the provided user because it does not exist', async (done) => {
-    await savePostsFixture([selectedPostDto])
+  it('must retrieve the indicated post, not owned nor liked by the provided user because it is not bound with the post', async (done) => {
+    await savePostsFixture([secondaryPostDto])
 
-    const postId = selectedPostDto._id
+    const postId = secondaryPostDto._id
     const userId = testingNonValidUserId
 
     const retrievedPost = await getExtendedPostById(postId, userId)
 
     const expectedOwnedPost = {
-      ...selectedPostDomainModel,
+      ...secondaryPostDomainModel,
       userIsOwner: false,
       userHasLiked: false,
-      comments: selectedPostDomainModel.comments.map(comment => ({ ...comment, userIsOwner: false }))
+      comments: secondaryPostDomainModel.comments.map(comment => ({ ...comment, userIsOwner: false }))
     }
     expect(retrievedPost).toStrictEqual(expectedOwnedPost)
 
@@ -148,11 +148,11 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
   })
 
   it('must retrieve the indicated post, where the provided user is not its owner but who has liked it', async (done) => {
-    const anotherUserPostLiked = { ...secondaryPost, likes: [...secondaryPost.likes, postOwnerLikeDto] }
+    const anotherUserPostLiked = { ...secondaryPostDto, likes: [...secondaryPostDto.likes, postOwnerLikeDto] }
 
     await savePostsFixture([anotherUserPostLiked])
 
-    const postId = secondaryPost._id
+    const postId = secondaryPostDto._id
     const userId = selectedPostDto.owner.userId
 
     const retrievedPost = await getExtendedPostById(postId, userId)
@@ -170,11 +170,11 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
   })
 
   it('must retrieve the indicated post, where the provided user is not its owner but who has commented it', async (done) => {
-    const anotherUserPostCommented = { ...secondaryPost, comments: [...secondaryPost.comments, postOwnerCommentDto] }
+    const anotherUserPostCommented = { ...secondaryPostDto, comments: [...secondaryPostDto.comments, postOwnerCommentDto] }
 
     await savePostsFixture([anotherUserPostCommented])
 
-    const postId = secondaryPost._id
+    const postId = secondaryPostDto._id
     const userId = selectedPostDto.owner.userId
 
     const retrievedPost = await getExtendedPostById(postId, userId)
