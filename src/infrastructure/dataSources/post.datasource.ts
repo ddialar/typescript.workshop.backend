@@ -15,11 +15,16 @@ export const postCommentFactory = (owner: PostOwnerDto, body: string): PostComme
   owner
 })
 
-export const createPost = async (owner: PostOwnerDomainModel, body: string): Promise<PostDomainModel | null> =>
-  mapPostFromDtoToDomainModel(await mongodb.requests.post.create(postFactory(mapPostOwnerFromDomainModelToDto(owner), body)))
+export const createPost = async (owner: PostOwnerDomainModel, body: string): Promise<PostDomainModel | null> => {
+  const createdPost = await mongodb.requests.post.create(postFactory(mapPostOwnerFromDomainModelToDto(owner), body))
+  return createdPost ? mapPostFromDtoToDomainModel(createdPost) : null
+}
 
-export const createPostComment = async (postId: string, body: string, owner: PostOwnerDomainModel) =>
-  mapPostFromDtoToDomainModel(await mongodb.requests.post.createComment(postId, postCommentFactory(mapPostOwnerFromDomainModelToDto(owner), body)))
+export const createPostComment = async (postId: string, body: string, owner: PostOwnerDomainModel) => {
+  const postCommented = await mongodb.requests.post.createComment(postId, postCommentFactory(mapPostOwnerFromDomainModelToDto(owner), body))
+  // TODO Review this return because before creating the comment, the post existance must be checked, so it has not sense to return a null.
+  return postCommented ? mapPostFromDtoToDomainModel(postCommented) : null
+}
 
 export const getPosts = async (): Promise<PostDomainModel[]> => {
   const persistedPosts = await mongodb.requests.post.getAll()
@@ -50,5 +55,5 @@ export const deletePostComment = async (postId: string, commentId: string): Prom
 export const likePost = async (postId: string, owner: PostLikeDomainModel): Promise<PostDomainModel> =>
   mapPostFromDtoToDomainModel(await mongodb.requests.post.like(postId, mapPostOwnerFromDomainModelToDto(owner)))
 
-export const dislikePost = async (postId: string, userId: string): Promise<void> =>
-  mongodb.requests.post.dislike(postId, userId)
+export const dislikePost = async (postId: string, userId: string): Promise<PostDomainModel> =>
+  mapPostFromDtoToDomainModel(await mongodb.requests.post.dislike(postId, userId))
