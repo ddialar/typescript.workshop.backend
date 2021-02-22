@@ -47,7 +47,7 @@ export const getPostLikeByOwnerId = async (postId: string, ownerId: string): Pro
 export const deletePostComment = async (postId: string, commentId: string): Promise<void> =>
   mongodb.requests.post.deleteComment(postId, commentId)
 
-export const likePost = async (postId: string, owner: PostLikeDomainModel): Promise<PostDomainModel | null> =>
+export const likePost = async (postId: string, owner: PostLikeDomainModel): Promise<PostDomainModel> =>
   mapPostFromDtoToDomainModel(await mongodb.requests.post.like(postId, mapPostOwnerFromDomainModelToDto(owner)))
 
 export const dislikePost = async (postId: string, userId: string): Promise<void> =>
