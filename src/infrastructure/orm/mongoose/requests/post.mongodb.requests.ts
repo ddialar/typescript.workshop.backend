@@ -105,7 +105,7 @@ export const getLikeByOwnerId = async (postId: string, ownerId: string): Promise
   return retrievedPostLike && Object.keys(retrievedPostLike).length ? retrievedPostLike : null
 }
 
-export const like = async (postId: string, owner: PostLikeDto): Promise<PostDto | null> => {
+export const like = async (postId: string, owner: PostLikeDto): Promise<PostDto> => {
   const conditions = { _id: postId }
   const update = { $push: { likes: owner } }
   const options = { new: true }

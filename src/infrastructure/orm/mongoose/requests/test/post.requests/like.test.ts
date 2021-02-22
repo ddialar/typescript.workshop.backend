@@ -4,11 +4,11 @@ import { testingLikedAndCommentedPersistedDtoPosts, testingDtoFreeUsers, savePos
 import { like } from '../../post.mongodb.requests'
 
 describe('[ORM] MongoDB - Posts - like', () => {
-  const mockedPosts = testingLikedAndCommentedPersistedDtoPosts
+  const [selectedPost] = testingLikedAndCommentedPersistedDtoPosts
 
   beforeAll(async () => {
     await connect()
-    await savePostsFixture(mockedPosts)
+    await savePostsFixture([selectedPost])
   })
 
   afterAll(async () => {
@@ -16,25 +16,24 @@ describe('[ORM] MongoDB - Posts - like', () => {
     await disconnect()
   })
 
-  it.only('must persist the new like into the selected post', async (done) => {
-    const [originalPost] = mockedPosts
-    const { _id: postId } = originalPost
+  it('must persist the new like into the selected post', async (done) => {
+    const { _id: postId } = selectedPost
     const [likeOwner] = testingDtoFreeUsers
 
-    const updatedPost = (await like(postId, likeOwner))!
+    const updatedPost = await like(postId, likeOwner)
 
     const expectedFields = ['_id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
     const updatedPostFields = Object.keys(updatedPost).sort()
     expect(updatedPostFields.sort()).toEqual(expectedFields.sort())
 
-    expect(updatedPost._id).not.toBeNull()
-    expect(updatedPost.body).toBe(originalPost.body)
+    expect(updatedPost._id?.toString()).toBe(postId)
+    expect(updatedPost.body).toBe(selectedPost.body)
     // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
-    expect(JSON.parse(JSON.stringify(updatedPost.owner))).toStrictEqual(originalPost.owner)
-    expect(JSON.parse(JSON.stringify(updatedPost.comments))).toStrictEqual(originalPost.comments)
+    expect(JSON.parse(JSON.stringify(updatedPost.owner))).toStrictEqual(selectedPost.owner)
+    expect(JSON.parse(JSON.stringify(updatedPost.comments))).toStrictEqual(selectedPost.comments)
 
-    expect(updatedPost.likes).toHaveLength(originalPost.likes.length + 1)
-    const originalLikesIds = originalPost.likes.map(({ _id }) => _id?.toString())
+    expect(updatedPost.likes).toHaveLength(selectedPost.likes.length + 1)
+    const originalLikesIds = selectedPost.likes.map(({ _id }) => _id?.toString())
     const updatedLikesIds = updatedPost.likes.map(({ _id }) => _id?.toString())
     const newLikeId = updatedLikesIds.find((updatedId) => !originalLikesIds.includes(updatedId))
     const newPersistedLike = updatedPost.likes.find((like) => like._id?.toString() === newLikeId)!
@@ -43,8 +42,8 @@ describe('[ORM] MongoDB - Posts - like', () => {
     expect(newPersistedLike.surname).toBe(likeOwner.surname)
     expect(newPersistedLike.avatar).toBe(likeOwner.avatar)
 
-    expect((new Date(updatedPost.createdAt!)).toISOString()).toBe(originalPost.createdAt)
-    expect((new Date(updatedPost.updatedAt!)).toISOString()).not.toBe(originalPost.updatedAt)
+    expect((new Date(updatedPost.createdAt!)).toISOString()).toBe(selectedPost.createdAt)
+    expect((new Date(updatedPost.updatedAt!)).toISOString()).not.toBe(selectedPost.updatedAt)
 
     done()
   })
