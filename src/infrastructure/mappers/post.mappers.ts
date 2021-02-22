@@ -20,9 +20,7 @@ export const mapPostCommentFromDtoToDomainModel = (comment: PostCommentDto): Pos
   }
 }
 
-export const mapPostFromDtoToDomainModel = (post: PostDto | null): PostDomainModel | null => {
-  if (!post) { return post }
-
+export const mapPostFromDtoToDomainModel = (post: PostDto): PostDomainModel => {
   const { _id, owner, comments, likes, createdAt, updatedAt, ...oherPostFields } = post
 
   const parsedOwner = mapOwnerFromDtoToDomainModel(owner)
