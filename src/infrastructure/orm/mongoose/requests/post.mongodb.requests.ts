@@ -112,8 +112,9 @@ export const like = async (postId: string, owner: PostLikeDto): Promise<PostDto>
   return await Post.findOneAndUpdate(conditions, update, options).lean<PostDto>()
 }
 
-export const dislike = async (postId: string, userId: string): Promise<void> => {
+export const dislike = async (postId: string, userId: string): Promise<PostDto> => {
   const conditions = { _id: postId }
   const update = { $pull: { likes: { userId } } }
-  await Post.findOneAndUpdate(conditions, update)
+  const options = { new: true }
+  return await Post.findOneAndUpdate(conditions, update, options).lean<PostDto>()
 }

@@ -1,5 +1,5 @@
 import { connect, disconnect } from '../../../core'
-import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, getPostByIdFixture } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { dislike } from '../../post.mongodb.requests'
 
@@ -21,9 +21,7 @@ describe('[ORM] MongoDB - Posts - dislike', () => {
     const postId = selectedPost._id
     const userId = selectedLike.userId
 
-    await dislike(postId, userId)
-
-    const { likes: updatedLikes } = (await getPostByIdFixture(postId))!
+    const { likes: updatedLikes } = await dislike(postId, userId)
 
     expect(updatedLikes).toHaveLength(selectedPost.likes.length - 1)
     expect(updatedLikes.map(({ userId: updatedUserId }) => updatedUserId).includes(userId)).toBeFalsy()
