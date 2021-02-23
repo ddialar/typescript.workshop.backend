@@ -139,11 +139,12 @@ export const getPostLikeByOwnerId = async (postId: string, likeOwnerId: string):
   }
 }
 
-export const likePost = async (postId: string, owner: PostOwnerDomainModel): Promise<void> => {
+export const likePost = async (postId: string, owner: PostOwnerDomainModel): Promise<ExtendedPostDomainModel> => {
   await getPostById(postId)
 
   try {
-    await postDataSource.likePost(postId, owner)
+    const likedPost = await postDataSource.likePost(postId, owner)
+    return extendSinglePost(owner.id, likedPost)
   } catch ({ message }) {
     throw new LikingPostError(`Error setting like to post '${postId}' by user '${owner.id}'. ${message}`)
   }

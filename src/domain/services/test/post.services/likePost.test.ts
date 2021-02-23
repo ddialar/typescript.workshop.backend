@@ -5,14 +5,12 @@ import {
   testingDomainModelFreeUsers,
   savePostsFixture,
   cleanPostsCollectionFixture,
-  getPostByIdFixture,
   testingNonValidPostId
 } from '@testingFixtures'
 
 import { likePost } from '@domainServices'
 import { GettingPostError, LikingPostError, PostNotFoundError } from '@errors'
 import { postDataSource } from '@infrastructure/dataSources'
-import { mapPostFromDtoToDomainModel } from '@infrastructure/mappers'
 
 describe('[SERVICES] Post - likePost', () => {
   const { connect, disconnect } = mongodb
@@ -30,36 +28,37 @@ describe('[SERVICES] Post - likePost', () => {
     await disconnect()
   })
 
-  it('must persist the new like into the selected post', async (done) => {
+  it('must like the selected post and return the new updated document, liked by the indicated user', async (done) => {
     const postId = originalPost.id
     const [likeOwner] = testingDomainModelFreeUsers
 
-    await likePost(postId, likeOwner)
+    const updatedPost = await likePost(postId, likeOwner)
 
-    const updatedPost = mapPostFromDtoToDomainModel((await getPostByIdFixture(postId))!)
+    expect(updatedPost.id).toBe(postId)
+    expect(updatedPost.body).toBe(originalPost.body)
+    expect(updatedPost.owner).toStrictEqual(originalPost.owner)
+    expect(updatedPost.comments).toStrictEqual(originalPost.comments.map(comment => ({ ...comment, userIsOwner: false })))
 
-    expect(updatedPost?.id).not.toBeNull()
-    expect(updatedPost?.body).toBe(originalPost.body)
-    expect(updatedPost?.owner).toStrictEqual(originalPost.owner)
-    expect(updatedPost?.comments).toStrictEqual(originalPost.comments)
+    expect(updatedPost.userIsOwner).toBeFalsy()
+    expect(updatedPost.userHasLiked).toBeTruthy()
 
-    expect(updatedPost?.likes).toHaveLength(originalPost.likes.length + 1)
+    expect(updatedPost.likes).toHaveLength(originalPost.likes.length + 1)
     const originalLikesIds = originalPost.likes.map(({ id }) => id.toString())
-    const updatedLikesIds = updatedPost?.likes.map(({ id }) => id.toString())
-    const newLikeId = updatedLikesIds?.find((updatedId) => !originalLikesIds.includes(updatedId))
-    const newPersistedLike = updatedPost?.likes.find((like) => like.id === newLikeId)
-    expect(newPersistedLike?.id).toBe(likeOwner.id)
-    expect(newPersistedLike?.name).toBe(likeOwner.name)
-    expect(newPersistedLike?.surname).toBe(likeOwner.surname)
-    expect(newPersistedLike?.avatar).toBe(likeOwner.avatar)
+    const updatedLikesIds = updatedPost.likes.map(({ id }) => id.toString())
+    const newLikeId = updatedLikesIds.find((updatedId) => !originalLikesIds.includes(updatedId))
+    const newPersistedLike = updatedPost.likes.find((like) => like.id === newLikeId)!
+    expect(newPersistedLike.id).toBe(likeOwner.id)
+    expect(newPersistedLike.name).toBe(likeOwner.name)
+    expect(newPersistedLike.surname).toBe(likeOwner.surname)
+    expect(newPersistedLike.avatar).toBe(likeOwner.avatar)
 
-    expect(updatedPost?.createdAt).toBe(originalPost.createdAt)
-    expect(updatedPost?.updatedAt).not.toBe(originalPost.updatedAt)
+    expect(updatedPost.createdAt).toBe(originalPost.createdAt)
+    expect(updatedPost.updatedAt).not.toBe(originalPost.updatedAt)
 
     done()
   })
 
-  it('must throw NOT_FOUND (404) when the provided post ID doesn\'t exist', async (done) => {
+  it('must throw NOT_FOUND (404) when the provided post ID does not exist', async (done) => {
     const postId = nonValidPostId
     const [likeOwner] = testingDomainModelFreeUsers
 
