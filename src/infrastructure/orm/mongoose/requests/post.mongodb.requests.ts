@@ -58,6 +58,7 @@ export const getComment = async (postId: string, commentId: string): Promise<Pos
     commentReduction
   ])
 
+  // NOTE If no coincidences are found, the aggregation returns and empty object.
   return retrievedPost && Object.keys(retrievedPost).length ? retrievedPost : null
 }
 
@@ -65,44 +66,6 @@ export const deleteComment = async (postId: string, commentId: string): Promise<
   const conditions = { _id: postId }
   const update = { $pull: { comments: { _id: commentId } } }
   await Post.findOneAndUpdate(conditions, update)
-}
-
-export const getLikeByOwnerId = async (postId: string, ownerId: string): Promise<PostLikeDto | null> => {
-  const postMatcher = { $match: { _id: Types.ObjectId(postId) } }
-  const likeMatcher = {
-    $project: {
-      _id: 0,
-      likes: {
-        $arrayElemAt: [{
-          $filter: {
-            input: '$likes',
-            as: 'item',
-            cond: { $eq: ['$$item.userId', `${ownerId}`] }
-          }
-        }, 0]
-      }
-    }
-  }
-  const likeReduction = {
-    $project: {
-      _id: '$likes._id',
-      userId: '$likes.userId',
-      name: '$likes.name',
-      surname: '$likes.surname',
-      avatar: '$likes.avatar',
-      createdAt: '$likes.createdAt',
-      updatedAt: '$likes.updatedAt'
-    }
-  }
-
-  const [retrievedPostLike] = await Post.aggregate<PostLikeDto>([
-    postMatcher,
-    likeMatcher,
-    likeReduction
-  ])
-
-  // NOTE If no coincidences are found, the aggregation returns and empty object.
-  return retrievedPostLike && Object.keys(retrievedPostLike).length ? retrievedPostLike : null
 }
 
 export const like = async (postId: string, owner: PostLikeDto): Promise<PostDto> => {
