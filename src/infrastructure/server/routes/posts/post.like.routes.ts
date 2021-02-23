@@ -14,7 +14,7 @@ postLikeRoutes.post('/like', ensureAuthenticated, validatePostLike, async (req: 
   postEndpointsLogger('debug', `Liking post '${postId}' by user '${id}'.`)
 
   try {
-    res.json(await likePost(postId as string, { id, name, surname, avatar }))
+    res.json(await likePost(postId, { id, name, surname, avatar }))
   } catch (error) {
     next(error)
   }
@@ -27,7 +27,7 @@ postLikeRoutes.delete('/like', ensureAuthenticated, validatePostLike, async (req
   postEndpointsLogger('debug', `Disliking post '${postId}' by user '${likeOwnerId}'.`)
 
   try {
-    await dislikePost(postId as string, likeOwnerId)
+    await dislikePost(postId, likeOwnerId)
     res.send()
   } catch (error) {
     next(error)
