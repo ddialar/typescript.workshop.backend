@@ -1,6 +1,6 @@
 import { PostCommentDomainModel, PostDomainModel, PostLikeDomainModel, PostOwnerDomainModel } from '@domainModels'
 import { PostCommentDto, PostDto, PostOwnerDto } from '@infrastructure/dtos'
-import { mapPostCommentFromDtoToDomainModel, mapPostFromDtoToDomainModel, mapPostOwnerFromDomainModelToDto, mapOwnerFromDtoToDomainModel } from '@infrastructure/mappers'
+import { mapPostCommentFromDtoToDomainModel, mapPostFromDtoToDomainModel, mapPostOwnerFromDomainModelToDto } from '@infrastructure/mappers'
 import { mongodb } from '@infrastructure/orm'
 
 export const postFactory = (owner: PostOwnerDto, body: string): PostDto => ({
@@ -42,11 +42,6 @@ export const deletePost = async (postId: string): Promise<void> =>
 export const getPostComment = async (postId: string, commentId: string): Promise<PostCommentDomainModel | null> => {
   const persistedComment = await mongodb.requests.post.getComment(postId, commentId)
   return persistedComment ? mapPostCommentFromDtoToDomainModel(persistedComment)! : null
-}
-
-export const getPostLikeByOwnerId = async (postId: string, ownerId: string): Promise<PostLikeDomainModel | null> => {
-  const persistedLike = await mongodb.requests.post.getLikeByOwnerId(postId, ownerId)
-  return persistedLike ? mapOwnerFromDtoToDomainModel(persistedLike)! : null
 }
 
 export const deletePostComment = async (postId: string, commentId: string): Promise<void> =>
