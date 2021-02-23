@@ -6,7 +6,6 @@ import {
   DeletingPostLikeError,
   GettingPostCommentError,
   GettingPostError,
-  GettingPostLikeError,
   LikingPostError,
   PostCommentNotFoundError,
   PostNotFoundError,
@@ -15,7 +14,7 @@ import {
   DeletingPostError,
   ApiError
 } from '@errors'
-import { ExtendedPostDomainModel, PostCommentDomainModel, PostDomainModel, PostLikeDomainModel, PostOwnerDomainModel } from '@domainModels'
+import { ExtendedPostDomainModel, PostCommentDomainModel, PostDomainModel, PostOwnerDomainModel } from '@domainModels'
 
 // #################################################
 // #####               POSTS                   #####
@@ -130,14 +129,6 @@ export const deletePostComment = async (postId: string, commentId: string, comme
 // #################################################
 // #####                LIKES                  #####
 // #################################################
-
-export const getPostLikeByOwnerId = async (postId: string, likeOwnerId: string): Promise<PostLikeDomainModel | null> => {
-  try {
-    return await postDataSource.getPostLikeByOwnerId(postId, likeOwnerId)
-  } catch ({ message }) {
-    throw new GettingPostLikeError(`Error retereaving post comment. ${message}`)
-  }
-}
 
 export const likePost = async (postId: string, owner: PostOwnerDomainModel): Promise<ExtendedPostDomainModel> => {
   await getPostById(postId)
