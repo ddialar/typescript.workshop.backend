@@ -82,7 +82,7 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId })
         .expect(OK)
         .then(async () => {
-          const updatedPost = mapPostFromDtoToDomainModel(await getPostByIdFixture(postId))!
+          const updatedPost = mapPostFromDtoToDomainModel((await getPostByIdFixture(postId))!)
 
           expect(updatedPost.id).not.toBeNull()
           expect(updatedPost.body).toBe(originalPost.body)
