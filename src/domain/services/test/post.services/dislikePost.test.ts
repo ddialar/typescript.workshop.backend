@@ -5,13 +5,12 @@ import {
   testingLikedAndCommentedPersistedDomainModelPosts,
   cleanPostsCollectionFixture,
   savePostsFixture,
-  getPostByIdFixture,
   testingNonValidPostId,
   testingNonValidLikeOwnerId
 } from '@testingFixtures'
 
 import { dislikePost } from '@domainServices'
-import { DeletingPostLikeError, GettingPostError, GettingPostLikeError, PostNotFoundError } from '@errors'
+import { DeletingPostLikeError, GettingPostError, PostNotFoundError } from '@errors'
 
 describe('[SERVICES] Post - dislikePost', () => {
   const { connect, disconnect } = mongodb
@@ -41,16 +40,15 @@ describe('[SERVICES] Post - dislikePost', () => {
     await disconnect()
   })
 
-  it('must delete the selected post like', async (done) => {
+  it('must dislike the selected post, deleting this like from the post', async (done) => {
     const postId = selectedPost.id
     const likeOwnerId = selectedLikeOwnerId
 
-    await dislikePost(postId, likeOwnerId)
+    const { userHasLiked, likes: updatedDtoLikes } = await dislikePost(postId, likeOwnerId)
 
-    const { likes: updatedDtoLikes } = (await getPostByIdFixture(postId))!
-
+    expect(userHasLiked).toBeFalsy()
     expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length - 1)
-    expect(updatedDtoLikes.map(({ userId }) => userId).includes(likeOwnerId)).toBeFalsy()
+    expect(updatedDtoLikes.map(({ id }) => id).includes(likeOwnerId)).toBeFalsy()
 
     done()
   })
@@ -59,20 +57,26 @@ describe('[SERVICES] Post - dislikePost', () => {
     const postId = selectedPost.id
     const likeOwnerId = mockedNonValidLikeOwnerId
 
-    await dislikePost(postId, likeOwnerId)
+    const { userHasLiked, likes: updatedDtoLikes } = await dislikePost(postId, likeOwnerId)
 
-    const { likes: updatedDtoLikes } = (await getPostByIdFixture(postId))!
-
-    expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length)
+    expect(userHasLiked).toBeFalsy()
+    expect(updatedDtoLikes).toStrictEqual(selectedPost.likes)
 
     done()
   })
 
-  it('must throw NOT_FOUND (404) when the provided post ID doesn\'t exist', async (done) => {
+  it('must throw NOT_FOUND (404) when the provided post ID does not exist', async (done) => {
     const postId = mockedNonValidPostId
     const likeOwnerId = selectedLikeOwnerId
+    const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
 
-    await expect(dislikePost(postId, likeOwnerId)).rejects.toThrowError(new PostNotFoundError(`Post '${postId}' not found`))
+    try {
+      await dislikePost(postId, likeOwnerId)
+    } catch (error) {
+      expect(error.status).toBe(expectedError.status)
+      expect(error.message).toBe(expectedError.message)
+      expect(error.description).toBe(expectedError.description)
+    }
 
     done()
   })
@@ -95,28 +99,6 @@ describe('[SERVICES] Post - dislikePost', () => {
     }
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
-
-    done()
-  })
-
-  it('must throw INTERNAL_SERVER_ERROR (500) when the datasource retrieving post like by owner ID throws an unexpected error', async (done) => {
-    jest.spyOn(postDataSource, 'getPostLikeByOwnerId').mockImplementation(() => {
-      throw new Error(errorMessage)
-    })
-
-    const postId = selectedPost.id
-    const likeOwnerId = selectedLikeOwnerId
-    const expectedError = new GettingPostLikeError(`Error retereaving post comment. ${errorMessage}`)
-
-    try {
-      await dislikePost(postId, likeOwnerId)
-    } catch (error) {
-      expect(error.status).toBe(expectedError.status)
-      expect(error.message).toBe(expectedError.message)
-      expect(error.description).toBe(expectedError.description)
-    }
-
-    jest.spyOn(postDataSource, 'getPostLikeByOwnerId').mockRestore()
 
     done()
   })

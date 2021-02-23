@@ -150,16 +150,19 @@ export const likePost = async (postId: string, owner: PostOwnerDomainModel): Pro
   }
 }
 
-export const dislikePost = async (postId: string, likeOwnerId: string): Promise<void> => {
-  await getPostById(postId)
+export const dislikePost = async (postId: string, likeOwnerId: string): Promise<ExtendedPostDomainModel> => {
+  const selectedPost = await getPostById(postId)
+  const selectedLike = selectedPost.likes.find(({ id }) => id === likeOwnerId)
 
-  const selectedLike = await getPostLikeByOwnerId(postId, likeOwnerId)
   if (selectedLike) {
     try {
-      await postDataSource.dislikePost(postId, selectedLike.id)
+      const dislikedPost = await postDataSource.dislikePost(postId, selectedLike.id)
+      return extendSinglePost(likeOwnerId, dislikedPost)
     } catch ({ message }) {
       throw new DeletingPostLikeError(`Error deleting like '${selectedLike.id}', from post '${postId}', by user '${likeOwnerId}'. ${message}`)
     }
+  } else {
+    return extendSinglePost(likeOwnerId, selectedPost)
   }
 }
 
