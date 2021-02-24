@@ -2,9 +2,7 @@ import { UserDomainModel, NewUserDomainModel, UserProfileDomainModel, UpdateUser
 import { mapUserFromDtoToDomainModel, mapUserFromDtoToProfileDomainModel } from '@infrastructure/mappers'
 import { mongodb } from '@infrastructure/orm'
 
-export const createUser = async (newUserData: NewUserDomainModel): Promise<void> => {
-  await mongodb.requests.user.create(newUserData)
-}
+export const createUser = async (newUserData: NewUserDomainModel): Promise<void> => mongodb.requests.user.create(newUserData)
 
 export const getUserByUsername = async (username: string): Promise<UserDomainModel | null> =>
   mapUserFromDtoToDomainModel(await mongodb.requests.user.getByUsername(username))
