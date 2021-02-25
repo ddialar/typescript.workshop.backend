@@ -1,7 +1,7 @@
 import { connect, disconnect } from '../../../core'
 import { NewUserDatabaseDto } from '@infrastructure/dtos'
 
-import { testingUsers, cleanUsersCollectionFixture, getUserByUsernameFixture } from '@testingFixtures'
+import { testingUsers, cleanUsersCollectionFixture } from '@testingFixtures'
 
 import { create } from '../../user.mongodb.requests'
 
@@ -32,28 +32,26 @@ describe('[ORM] MongoDB - create', () => {
 
   it('must persist the new user successfully', async (done) => {
     const newUserData = { ...mockedUserData }
-    await create(newUserData)
-
-    const retrievedUser = (await getUserByUsernameFixture(username))!
+    const registeredUser = await create(newUserData)
 
     const expectedFields = ['_id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
-    const retrievedUserFields = Object.keys(retrievedUser).sort()
-    expect(retrievedUserFields.sort()).toEqual(expectedFields.sort())
+    const registeredUserFields = Object.keys(registeredUser).sort()
+    expect(registeredUserFields.sort()).toEqual(expectedFields.sort())
 
-    expect(retrievedUser._id).not.toBeNull()
-    expect(retrievedUser.username).toBe(mockedUserData.username)
-    expect(retrievedUser.password).toBe(mockedUserData.password)
-    expect(retrievedUser.email).toBe(mockedUserData.email)
-    expect(retrievedUser.name).toBe(mockedUserData.name)
-    expect(retrievedUser.surname).toBe(mockedUserData.surname)
-    expect(retrievedUser.avatar).toBe(mockedUserData.avatar)
-    expect(retrievedUser.enabled).toBeTruthy()
-    expect(retrievedUser.deleted).toBeFalsy()
-    expect(retrievedUser.createdAt).not.toBeNull()
-    expect(retrievedUser.updatedAt).not.toBeNull()
+    expect(registeredUser._id).not.toBeNull()
+    expect(registeredUser.username).toBe(mockedUserData.username)
+    expect(registeredUser.password).toBe(mockedUserData.password)
+    expect(registeredUser.email).toBe(mockedUserData.email)
+    expect(registeredUser.name).toBe(mockedUserData.name)
+    expect(registeredUser.surname).toBe(mockedUserData.surname)
+    expect(registeredUser.avatar).toBe(mockedUserData.avatar)
+    expect(registeredUser.enabled).toBeTruthy()
+    expect(registeredUser.deleted).toBeFalsy()
+    expect(registeredUser.createdAt).not.toBeNull()
+    expect(registeredUser.updatedAt).not.toBeNull()
 
-    expect(retrievedUser.token).toBe('')
-    expect(retrievedUser.lastLoginAt).toBe('')
+    expect(registeredUser.token).toBe('')
+    expect(registeredUser.lastLoginAt).toBe('')
 
     done()
   })

@@ -2,8 +2,9 @@ import { QueryFindOneAndUpdateOptions } from 'mongoose'
 import { User } from '../models'
 import { UserDto, NewUserDatabaseDto, UpdateUserPayloadDto, UserProfileDto } from '@infrastructure/dtos'
 
-export const create = async (newUserData: NewUserDatabaseDto): Promise<void> => {
+export const create = async (newUserData: NewUserDatabaseDto): Promise<UserDto> => {
   await (new User(newUserData)).save()
+  return await User.findOne({ username: newUserData.username }).lean<UserDto>()
 }
 
 export const getByUsername = async (username: string): Promise<UserDto | null> =>
