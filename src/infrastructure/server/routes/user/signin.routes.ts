@@ -17,8 +17,8 @@ signinRoutes.post('/signin', validateSignin, async (req: RequestDto, res, next) 
   userEndpointsLogger('debug', `Signin request for username '${newUserData.email}'.`)
 
   try {
-    await createUser(mapNewUserFromDtoToDomainModel(newUserData))
-    res.status(CREATED).end('User created')
+    const registeredUser = await createUser(mapNewUserFromDtoToDomainModel(newUserData))
+    res.status(CREATED).json(registeredUser)
   } catch (error) {
     next(error)
   }

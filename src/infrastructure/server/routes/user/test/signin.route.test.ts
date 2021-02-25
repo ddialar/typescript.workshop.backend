@@ -15,6 +15,7 @@ import {
   getUserByUsernameFixture,
   saveUserFixture
 } from '@testingFixtures'
+import { RegisteredUserDomainModel } from '@domainModels'
 
 const [{ email, name, surname, avatar }] = testingUsers
 
@@ -52,8 +53,15 @@ describe(`[POST] ${SIGIN_PATH}`, () => {
       .post(SIGIN_PATH)
       .send(newUserData)
       .expect(CREATED)
-      .then(async ({ text }) => {
-        expect(text).toBe('User created')
+      .then(async ({ body }) => {
+        const registeredUser: RegisteredUserDomainModel = body
+
+        const expectedRegisteredFields = ['username', 'fullName']
+        const registeredUserFields = Object.keys(registeredUser).sort()
+        expect(registeredUserFields.sort()).toEqual(expectedRegisteredFields.sort())
+
+        expect(registeredUser.username).toBe(newUserData.email)
+        expect(registeredUser.fullName).toBe(`${newUserData.name} ${newUserData.surname}`)
 
         const retrievedUser = (await getUserByUsernameFixture(newUserData.email))!
 
