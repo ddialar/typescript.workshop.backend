@@ -17,8 +17,9 @@ import {
   testingNonValidPostId,
   saveUsersFixture,
   savePostsFixture,
-  getPostByIdFixture
+  testingLikedAndCommentedPersistedDomainModelPosts
 } from '@testingFixtures'
+import { ExtendedPostDomainModel } from '@domainModels'
 
 const POSTS_LIKE_PATH = '/posts/like'
 
@@ -26,12 +27,12 @@ describe('[API] - Posts endpoints', () => {
   describe(`[DELETE] ${POSTS_LIKE_PATH}`, () => {
     const { connect, disconnect } = mongodb
 
-    const [selectedPost, emptyLikesPost] = testingLikedAndCommentedPersistedDtoPosts
-    emptyLikesPost.likes = []
+    const [selectedPostDto] = testingLikedAndCommentedPersistedDtoPosts
+    const [selectedPostDomainModel] = testingLikedAndCommentedPersistedDomainModelPosts
 
     const nonValidPostId = testingNonValidPostId
 
-    const [{ userId: selectedLikeOwnerId }] = selectedPost.likes
+    const [{ userId: selectedLikeOwnerId }] = selectedPostDto.likes
     const {
       username: likeOwnerUsername,
       password: likeOwnerPassword,
@@ -72,7 +73,7 @@ describe('[API] - Posts endpoints', () => {
 
     beforeEach(async () => {
       await cleanPostsCollectionFixture()
-      await savePostsFixture([selectedPost, emptyLikesPost])
+      await savePostsFixture([selectedPostDto])
     })
 
     afterAll(async () => {
@@ -83,18 +84,18 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return OK (200) and delete the provided like', async (done) => {
       const token = `bearer ${likeOwnerValidToken}`
-      const { _id: postId } = selectedPost
+      const { _id: postId } = selectedPostDto
 
       await request
         .delete(POSTS_LIKE_PATH)
         .set('Authorization', token)
         .send({ postId })
         .expect(OK)
-        .then(async () => {
-          const { likes: updatedDtoLikes } = (await getPostByIdFixture(postId))!
+        .then(({ body }) => {
+          const { userHasLiked, likes }: ExtendedPostDomainModel = body
 
-          expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length - 1)
-          expect(updatedDtoLikes.map(({ userId }) => userId).includes(selectedLikeOwnerId!)).toBeFalsy()
+          expect(userHasLiked).toBeFalsy()
+          expect(likes).toStrictEqual(selectedPostDomainModel.likes.filter(({ id }) => id !== mockedPostLikeOwner._id))
         })
 
       done()
@@ -102,17 +103,18 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return OK (200) but not modify the selected post nor throw any error when the provided user has not liked the post', async (done) => {
       const token = `bearer ${noLikeOwnerToken}`
-      const { _id: postId } = selectedPost!
+      const { _id: postId } = selectedPostDto!
 
       await request
         .delete(POSTS_LIKE_PATH)
         .set('Authorization', token)
         .send({ postId })
         .expect(OK)
-        .then(async () => {
-          const { likes: updatedDtoLikes } = (await getPostByIdFixture(postId))!
+        .then(({ body }) => {
+          const { userHasLiked, likes }: ExtendedPostDomainModel = body
 
-          expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length)
+          expect(userHasLiked).toBeFalsy()
+          expect(likes).toStrictEqual(selectedPostDomainModel.likes)
         })
 
       done()
@@ -120,7 +122,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
-      const { _id: postId } = selectedPost!
+      const { _id: postId } = selectedPostDto!
       const expectedErrorMessage = 'Token expired'
 
       await request
@@ -137,7 +139,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return BAD_REQUEST (400) error when we send a token of non recorded user', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
-      const { _id: postId } = selectedPost!
+      const { _id: postId } = selectedPostDto!
       const expectedErrorMessage = 'User does not exist'
 
       await request
@@ -184,7 +186,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return FORBIDDEN (403) when the sent token is empty', async (done) => {
       const token = `bearer ${''}`
-      const { _id: postId } = selectedPost!
+      const { _id: postId } = selectedPostDto!
       const expectedErrorMessage = 'Required token was not provided'
 
       await request
@@ -200,7 +202,7 @@ describe('[API] - Posts endpoints', () => {
     })
 
     it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
-      const { _id: postId } = selectedPost!
+      const { _id: postId } = selectedPostDto!
       const expectedErrorMessage = 'Required token was not provided'
 
       await request
@@ -231,7 +233,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return BAD_REQUEST (400) error when we provide a wrong post ID that has more characters than allowed ones', async (done) => {
       const token = `bearer ${likeOwnerValidToken}`
-      const { _id: originalPostId } = selectedPost
+      const { _id: originalPostId } = selectedPostDto
       const postId = originalPostId.concat('abcde')
       const expectedErrorMessage = 'Post identification not valid'
 
@@ -249,7 +251,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('must return BAD_REQUEST (400) error when we provide a wrong post ID that has less characters than required ones', async (done) => {
       const token = `bearer ${likeOwnerValidToken}`
-      const { _id: originalPostId } = selectedPost
+      const { _id: originalPostId } = selectedPostDto
       const postId = originalPostId.substring(1)
       const expectedErrorMessage = 'Post identification not valid'
 
@@ -288,7 +290,7 @@ describe('[API] - Posts endpoints', () => {
       })
 
       const token = `bearer ${likeOwnerValidToken}`
-      const { _id: postId } = selectedPost!
+      const { _id: postId } = selectedPostDto!
       const expectedErrorMessage = 'Internal Server Error'
 
       await request
@@ -311,7 +313,7 @@ describe('[API] - Posts endpoints', () => {
       })
 
       const token = `bearer ${likeOwnerValidToken}`
-      const { _id: postId } = selectedPost!
+      const { _id: postId } = selectedPostDto!
       const expectedErrorMessage = 'Internal Server Error'
 
       await request

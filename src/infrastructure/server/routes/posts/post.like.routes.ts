@@ -28,7 +28,7 @@ postLikeRoutes.delete('/like', ensureAuthenticated, validatePostLike, async (req
 
   try {
     await dislikePost(postId, likeOwnerId)
-    res.send()
+    res.json(await dislikePost(postId, likeOwnerId))
   } catch (error) {
     next(error)
   }
