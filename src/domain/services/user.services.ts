@@ -1,5 +1,5 @@
 import { userDataSource } from '@infrastructure/dataSources'
-import { UserDomainModel, NewUserDomainModel, UserProfileDomainModel, NewUserProfileDomainModel } from '@domainModels'
+import { UserDomainModel, NewUserDomainModel, UserProfileDomainModel, NewUserProfileDomainModel, RegisteredUserDomainModel } from '@domainModels'
 import { NewUserAlreadyExistsError, GettingUserError, CreatingUserError, UpdatingUserError, GettingUserProfileError } from '@errors'
 import { getUtcTimestampIsoString } from '@common'
 import { hashPassword } from '@domainServices'
@@ -20,7 +20,8 @@ export const getUserByToken = async (token: string): Promise<UserDomainModel | n
   }
 }
 
-const saveUser = async (newUserData: NewUserDomainModel): Promise<void> => userDataSource.createUser(newUserData)
+const saveUser = async (newUserData: NewUserDomainModel): Promise<RegisteredUserDomainModel> =>
+  userDataSource.createUser(newUserData)
 
 const checkIfNewUserAlreadyExists = async (username: string) => {
   const persistedUser = await getUserByUsername(username)
@@ -29,7 +30,7 @@ const checkIfNewUserAlreadyExists = async (username: string) => {
   }
 }
 
-export const createUser = async (newUserData: NewUserDomainModel): Promise<void> => {
+export const createUser = async (newUserData: NewUserDomainModel): Promise<RegisteredUserDomainModel> => {
   const { username, password } = newUserData
   await checkIfNewUserAlreadyExists(username)
   const hashedPassword = await hashPassword(password)
@@ -39,7 +40,7 @@ export const createUser = async (newUserData: NewUserDomainModel): Promise<void>
   }
 
   try {
-    await saveUser(userDataWithHashedPassword)
+    return await saveUser(userDataWithHashedPassword)
   } catch ({ message }) {
     throw new CreatingUserError(`Error updating user with username '${newUserData.username}' login data. ${message}`)
   }
