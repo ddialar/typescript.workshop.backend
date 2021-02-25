@@ -1,5 +1,14 @@
 import { NewUserInputDto, UserDto } from '@infrastructure/dtos'
-import { NewUserDomainModel, UserDomainModel, UserProfileDomainModel } from '@domainModels'
+import { NewUserDomainModel, RegisteredUserDomainModel, UserDomainModel, UserProfileDomainModel } from '@domainModels'
+
+export const mapUserFromDtoToRegisteredDomainModel = (user: UserDto): RegisteredUserDomainModel => {
+  const { username, name, surname } = user
+
+  return {
+    username,
+    fullName: `${name} ${surname}`
+  }
+}
 
 export const mapUserFromDtoToDomainModel = (user: UserDto | null): UserDomainModel | null => {
   if (!user) { return user }
