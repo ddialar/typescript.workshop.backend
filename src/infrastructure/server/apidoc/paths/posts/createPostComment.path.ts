@@ -30,7 +30,7 @@ export const createPostComment = {
   },
   responses: {
     200: {
-      description: 'New comment created successfully in the provided post',
+      description: 'Selected post commented successfully',
       content: {
         'application/json': {
           schema: {
@@ -40,7 +40,13 @@ export const createPostComment = {
       }
     },
     400: {
-      description: 'Bad request when the token is expired or it belongs to a non registered user',
+      description: `<p>Bad request when some of the next situations happen:</p>
+        <ul>
+          <li>The token content is malformed</li>
+          <li>The token belongs to a non recorded user</li>
+          <li>The post ID is not provided, empty or malformed</li>
+          <li>The comment body is not provided or empty</li>
+        </ul>`,
       content: {
         'application/json': {
           schema: {
@@ -50,7 +56,7 @@ export const createPostComment = {
       }
     },
     401: {
-      description: 'Unauthorized user error when the provided token is not valid',
+      description: 'Unauthorized user error when the provided token is expired',
       content: {
         'application/json': {
           schema: {
@@ -60,11 +66,24 @@ export const createPostComment = {
       }
     },
     403: {
-      description: 'The sent token is empty',
+      description: `<p>Forbidden error when some of the next situations happen:</p>
+        <ul>
+          <li>The <b>Authorization</b> header is not sent</li>
+          <li>The token is epmty</li>`,
       content: {
         'application/json': {
           schema: {
             $ref: '#/components/schemas/Error403'
+          }
+        }
+      }
+    },
+    404: {
+      description: 'When the selected post is not found',
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/components/schemas/Error404'
           }
         }
       }
