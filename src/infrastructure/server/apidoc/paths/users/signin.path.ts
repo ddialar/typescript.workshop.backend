@@ -15,10 +15,21 @@ export const signin = {
   },
   responses: {
     201: {
-      description: 'New user created successfully'
+      description: 'New user created successfully',
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/components/schemas/NewRegisteredUser'
+          }
+        }
+      }
     },
     400: {
-      description: 'Bad request when the user is alredy recorded in the system',
+      description: `<p>Bad request when some of the next reasons happen:</p>
+        <ul>
+          <li>The user is alredy recorded in the system.</li>
+          <li>Some of the required fields is not provided or its content is malformed.</li>
+        </ul>`,
       content: {
         'application/json': {
           schema: {
