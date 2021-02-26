@@ -9,7 +9,7 @@ import { userDataSource } from '@infrastructure/dataSources'
 
 import { testingUsers, testingExpiredJwtToken, testingValidJwtTokenForNonPersistedUser, cleanUsersCollectionFixture, saveUserFixture, getUserByUsernameFixture } from '@testingFixtures'
 
-const [{ username, password, email, token }] = testingUsers
+const [{ username, password, email, token: validToken }] = testingUsers
 
 const LOGOUT_PATH = '/logout'
 
@@ -20,7 +20,7 @@ describe('[API] - Authentication endpoints', () => {
       username,
       password,
       email,
-      token
+      token: validToken
     }
     let request: SuperTest<Test>
 
@@ -39,8 +39,8 @@ describe('[API] - Authentication endpoints', () => {
       await disconnect()
     })
 
-    it('must return a OK (200) and the token field must be set to NULL in the user record', async (done) => {
-      const token = `bearer ${mockedUserData.token}`
+    it('must return OK (200) and the token field must be set to NULL in the user record', async (done) => {
+      const token = `bearer ${validToken}`
 
       await request
         .post(LOGOUT_PATH)
@@ -57,36 +57,8 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must return a FORBIDDEN (403) error when we do not provide any token', async (done) => {
-      const token = ''
-      const expectedErrorMessage = 'Required token was not provided'
-
-      await request
-        .post(LOGOUT_PATH)
-        .set('Authorization', token)
-        .expect(FORBIDDEN)
-        .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
-        })
-
-      done()
-    })
-
-    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
-      const expectedErrorMessage = 'Required token was not provided'
-
-      await request
-        .post(LOGOUT_PATH)
-        .expect(FORBIDDEN)
-        .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
-        })
-
-      done()
-    })
-
-    it('must return a BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
-      const token = `bearer ${mockedUserData.token}$`
+    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+      const token = `bearer ${''}$`
       const expectedErrorMessage = 'Wrong token format'
 
       await request
@@ -100,8 +72,8 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must return a BAD_REQUEST (400) error when we send a wrong formatted token because it is incomplete', async (done) => {
-      const token = `bearer ${mockedUserData.token.split('.').shift()}`
+    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+      const token = `bearer ${validToken}$`
       const expectedErrorMessage = 'Wrong token format'
 
       await request
@@ -115,14 +87,14 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must return an UNAUTHORIZED (401) error when we send an expired token', async (done) => {
-      const token = `bearer ${testingExpiredJwtToken}`
-      const expectedErrorMessage = 'Token expired'
+    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
+      const token = `bearer ${validToken.split('.').shift()}`
+      const expectedErrorMessage = 'Wrong token format'
 
       await request
         .post(LOGOUT_PATH)
         .set('Authorization', token)
-        .expect(UNAUTHORIZED)
+        .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
@@ -130,7 +102,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must return an BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async (done) => {
+    it('must return BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const expectedErrorMessage = 'User does not exist'
 
@@ -145,12 +117,55 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must return an INTERNAL_SERVER_ERROR (500) when the updating logout user data process fails', async (done) => {
+    it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+      const token = `bearer ${testingExpiredJwtToken}`
+      const expectedErrorMessage = 'Token expired'
+
+      await request
+        .post(LOGOUT_PATH)
+        .set('Authorization', token)
+        .expect(UNAUTHORIZED)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return FORBIDDEN (403) error when we do not provide any token', async (done) => {
+      const token = ''
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .post(LOGOUT_PATH)
+        .set('Authorization', token)
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .post(LOGOUT_PATH)
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return INTERNAL_SERVER_ERROR (500) when the updating logout user data process fails', async (done) => {
       jest.spyOn(userDataSource, 'updateUserById').mockImplementation(() => {
         throw new Error('Testing Error')
       })
 
-      const token = `bearer ${mockedUserData.token}`
+      const token = `bearer ${validToken}`
       const expectedErrorMessage = 'Internal Server Error'
 
       await request
