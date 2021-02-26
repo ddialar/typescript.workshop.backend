@@ -49,7 +49,7 @@ describe('[API] - Authentication endpoints', () => {
       await disconnect()
     })
 
-    it('must return a 200 (OK) and the user authentication data', async (done) => {
+    it('must return OK (200) and the user authentication data', async (done) => {
       const loginData: LoginInputParams = {
         username: testingUsername,
         password: testingValidPlainPassword
@@ -79,7 +79,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw a BAD_REQUEST (400) when username is not provided', async (done) => {
+    it('must return BAD_REQUEST (400) when username is not provided', async (done) => {
       const loginData = {
         password: testingValidPlainPassword
       }
@@ -96,7 +96,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw a BAD_REQUEST (400) when the provided username has not a valid structure', async (done) => {
+    it('must return BAD_REQUEST (400) when the provided username has not a valid structure', async (done) => {
       const loginData = {
         username: '@wrong.mail.com',
         password: testingValidPlainPassword
@@ -114,7 +114,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw a BAD_REQUEST (400) when the provided password has not a valid structure', async (done) => {
+    it('must return BAD_REQUEST (400) when the provided password has not a valid structure', async (done) => {
       const loginData = {
         username: testingUsername,
         password: '123' // Password too short.
@@ -132,7 +132,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw a BAD_REQUEST (400) when the provided password contains not valid elements', async (done) => {
+    it('must return BAD_REQUEST (400) when the provided password contains not valid elements', async (done) => {
       const loginData = {
         username: testingUsername,
         password: '123$#%'
@@ -150,7 +150,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw a BAD_REQUEST (400) when when password is not provided', async (done) => {
+    it('must return BAD_REQUEST (400) when when password is not provided', async (done) => {
       const loginData = {
         username: testingUsername
       }
@@ -167,7 +167,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw an UNAUTHORIZED (401) error when we use a non persisted username', async (done) => {
+    it('must return UNAUTHORIZED (401) error when we use a non persisted username', async (done) => {
       const loginData: LoginInputParams = {
         username: testingNonPersistedUsername,
         password: testingValidPlainPassword
@@ -185,7 +185,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw an UNAUTHORIZED (401) error when we use a wrong password', async (done) => {
+    it('must return UNAUTHORIZED (401) error when we use a wrong password', async (done) => {
       const loginData: LoginInputParams = {
         username: testingUsername,
         password: testingWrongPlainPassword
@@ -203,7 +203,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw an INTERNAL_SERVER_ERROR (500) when the retrieving user process fails', async (done) => {
+    it('must return INTERNAL_SERVER_ERROR (500) when the retrieving user process fails', async (done) => {
       jest.spyOn(userDataSource, 'getUserByUsername').mockImplementation(() => {
         throw new GettingUserError('Testing error')
       })
@@ -227,7 +227,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw an INTERNAL_SERVER_ERROR (500) when the checking password process fails', async (done) => {
+    it('must return INTERNAL_SERVER_ERROR (500) when the checking password process fails', async (done) => {
       jest.spyOn(hashServices, 'checkPassword').mockImplementation(() => {
         throw new CheckingPasswordError('Error checking password')
       })
@@ -251,7 +251,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw an INTERNAL_SERVER_ERROR (500) when the getting token process fails', async (done) => {
+    it('must return INTERNAL_SERVER_ERROR (500) when the getting token process fails', async (done) => {
       jest.spyOn(token, 'generateToken').mockImplementation(() => {
         throw new Error('Testing Error')
       })
@@ -275,7 +275,7 @@ describe('[API] - Authentication endpoints', () => {
       done()
     })
 
-    it('must throw an INTERNAL_SERVER_ERROR (500) when the updating login user data process fails', async (done) => {
+    it('must return INTERNAL_SERVER_ERROR (500) when the updating login user data process fails', async (done) => {
       jest.spyOn(userDataSource, 'updateUserById').mockImplementation(() => {
         throw new Error('Testing Error')
       })
