@@ -12,7 +12,10 @@ export const postLogout = {
       description: 'Logout success'
     },
     400: {
-      description: 'Bad request error when the sent token belongs to a non recorded user',
+      description: `<p>Bad request error when some of the next situations affect to the sent token:</p>
+        <ul>
+          <li>Its content is malformed</li>
+          <li>It belongs to a non recorded user</li>`,
       content: {
         'application/json': {
           schema: {
@@ -22,7 +25,7 @@ export const postLogout = {
       }
     },
     401: {
-      description: 'Unauthorized user error when the provided token is expired or not valid',
+      description: 'Unauthorized user error when the provided token is expired',
       content: {
         'application/json': {
           schema: {
@@ -32,7 +35,10 @@ export const postLogout = {
       }
     },
     403: {
-      description: 'Forbidden error when the token is not sent',
+      description: `<p>Forbidden error when some of the next situations happen:</p>
+        <ul>
+          <li>The <b>Authorization</b> header is not sent</li>
+          <li>The token is epmty</li>`,
       content: {
         'application/json': {
           schema: {

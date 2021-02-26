@@ -24,6 +24,16 @@ export const postLogin = {
         }
       }
     },
+    400: {
+      description: 'Bad request when some of the required fields is not provided or its contend is malformed',
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/components/schemas/Error400'
+          }
+        }
+      }
+    },
     401: {
       description: 'Unauthorized user error when the username or password are wrong or they mismatch with the stored information',
       content: {
