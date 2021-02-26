@@ -94,16 +94,16 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return FORBIDDEN (403) when we send an empty token', async (done) => {
-      const token = ''
+    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+      const token = `bearer ${''}$`
       const payload = { postBody }
-      const expectedErrorMessage = 'Required token was not provided'
+      const expectedErrorMessage = 'Wrong token format'
 
       await request
         .post(POSTS_CREATE_PATH)
         .set('Authorization', token)
         .send(payload)
-        .expect(FORBIDDEN)
+        .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
@@ -111,31 +111,16 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+      const token = `bearer ${validToken}$`
       const payload = { postBody }
-      const expectedErrorMessage = 'Required token was not provided'
-
-      await request
-        .post(POSTS_CREATE_PATH)
-        .send(payload)
-        .expect(FORBIDDEN)
-        .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
-        })
-
-      done()
-    })
-
-    it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
-      const token = `bearer ${testingExpiredJwtToken}`
-      const payload = { postBody }
-      const expectedErrorMessage = 'Token expired'
+      const expectedErrorMessage = 'Wrong token format'
 
       await request
         .post(POSTS_CREATE_PATH)
         .set('Authorization', token)
         .send(payload)
-        .expect(UNAUTHORIZED)
+        .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
@@ -143,7 +128,24 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send an expired token', async (done) => {
+    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
+      const token = `bearer ${validToken.split('.').shift()}`
+      const payload = { postBody }
+      const expectedErrorMessage = 'Wrong token format'
+
+      await request
+        .post(POSTS_CREATE_PATH)
+        .set('Authorization', token)
+        .send(payload)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return BAD_REQUEST (400) error when we send a token which belongs to a non registered user', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const payload = { postBody }
       const expectedErrorMessage = 'User does not exist'
@@ -185,6 +187,55 @@ describe('[API] - Posts endpoints', () => {
         .set('Authorization', token)
         .send(payload)
         .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+      const token = `bearer ${testingExpiredJwtToken}`
+      const payload = { postBody }
+      const expectedErrorMessage = 'Token expired'
+
+      await request
+        .post(POSTS_CREATE_PATH)
+        .set('Authorization', token)
+        .send(payload)
+        .expect(UNAUTHORIZED)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return FORBIDDEN (403) when we send an empty token', async (done) => {
+      const token = ''
+      const payload = { postBody }
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .post(POSTS_CREATE_PATH)
+        .set('Authorization', token)
+        .send(payload)
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+      const payload = { postBody }
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .post(POSTS_CREATE_PATH)
+        .send(payload)
+        .expect(FORBIDDEN)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })

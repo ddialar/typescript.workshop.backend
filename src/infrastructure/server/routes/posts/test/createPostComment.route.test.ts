@@ -4,7 +4,7 @@ import { lorem } from 'faker'
 import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
-import { BAD_REQUEST, OK, FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR } from '@errors'
+import { BAD_REQUEST, OK, FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND } from '@errors'
 import { PostDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
 import { UserDto, UserProfileDto } from '@infrastructure/dtos'
@@ -19,7 +19,8 @@ import {
   cleanUsersCollectionFixture,
   saveUserFixture,
   cleanPostsCollectionFixture,
-  savePostsFixture
+  savePostsFixture,
+  testingNonValidPostId
 } from '@testingFixtures'
 
 const POSTS_COMMENT_PATH = '/posts/comment'
@@ -36,6 +37,7 @@ describe('[API] - Posts endpoints', () => {
 
     const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts
     const [originalPost] = mockedPosts
+    const nonValidPostId = testingNonValidPostId
     const [testingFreeUser] = testingDomainModelFreeUsers
     const { id, username, password, email, avatar, name, surname, token: validToken } = testingUsers.find(({ id }) => id === testingFreeUser.id)!
 
@@ -116,17 +118,17 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return FORBIDDEN (403) when we send an empty token', async (done) => {
-      const token = ''
+    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+      const token = `bearer ${''}$`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
-      const expectedErrorMessage = 'Required token was not provided'
+      const expectedErrorMessage = 'Wrong token format'
 
       await request
         .post(POSTS_COMMENT_PATH)
         .set('Authorization', token)
         .send({ postId, commentBody })
-        .expect(FORBIDDEN)
+        .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
@@ -134,12 +136,17 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
-      const expectedErrorMessage = 'Required token was not provided'
+    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+      const token = `bearer ${validToken}$`
+      const { id: postId } = originalPost
+      const commentBody = lorem.paragraph()
+      const expectedErrorMessage = 'Wrong token format'
 
       await request
         .post(POSTS_COMMENT_PATH)
-        .expect(FORBIDDEN)
+        .set('Authorization', token)
+        .send({ postId, commentBody })
+        .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
@@ -147,17 +154,17 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
-      const token = `bearer ${testingExpiredJwtToken}`
+    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
+      const token = `bearer ${validToken.split('.').shift()}`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
-      const expectedErrorMessage = 'Token expired'
+      const expectedErrorMessage = 'Wrong token format'
 
       await request
         .post(POSTS_COMMENT_PATH)
         .set('Authorization', token)
         .send({ postId, commentBody })
-        .expect(UNAUTHORIZED)
+        .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
@@ -302,6 +309,73 @@ describe('[API] - Posts endpoints', () => {
         .set('Authorization', token)
         .send({ postId })
         .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+      const token = `bearer ${testingExpiredJwtToken}`
+      const { id: postId } = originalPost
+      const commentBody = lorem.paragraph()
+      const expectedErrorMessage = 'Token expired'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentBody })
+        .expect(UNAUTHORIZED)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return FORBIDDEN (403) when we send an empty token', async (done) => {
+      const token = ''
+      const { id: postId } = originalPost
+      const commentBody = lorem.paragraph()
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentBody })
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('must return NOT_FOUND (404) when the provided post ID does nott exist', async (done) => {
+      const token = `bearer ${validToken}`
+      const postId = nonValidPostId
+      const commentBody = lorem.paragraph()
+      const expectedErrorMessage = 'Post not found'
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentBody })
+        .expect(NOT_FOUND)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
