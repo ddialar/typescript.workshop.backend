@@ -1,4 +1,5 @@
 export * from './PostIdentificationError'
 export * from './PostCommentError'
+export * from './PostDislikeUserError'
 export * from './NewPostError'
 export * from './NewPostCommentError'
