@@ -243,8 +243,56 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a token of non recorded user', async (done) => {
-      const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+      const token = `bearer ${''}$`
+      const postId = selectedPostDto._id
+      const expectedErrorMessage = 'Wrong token format'
+
+      await request
+        .get(`${POSTS_EXTENDED_PATH}/${postId}`)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+      const token = `bearer ${postOwnerToken}$`
+      const postId = selectedPostDto._id
+      const expectedErrorMessage = 'Wrong token format'
+
+      await request
+        .get(`${POSTS_EXTENDED_PATH}/${postId}`)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is incomplete', async (done) => {
+      const token = `bearer ${postOwnerToken.split('.').shift()}`
+      const postId = selectedPostDto._id
+      const expectedErrorMessage = 'Wrong token format'
+
+      await request
+        .get(`${POSTS_EXTENDED_PATH}/${postId}`)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('returns BAD_REQUEST (400) when the action is performed by an user who is not recorded in the database', async (done) => {
+      const token = `bearer ${unknownUserToken}`
       const postId = selectedPostDto._id
       const expectedErrorMessage = 'User does not exist'
 
@@ -311,22 +359,6 @@ describe('[API] - Posts endpoints', () => {
       const token = `bearer ${postOwnerToken}`
       const postId = selectedPostDto._id.substring(2).concat('$%')
       const expectedErrorMessage = `Failed to decode param '${postId}'`
-
-      await request
-        .get(`${POSTS_EXTENDED_PATH}/${postId}`)
-        .set('Authorization', token)
-        .expect(BAD_REQUEST)
-        .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
-        })
-
-      done()
-    })
-
-    it('returns BAD_REQUEST (400) when the action is performed by an user who is not recorded in the database', async (done) => {
-      const token = `bearer ${unknownUserToken}`
-      const postId = selectedPostDto._id
-      const expectedErrorMessage = 'User does not exist'
 
       await request
         .get(`${POSTS_EXTENDED_PATH}/${postId}`)
