@@ -1,5 +1,6 @@
 import { getAllPosts } from './getAllPosts.path'
 import { getPostById } from './getPostById.path'
+import { getExtendedPostById } from './getExtendedPostById.path'
 import { createPost } from './createPost.path'
 import { deletePost } from './deletePost.path'
 import { createPostComment } from './createPostComment.path'
@@ -15,6 +16,9 @@ export const posts = {
   },
   '/posts/{id}': {
     get: getPostById
+  },
+  '/posts/ext/{id}': {
+    get: getExtendedPostById
   },
   '/posts/comment': {
     post: createPostComment,
