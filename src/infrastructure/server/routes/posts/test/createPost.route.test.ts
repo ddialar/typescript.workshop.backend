@@ -53,7 +53,7 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
-    it('must return OK (200) and the created post', async (done) => {
+    it('returns OK (200) and the created post', async (done) => {
       const token = `bearer ${validToken}`
       const payload = { postBody }
 
@@ -94,7 +94,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
       const token = `bearer ${''}$`
       const payload = { postBody }
       const expectedErrorMessage = 'Wrong token format'
@@ -111,7 +111,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
       const token = `bearer ${validToken}$`
       const payload = { postBody }
       const expectedErrorMessage = 'Wrong token format'
@@ -128,7 +128,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
       const token = `bearer ${validToken.split('.').shift()}`
       const payload = { postBody }
       const expectedErrorMessage = 'Wrong token format'
@@ -145,7 +145,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a token which belongs to a non registered user', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a token which belongs to a non registered user', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const payload = { postBody }
       const expectedErrorMessage = 'User does not exist'
@@ -162,7 +162,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when postBody is not sent', async (done) => {
+    it('returns BAD_REQUEST (400) error when postBody is not sent', async (done) => {
       const token = `bearer ${validToken}`
       const expectedErrorMessage = 'New post data error.'
 
@@ -177,7 +177,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when postBody is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when postBody is empty', async (done) => {
       const token = `bearer ${validToken}`
       const payload = { postBody: '' }
       const expectedErrorMessage = 'New post data error.'
@@ -194,7 +194,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+    it('returns UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
       const payload = { postBody }
       const expectedErrorMessage = 'Token expired'
@@ -211,7 +211,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return FORBIDDEN (403) when we send an empty token', async (done) => {
+    it('returns FORBIDDEN (403) when we send an empty token', async (done) => {
       const token = ''
       const payload = { postBody }
       const expectedErrorMessage = 'Required token was not provided'
@@ -228,7 +228,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+    it('returns a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
       const payload = { postBody }
       const expectedErrorMessage = 'Required token was not provided'
 
@@ -243,7 +243,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
       jest.spyOn(postDataSource, 'createPost').mockImplementation(() => Promise.resolve(null))
 
       const token = `bearer ${validToken}`
@@ -264,7 +264,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async (done) => {
       jest.spyOn(postDataSource, 'createPost').mockImplementation(() => {
         throw new Error('Testing error')
       })
