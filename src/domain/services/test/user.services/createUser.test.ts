@@ -38,12 +38,13 @@ describe('[SERVICES] User - createUser', () => {
 
     const registeredUser = await createUser(newUserData)
 
-    const expectedRegisteredFields = ['username', 'fullName']
+    const expectedRegisteredFields = ['username', 'fullName', 'avatar']
     const registeredUserFields = Object.keys(registeredUser).sort()
     expect(registeredUserFields.sort()).toEqual(expectedRegisteredFields.sort())
 
     expect(registeredUser.username).toBe(newUserData.username)
     expect(registeredUser.fullName).toBe(`${newUserData.name} ${newUserData.surname}`)
+    expect(registeredUser.avatar).toBe(newUserData.avatar)
 
     const persistedUser = (await getUserByUsernameFixture(username))!
 
