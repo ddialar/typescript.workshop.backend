@@ -8,7 +8,7 @@ export const deletePost = {
     }
   ],
   requestBody: {
-    description: 'The post that we want to remove.',
+    description: 'The post that we want to delete.',
     required: true,
     content: {
       'application/json': {
@@ -26,10 +26,16 @@ export const deletePost = {
   },
   responses: {
     200: {
-      description: 'The selected post was removed successfully'
+      description: 'The selected post was deleted successfully'
     },
     400: {
-      description: 'Bad request when the token is expired or it belongs to a non registered user',
+      description: `<p>Bad request when some of the next situations happen:</p>
+        <ul>
+          <li>The token content is malformed</li>
+          <li>The token belongs to a non recorded user</li>
+          <li>The post ID is not provided, empty or malformed</li>
+          <li>The request is performed by an user who is not registered in the database</li>
+        </ul>`,
       content: {
         'application/json': {
           schema: {
@@ -39,7 +45,11 @@ export const deletePost = {
       }
     },
     401: {
-      description: 'Unauthorized user error when the provided token is not valid or when the user who performes the action is not the post owner',
+      description: `<p>Unauthorized user error when some of the next situations happen:</p>
+        <ul>
+          <li>The token is expired</li>
+          <li>The token belongs to a user who is not the post owner</li>
+        </ul>`,
       content: {
         'application/json': {
           schema: {
@@ -49,7 +59,11 @@ export const deletePost = {
       }
     },
     403: {
-      description: 'The sent token is empty',
+      description: `<p>Forbidden error when some of the next situations happen:</p>
+        <ul>
+          <li>The <b>Authorization</b> header is not sent</li>
+          <li>The token is epmty</li>
+        </ul>`,
       content: {
         'application/json': {
           schema: {

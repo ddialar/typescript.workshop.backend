@@ -50,7 +50,8 @@ postGeneralRoutes.delete('/', ensureAuthenticated, validatePost('body'), async (
   postEndpointsLogger('debug', `Deleting post '${postId}' by user '${postOwnerId}'.`)
 
   try {
-    res.json(await deletePost(postId, postOwnerId))
+    await deletePost(postId, postOwnerId)
+    res.end()
   } catch (error) {
     next(error)
   }
