@@ -4,7 +4,7 @@ export const getAllPosts = {
   operationId: 'getAllPosts',
   responses: {
     200: {
-      description: 'Posts retreived successfully',
+      description: 'Posts retreived successfully or empty array when no posts are found',
       content: {
         'application/json': {
           schema: {
