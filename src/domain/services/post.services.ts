@@ -12,6 +12,7 @@ import {
   UnauthorizedPostCommentDeletingError,
   UnauthorizedPostDeletingError,
   DeletingPostError,
+  PostDislikeUserError,
   ApiError
 } from '@errors'
 import { ExtendedPostDomainModel, PostCommentDomainModel, PostDomainModel, PostOwnerDomainModel } from '@domainModels'
@@ -153,7 +154,7 @@ export const dislikePost = async (postId: string, likeOwnerId: string): Promise<
       throw new DeletingPostLikeError(`Error deleting like '${selectedLike.id}', from post '${postId}', by user '${likeOwnerId}'. ${message}`)
     }
   } else {
-    return extendSinglePost(likeOwnerId, selectedPost)
+    throw new PostDislikeUserError(`User '${likeOwnerId}' tried to dislike the post '${postId}' that was not previously liked by it.`)
   }
 }
 
