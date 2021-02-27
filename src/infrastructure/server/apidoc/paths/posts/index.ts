@@ -1,4 +1,5 @@
 import { getAllPosts } from './getAllPosts.path'
+import { getAllExtendedPosts } from './getAllExtendedPosts.path'
 import { getPostById } from './getPostById.path'
 import { getExtendedPostById } from './getExtendedPostById.path'
 import { createPost } from './createPost.path'
@@ -16,6 +17,9 @@ export const posts = {
   },
   '/posts/{id}': {
     get: getPostById
+  },
+  '/posts/ext': {
+    get: getAllExtendedPosts
   },
   '/posts/ext/{id}': {
     get: getExtendedPostById
