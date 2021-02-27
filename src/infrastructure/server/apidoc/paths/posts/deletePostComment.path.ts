@@ -46,7 +46,6 @@ export const deletePostComment = {
           <li>The token belongs to a non recorded user</li>
           <li>The post ID is not provided, empty or malformed</li>
           <li>The comment ID is not provided, empty or malformed</li>
-          <li>The request is performed by an user who is not registered in the database</li>
         </ul>`,
       content: {
         'application/json': {
