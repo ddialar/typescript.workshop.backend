@@ -22,8 +22,18 @@ export const getPostById = {
         }
       }
     },
+    400: {
+      description: 'Bad request when the provided post ID is malformed',
+      content: {
+        'application/json': {
+          schema: {
+            $ref: '#/components/schemas/Error400'
+          }
+        }
+      }
+    },
     404: {
-      description: 'API Error',
+      description: 'When the provided post was not found',
       content: {
         'application/json': {
           schema: {
