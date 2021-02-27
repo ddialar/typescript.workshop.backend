@@ -73,7 +73,7 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
-    it('must return OK (200) and the updated post with the new comment', async (done) => {
+    it('returns OK (200) and the updated post with the new comment', async (done) => {
       const token = `bearer ${validToken}`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
@@ -118,7 +118,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
       const token = `bearer ${''}$`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
@@ -136,7 +136,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
       const token = `bearer ${validToken}$`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
@@ -154,7 +154,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
       const token = `bearer ${validToken.split('.').shift()}`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
@@ -172,7 +172,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
@@ -190,7 +190,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when postId is not provided', async (done) => {
+    it('returns BAD_REQUEST (400) error when postId is not provided', async (done) => {
       const token = `bearer ${validToken}`
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'New post comment data error.'
@@ -207,7 +207,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when postId is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when postId is empty', async (done) => {
       const token = `bearer ${validToken}`
       const postId = ''
       const commentBody = lorem.paragraph()
@@ -225,7 +225,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when postId has more characters than allowed ones', async (done) => {
+    it('returns BAD_REQUEST (400) error when postId has more characters than allowed ones', async (done) => {
       const token = `bearer ${validToken}`
       const { id: originalPostId } = originalPost
       const postId = originalPostId.concat('abcde')
@@ -244,7 +244,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when postId has less characters than required ones', async (done) => {
+    it('returns BAD_REQUEST (400) error when postId has less characters than required ones', async (done) => {
       const token = `bearer ${validToken}`
       const { id: originalPostId } = originalPost
       const postId = originalPostId.substring(1)
@@ -263,7 +263,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when postId has non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) error when postId has non allowed characters', async (done) => {
       const token = `bearer ${validToken}`
       const { id: originalPostId } = originalPost
       const postId = originalPostId.substring(3).concat('$%#')
@@ -282,7 +282,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when commentBody is not provided', async (done) => {
+    it('returns BAD_REQUEST (400) error when commentBody is not provided', async (done) => {
       const token = `bearer ${validToken}`
       const { id: postId } = originalPost
       const expectedErrorMessage = 'New post comment data error.'
@@ -299,7 +299,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when commentBody is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when commentBody is empty', async (done) => {
       const token = `bearer ${validToken}`
       const postId = ''
       const expectedErrorMessage = 'New post comment data error.'
@@ -316,7 +316,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+    it('returns UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
@@ -334,7 +334,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return FORBIDDEN (403) when we send an empty token', async (done) => {
+    it('returns FORBIDDEN (403) when we send an empty token', async (done) => {
       const token = ''
       const { id: postId } = originalPost
       const commentBody = lorem.paragraph()
@@ -352,7 +352,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
       const expectedErrorMessage = 'Required token was not provided'
 
       await request
@@ -365,7 +365,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return NOT_FOUND (404) when the provided post ID does nott exist', async (done) => {
+    it('returns NOT_FOUND (404) when the provided post ID does nott exist', async (done) => {
       const token = `bearer ${validToken}`
       const postId = nonValidPostId
       const commentBody = lorem.paragraph()
@@ -383,7 +383,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
       jest.spyOn(postDataSource, 'createPostComment').mockImplementation(() => Promise.resolve(null))
 
       const token = `bearer ${validToken}`
@@ -405,7 +405,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async (done) => {
       jest.spyOn(postDataSource, 'createPostComment').mockImplementation(() => {
         throw new Error('Testing error')
       })
