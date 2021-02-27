@@ -86,7 +86,7 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
-    it('must return OK (200) and an empty array in the body when no posts have been found', async (done) => {
+    it('returns OK (200) and an empty array in the body when no posts have been found', async (done) => {
       const token = `bearer ${postOwnerToken}`
 
       await request
@@ -100,7 +100,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return OK (200) and retrieve the persisted posts and the owned one by the user, marked like that', async (done) => {
+    it('returns OK (200) and retrieve the persisted posts and the owned one by the user, marked like that', async (done) => {
       await savePostsFixture([selectedPostDto, secondaryPost])
 
       const token = `bearer ${postOwnerToken}`
@@ -134,7 +134,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return OK (200) and retrieve the persisted posts and the owned one by the user, marked as liked by itself', async (done) => {
+    it('returns OK (200) and retrieve the persisted posts and the owned one by the user, marked as liked by itself', async (done) => {
       const postLikedByItsOwner = { ...selectedPostDto, likes: [...selectedPostDto.likes, postOwnerLikeDto] }
 
       await savePostsFixture([postLikedByItsOwner, secondaryPost])
@@ -171,7 +171,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return OK (200) and retrieve the persisted posts and the owned one by the user, commented by itself', async (done) => {
+    it('returns OK (200) and retrieve the persisted posts and the owned one by the user, commented by itself', async (done) => {
       const postCommentedByItsOwner = { ...selectedPostDto, comments: [...selectedPostDto.comments, postOwnerCommentDto] }
 
       await savePostsFixture([postCommentedByItsOwner, secondaryPost])
@@ -207,7 +207,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return OK (200) and retrieve the persisted posts and the another user one, liked by the selected user', async (done) => {
+    it('returns OK (200) and retrieve the persisted posts and the another user one, liked by the selected user', async (done) => {
       const anotherUserPostLiked = { ...secondaryPost, likes: [...secondaryPost.likes, postOwnerLikeDto] }
 
       await savePostsFixture([selectedPostDto, anotherUserPostLiked])
@@ -244,7 +244,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return OK (200) and retrieve the persisted posts and the another user one, commented by the selected user', async (done) => {
+    it('returns OK (200) and retrieve the persisted posts and the another user one, commented by the selected user', async (done) => {
       const anotherUserPostCommented = { ...secondaryPost, comments: [...secondaryPost.comments, postOwnerCommentDto] }
 
       await savePostsFixture([selectedPostDto, anotherUserPostCommented])
@@ -280,7 +280,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a token of non recorded user', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a token of non recorded user', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const expectedErrorMessage = 'User does not exist'
 
@@ -295,7 +295,22 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+      const token = `bearer ${''}$`
+      const expectedErrorMessage = 'Wrong token format'
+
+      await request
+        .get(POSTS_EXTENDED_PATH)
+        .set('Authorization', token)
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
       const token = `bearer ${postOwnerToken}$`
       const expectedErrorMessage = 'Wrong token format'
 
@@ -310,7 +325,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we send a wrong formatted token because it is incomplete', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is incomplete', async (done) => {
       const token = `bearer ${postOwnerToken.split('.').shift()}`
       const expectedErrorMessage = 'Wrong token format'
 
@@ -325,7 +340,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+    it('returns UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
       const expectedErrorMessage = 'Token expired'
 
@@ -340,7 +355,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return FORBIDDEN (403) when the sent token is empty', async (done) => {
+    it('returns FORBIDDEN (403) when the sent token is empty', async (done) => {
       const token = `bearer ${''}`
       const expectedErrorMessage = 'Required token was not provided'
 
@@ -355,7 +370,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
       const expectedErrorMessage = 'Required token was not provided'
 
       await request
@@ -368,7 +383,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return INTERNAL_SERVER_ERROR (500) when the posts retrieving process throws an exception', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the posts retrieving process throws an exception', async (done) => {
       jest.spyOn(postDataSource, 'getPosts').mockImplementation(() => {
         throw new Error()
       })
