@@ -28,11 +28,13 @@ describe('[API] - Posts endpoints', () => {
     const { connect, disconnect } = mongodb
 
     const [selectedPostDto] = testingLikedAndCommentedPersistedDtoPosts
+    const { _id: selectedPostId, likes: selectedPostLikes } = selectedPostDto
+
     const [selectedPostDomainModel] = testingLikedAndCommentedPersistedDomainModelPosts
 
     const nonValidPostId = testingNonValidPostId
 
-    const [{ userId: selectedLikeOwnerId }] = selectedPostDto.likes
+    const [{ userId: selectedLikeOwnerId }] = selectedPostLikes
     const {
       username: likeOwnerUsername,
       password: likeOwnerPassword,
@@ -82,9 +84,10 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
-    it('must return OK (200) and delete the provided like', async (done) => {
+    it('returns OK (200) and delete the provided like', async (done) => {
       const token = `bearer ${likeOwnerValidToken}`
-      const { _id: postId } = selectedPostDto
+      const postId = selectedPostId
+      const expectedLikes = selectedPostDomainModel.likes.filter(({ id }) => id !== mockedPostLikeOwner._id)
 
       await request
         .delete(POSTS_LIKE_PATH)
@@ -95,52 +98,16 @@ describe('[API] - Posts endpoints', () => {
           const { userHasLiked, likes }: ExtendedPostDomainModel = body
 
           expect(userHasLiked).toBeFalsy()
-          expect(likes).toStrictEqual(selectedPostDomainModel.likes.filter(({ id }) => id !== mockedPostLikeOwner._id))
+          expect(likes).toStrictEqual(expectedLikes)
         })
 
       done()
     })
 
-    it('must return OK (200) but not modify the selected post nor throw any error when the provided user has not liked the post', async (done) => {
-      const token = `bearer ${noLikeOwnerToken}`
-      const { _id: postId } = selectedPostDto!
-
-      await request
-        .delete(POSTS_LIKE_PATH)
-        .set('Authorization', token)
-        .send({ postId })
-        .expect(OK)
-        .then(({ body }) => {
-          const { userHasLiked, likes }: ExtendedPostDomainModel = body
-
-          expect(userHasLiked).toBeFalsy()
-          expect(likes).toStrictEqual(selectedPostDomainModel.likes)
-        })
-
-      done()
-    })
-
-    it('must return UNAUTHORIZED (401) error when we send an expired token', async (done) => {
-      const token = `bearer ${testingExpiredJwtToken}`
-      const { _id: postId } = selectedPostDto!
-      const expectedErrorMessage = 'Token expired'
-
-      await request
-        .delete(POSTS_LIKE_PATH)
-        .set('Authorization', token)
-        .send({ postId })
-        .expect(UNAUTHORIZED)
-        .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
-        })
-
-      done()
-    })
-
-    it('must return BAD_REQUEST (400) error when we send a token of non recorded user', async (done) => {
-      const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
-      const { _id: postId } = selectedPostDto!
-      const expectedErrorMessage = 'User does not exist'
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+      const token = `bearer ${''}$`
+      const postId = selectedPostId
+      const expectedErrorMessage = 'Wrong token format'
 
       await request
         .delete(POSTS_LIKE_PATH)
@@ -154,7 +121,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return a BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
       const token = `bearer ${likeOwnerValidToken}$`
       const expectedErrorMessage = 'Wrong token format'
 
@@ -169,7 +136,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return a BAD_REQUEST (400) error when we send a wrong formatted token because it is incomplete', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is incomplete', async (done) => {
       const token = `bearer ${likeOwnerValidToken.split('.').shift()}`
       const expectedErrorMessage = 'Wrong token format'
 
@@ -184,16 +151,16 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return FORBIDDEN (403) when the sent token is empty', async (done) => {
-      const token = `bearer ${''}`
-      const { _id: postId } = selectedPostDto!
-      const expectedErrorMessage = 'Required token was not provided'
+    it('returns BAD_REQUEST (400) error when we send a token of non recorded user', async (done) => {
+      const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
+      const postId = selectedPostId
+      const expectedErrorMessage = 'User does not exist'
 
       await request
         .delete(POSTS_LIKE_PATH)
         .set('Authorization', token)
         .send({ postId })
-        .expect(FORBIDDEN)
+        .expect(BAD_REQUEST)
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
@@ -201,22 +168,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
-      const { _id: postId } = selectedPostDto!
-      const expectedErrorMessage = 'Required token was not provided'
-
-      await request
-        .delete(POSTS_LIKE_PATH)
-        .send({ postId })
-        .expect(FORBIDDEN)
-        .then(({ text }) => {
-          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
-        })
-
-      done()
-    })
-
-    it('must return BAD_REQUEST (400) error when we do not provide post ID', async (done) => {
+    it('returns BAD_REQUEST (400) error when we do not provide post ID', async (done) => {
       const token = `bearer ${likeOwnerValidToken}`
       const expectedErrorMessage = 'Post identification not valid'
 
@@ -231,7 +183,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we provide a wrong post ID that has more characters than allowed ones', async (done) => {
+    it('returns BAD_REQUEST (400) error when we provide a wrong post ID that has more characters than allowed ones', async (done) => {
       const token = `bearer ${likeOwnerValidToken}`
       const { _id: originalPostId } = selectedPostDto
       const postId = originalPostId.concat('abcde')
@@ -249,7 +201,7 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return BAD_REQUEST (400) error when we provide a wrong post ID that has less characters than required ones', async (done) => {
+    it('returns BAD_REQUEST (400) error when we provide a wrong post ID that has less characters than required ones', async (done) => {
       const token = `bearer ${likeOwnerValidToken}`
       const { _id: originalPostId } = selectedPostDto
       const postId = originalPostId.substring(1)
@@ -267,7 +219,73 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return NOT_FOUND (404) when the provided post ID doesn\'t exist', async (done) => {
+    it('returns BAD_REQUEST (400) error when the provided user has not liked the post previously', async (done) => {
+      const token = `bearer ${noLikeOwnerToken}`
+      const postId = selectedPostId
+      const expectedErrorMessage = 'User must like a post before dislike it'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(BAD_REQUEST)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('returns UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+      const token = `bearer ${testingExpiredJwtToken}`
+      const postId = selectedPostId
+      const expectedErrorMessage = 'Token expired'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(UNAUTHORIZED)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('returns FORBIDDEN (403) when the sent token is empty', async (done) => {
+      const token = `bearer ${''}`
+      const postId = selectedPostId
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .set('Authorization', token)
+        .send({ postId })
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+      const postId = selectedPostId
+      const expectedErrorMessage = 'Required token was not provided'
+
+      await request
+        .delete(POSTS_LIKE_PATH)
+        .send({ postId })
+        .expect(FORBIDDEN)
+        .then(({ text }) => {
+          expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
+        })
+
+      done()
+    })
+
+    it('returns NOT_FOUND (404) when the provided post ID does not exist', async (done) => {
       const token = `bearer ${likeOwnerValidToken}`
       const postId = nonValidPostId
       const expectedErrorMessage = 'Post not found'
@@ -284,13 +302,13 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return INTERNAL_SERVER_ERROR (500) when the datasource retrieving post by ID process throws an unexpected error', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the datasource retrieving post by ID process throws an unexpected error', async (done) => {
       jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
         throw new Error('Testing error')
       })
 
       const token = `bearer ${likeOwnerValidToken}`
-      const { _id: postId } = selectedPostDto!
+      const postId = selectedPostId
       const expectedErrorMessage = 'Internal Server Error'
 
       await request
@@ -307,13 +325,13 @@ describe('[API] - Posts endpoints', () => {
       done()
     })
 
-    it('must return INTERNAL_SERVER_ERROR (500) when the datasource disliking process throws an unexpected error', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the datasource disliking process throws an unexpected error', async (done) => {
       jest.spyOn(postDataSource, 'dislikePost').mockImplementation(() => {
         throw new Error('Testing error')
       })
 
       const token = `bearer ${likeOwnerValidToken}`
-      const { _id: postId } = selectedPostDto!
+      const postId = selectedPostId
       const expectedErrorMessage = 'Internal Server Error'
 
       await request
