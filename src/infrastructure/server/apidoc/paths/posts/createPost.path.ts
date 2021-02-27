@@ -41,7 +41,8 @@ export const createPost = {
           <li>The token content is malformed</li>
           <li>The token belongs to a non recorded user</li>
           <li>The post body is empty</li>
-          <li>The post body is not sent</li>`,
+          <li>The post body is not sent</li>
+        </ul>`,
       content: {
         'application/json': {
           schema: {

@@ -64,7 +64,8 @@ export const createPostLike = {
       description: `<p>Forbidden error when some of the next situations happen:</p>
         <ul>
           <li>The <b>Authorization</b> header is not sent</li>
-          <li>The token is epmty</li>`,
+          <li>The token is epmty</li>
+        </ul>`,
       content: {
         'application/json': {
           schema: {
