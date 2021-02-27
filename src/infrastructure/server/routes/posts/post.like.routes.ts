@@ -27,7 +27,6 @@ postLikeRoutes.delete('/like', ensureAuthenticated, validatePostLike, async (req
   postEndpointsLogger('debug', `Disliking post '${postId}' by user '${likeOwnerId}'.`)
 
   try {
-    await dislikePost(postId, likeOwnerId)
     res.json(await dislikePost(postId, likeOwnerId))
   } catch (error) {
     next(error)
