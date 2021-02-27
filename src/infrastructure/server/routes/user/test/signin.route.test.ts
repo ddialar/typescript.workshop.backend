@@ -56,12 +56,13 @@ describe(`[POST] ${SIGIN_PATH}`, () => {
       .then(async ({ body }) => {
         const registeredUser: RegisteredUserDomainModel = body
 
-        const expectedRegisteredFields = ['username', 'fullName']
+        const expectedRegisteredFields = ['username', 'fullName', 'avatar']
         const registeredUserFields = Object.keys(registeredUser).sort()
         expect(registeredUserFields.sort()).toEqual(expectedRegisteredFields.sort())
 
         expect(registeredUser.username).toBe(newUserData.email)
         expect(registeredUser.fullName).toBe(`${newUserData.name} ${newUserData.surname}`)
+        expect(registeredUser.avatar).toBe(newUserData.avatar)
 
         const retrievedUser = (await getUserByUsernameFixture(newUserData.email))!
 
