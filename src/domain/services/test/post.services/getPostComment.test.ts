@@ -33,9 +33,8 @@ describe('[SERVICES] Post - getPostComment', () => {
 
     const persistedComment = (await getPostComment(postId, commentId))!
 
-    const expectedFields = ['id', 'body', 'owner', 'createdAt', 'updatedAt']
-    const persistedCommentFields = Object.keys(persistedComment).sort()
-    expect(persistedCommentFields.sort()).toEqual(expectedFields.sort())
+    const expectedFields = ['id', 'body', 'owner', 'createdAt', 'updatedAt'].sort()
+    expect(Object.keys(persistedComment).sort()).toEqual(expectedFields)
 
     expect(persistedComment).toStrictEqual<PostCommentDomainModel>(selectedComment)
 
