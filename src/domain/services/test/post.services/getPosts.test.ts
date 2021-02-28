@@ -39,9 +39,8 @@ describe('[SERVICES] Post - getPosts', () => {
     expect(persistedPosts).toHaveLength(mockedPosts.length)
 
     persistedPosts.forEach((post) => {
-      const expectedFields = ['id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
-      const getAlldPostFields = Object.keys(post).sort()
-      expect(getAlldPostFields.sort()).toEqual(expectedFields.sort())
+      const expectedFields = ['id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt'].sort()
+      expect(Object.keys(post).sort()).toEqual(expectedFields)
 
       const expectedPost = resultPosts.find((resultPost) => resultPost.id === post.id?.toString())
 
