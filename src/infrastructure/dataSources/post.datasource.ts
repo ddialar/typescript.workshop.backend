@@ -44,8 +44,8 @@ export const getPostComment = async (postId: string, commentId: string): Promise
   return persistedComment ? mapPostCommentFromDtoToDomainModel(persistedComment)! : null
 }
 
-export const deletePostComment = async (postId: string, commentId: string): Promise<void> =>
-  mongodb.requests.post.deleteComment(postId, commentId)
+export const deletePostComment = async (postId: string, commentId: string): Promise<PostDomainModel> =>
+  mapPostFromDtoToDomainModel(await mongodb.requests.post.deleteComment(postId, commentId))
 
 export const likePost = async (postId: string, owner: PostLikeDomainModel): Promise<PostDomainModel> =>
   mapPostFromDtoToDomainModel(await mongodb.requests.post.like(postId, mapPostOwnerFromDomainModelToDto(owner)))
