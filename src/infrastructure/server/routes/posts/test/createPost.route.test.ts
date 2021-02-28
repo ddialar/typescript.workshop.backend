@@ -65,16 +65,14 @@ describe('[API] - Posts endpoints', () => {
         .then(async ({ body }) => {
           const createdPost: ExtendedPostDomainModel = body
 
-          const expectedFields = ['id', 'body', 'owner', 'userIsOwner', 'userHasLiked', 'comments', 'likes', 'createdAt', 'updatedAt']
-          const createdPostFields = Object.keys(createdPost).sort()
-          expect(createdPostFields.sort()).toEqual(expectedFields.sort())
+          const expectedFields = ['id', 'body', 'owner', 'userIsOwner', 'userHasLiked', 'comments', 'likes', 'createdAt', 'updatedAt'].sort()
+          expect(Object.keys(createdPost).sort()).toEqual(expectedFields)
 
           expect(createdPost.id).not.toBeNull()
           expect(createdPost.body).toBe(postBody)
 
-          const expectedPostOwnerFields = ['id', 'name', 'surname', 'avatar']
-          const createdOwnerPostFields = Object.keys(createdPost.owner).sort()
-          expect(createdOwnerPostFields.sort()).toEqual(expectedPostOwnerFields.sort())
+          const expectedPostOwnerFields = ['id', 'name', 'surname', 'avatar'].sort()
+          expect(Object.keys(createdPost.owner).sort()).toEqual(expectedPostOwnerFields)
 
           const postOwner = createdPost.owner
           expect(postOwner.id).not.toBeNull()
