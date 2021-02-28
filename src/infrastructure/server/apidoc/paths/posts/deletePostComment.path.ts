@@ -34,7 +34,7 @@ export const deletePostComment = {
       content: {
         'application/json': {
           schema: {
-            $ref: '#/components/schemas/Post'
+            $ref: '#/components/schemas/ExtendedPost'
           }
         }
       }
