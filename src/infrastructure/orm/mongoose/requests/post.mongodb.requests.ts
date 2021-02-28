@@ -62,10 +62,11 @@ export const getComment = async (postId: string, commentId: string): Promise<Pos
   return retrievedPost && Object.keys(retrievedPost).length ? retrievedPost : null
 }
 
-export const deleteComment = async (postId: string, commentId: string): Promise<void> => {
+export const deleteComment = async (postId: string, commentId: string): Promise<PostDto> => {
   const conditions = { _id: postId }
   const update = { $pull: { comments: { _id: commentId } } }
-  await Post.findOneAndUpdate(conditions, update)
+  const options = { new: true }
+  return await Post.findOneAndUpdate(conditions, update, options).lean<PostDto>()
 }
 
 export const like = async (postId: string, owner: PostLikeDto): Promise<PostDto> => {

@@ -1,5 +1,5 @@
 import { connect, disconnect } from '../../../core'
-import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture, getPostByIdFixture } from '@testingFixtures'
+import { testingLikedAndCommentedPersistedDtoPosts, savePostsFixture, cleanPostsCollectionFixture } from '@testingFixtures'
 
 import { deleteComment } from '../../post.mongodb.requests'
 
@@ -22,9 +22,7 @@ describe('[ORM] MongoDB - Posts - deleteComment', () => {
     const postId = selectedPost._id
     const commentId = selectedComment._id
 
-    await deleteComment(postId, commentId)
-
-    const { comments: updatedComments } = (await getPostByIdFixture(postId))!
+    const { comments: updatedComments } = await deleteComment(postId, commentId)
 
     expect(updatedComments).toHaveLength(selectedPost.comments.length - 1)
     expect(updatedComments.map(({ _id }) => _id).includes(commentId)).toBeFalsy()
