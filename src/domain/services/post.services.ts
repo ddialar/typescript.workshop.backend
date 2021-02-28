@@ -94,13 +94,13 @@ export const getPostComment = async (postId: string, commentId: string): Promise
   }
 }
 
-export const createPostComment = async (postId: string, commentBody: string, owner: PostOwnerDomainModel): Promise<PostDomainModel> => {
+export const createPostComment = async (postId: string, commentBody: string, owner: PostOwnerDomainModel): Promise<ExtendedPostDomainModel> => {
   await getPostById(postId)
 
   try {
     const createdPostComment = await postDataSource.createPostComment(postId, commentBody, owner)
     if (!createdPostComment) { throw new Error('Post comment insertion process initiated but completed with NULL result') }
-    return createdPostComment
+    return extendSinglePost(owner.id, createdPostComment)
   } catch ({ message }) {
     throw new CreatingPostCommentError(`Error creating post '${postId}' commment by user '${owner.id}'. ${message}`)
   }
