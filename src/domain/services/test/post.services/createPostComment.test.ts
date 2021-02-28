@@ -15,13 +15,18 @@ import { postDataSource } from '@infrastructure/dataSources'
 describe('[SERVICES] Post - createPostComment', () => {
   const { connect, disconnect } = mongodb
   const errorMessage = 'Testing Error'
-  const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts
-  const [originalPost] = mockedPosts
+  const [selectedPostDto] = testingLikedAndCommentedPersistedDtoPosts
+  const [selectedPostDomainModel] = testingLikedAndCommentedPersistedDomainModelPosts
+  const { id: selectedPostDomainModelId, owner: selectedPostDomainModelOwner } = selectedPostDomainModel
   const [newPostCommentOwner] = testingDomainModelFreeUsers
 
   beforeAll(async () => {
     await connect()
-    await savePostsFixture(testingLikedAndCommentedPersistedDtoPosts)
+  })
+
+  beforeEach(async () => {
+    await cleanPostsCollectionFixture()
+    await savePostsFixture([selectedPostDto])
   })
 
   afterAll(async () => {
@@ -29,36 +34,82 @@ describe('[SERVICES] Post - createPostComment', () => {
     await disconnect()
   })
 
-  it('must persist the new comment into the selected post', async (done) => {
-    const { id: postId } = originalPost
-    const newPostComment = lorem.paragraph()
+  it('must persist the new comment into the selected post, when the user is the post owner', async (done) => {
+    const postId = selectedPostDomainModelId
+    const commentBody = lorem.paragraph()
+    const owner = selectedPostDomainModelOwner
 
-    const updatedPost = await createPostComment(postId, newPostComment, newPostCommentOwner)
+    const updatedPost = await createPostComment(postId, commentBody, owner)
 
-    const expectedPostFields = ['id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
-    const updatedPostFields = Object.keys(updatedPost).sort()
-    expect(updatedPostFields.sort()).toEqual(expectedPostFields.sort())
+    const expectedPostFields = ['id', 'body', 'owner', 'userIsOwner', 'userHasLiked', 'comments', 'likes', 'createdAt', 'updatedAt'].sort()
+    expect(Object.keys(updatedPost).sort()).toEqual(expectedPostFields)
 
-    expect(updatedPost.id).toBe(originalPost.id)
-    expect(updatedPost.body).toBe(originalPost.body)
+    expect(updatedPost.id).toBe(selectedPostDomainModel.id)
+    expect(updatedPost.body).toBe(selectedPostDomainModel.body)
 
-    const expectedPostOwnerFields = ['id', 'name', 'surname', 'avatar']
-    const createPostCommentdOwnerPostFields = Object.keys(updatedPost.owner).sort()
-    expect(createPostCommentdOwnerPostFields.sort()).toEqual(expectedPostOwnerFields.sort())
-    expect(updatedPost.owner).toStrictEqual(originalPost.owner)
+    const expectedPostOwnerFields = ['id', 'name', 'surname', 'avatar'].sort()
+    expect(Object.keys(updatedPost.owner).sort()).toEqual(expectedPostOwnerFields)
+    expect(updatedPost.owner).toStrictEqual(selectedPostDomainModel.owner)
 
-    expect(updatedPost.comments).toHaveLength(originalPost.comments.length + 1)
-    const originalCommentsIds = originalPost.comments.map(({ id }) => id.toString())
-    const updatedCommentsIds = updatedPost.comments.map(({ id }) => id?.toString())
-    const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId!))
-    const newPersistedComment = updatedPost.comments.find((comment) => comment.id === newPostId)!
-    expect(newPersistedComment.body).toBe(newPostComment)
-    expect(newPersistedComment.owner).toStrictEqual(newPostCommentOwner)
+    expect(updatedPost.userIsOwner).toBeTruthy()
+    expect(updatedPost.userHasLiked).toBeFalsy()
 
-    expect(updatedPost.likes).toStrictEqual(originalPost.likes)
+    expect(updatedPost.comments).toHaveLength(selectedPostDomainModel.comments.length + 1)
+    const expectedCommentFields = ['id', 'body', 'owner', 'userIsOwner', 'createdAt', 'updatedAt'].sort()
+    updatedPost.comments.forEach(comment => {
+      expect(Object.keys(comment).sort()).toEqual(expectedCommentFields)
+    })
+    const originalCommentsIds = selectedPostDomainModel.comments.map(({ id }) => id.toString())
+    const newPersistedComment = updatedPost.comments.find(({ id }) => !originalCommentsIds.includes(id!))
 
-    expect(updatedPost.createdAt).toBe(originalPost.createdAt)
-    expect(updatedPost.updatedAt).not.toBe(originalPost.updatedAt)
+    expect(newPersistedComment?.body).toBe(commentBody)
+    expect(newPersistedComment?.owner).toStrictEqual(owner)
+    expect(newPersistedComment?.userIsOwner).toBeTruthy()
+
+    expect(updatedPost.likes).toStrictEqual(selectedPostDomainModel.likes)
+
+    expect(updatedPost.createdAt).toBe(selectedPostDomainModel.createdAt)
+    expect(updatedPost.updatedAt).not.toBe(selectedPostDomainModel.updatedAt)
+
+    done()
+  })
+
+  it('must persist the new comment into the selected post, when the user is not the post owner', async (done) => {
+    const postId = selectedPostDomainModelId
+    const commentBody = lorem.paragraph()
+    const owner = newPostCommentOwner
+
+    const updatedPost = await createPostComment(postId, commentBody, owner)
+
+    const expectedPostFields = ['id', 'body', 'owner', 'userIsOwner', 'userHasLiked', 'comments', 'likes', 'createdAt', 'updatedAt'].sort()
+    expect(Object.keys(updatedPost).sort()).toEqual(expectedPostFields)
+
+    expect(updatedPost.id).toBe(selectedPostDomainModel.id)
+    expect(updatedPost.body).toBe(selectedPostDomainModel.body)
+
+    const expectedPostOwnerFields = ['id', 'name', 'surname', 'avatar'].sort()
+    expect(Object.keys(updatedPost.owner).sort()).toEqual(expectedPostOwnerFields)
+    expect(updatedPost.owner).toStrictEqual(selectedPostDomainModel.owner)
+
+    expect(updatedPost.userIsOwner).toBeFalsy()
+    expect(updatedPost.userHasLiked).toBeFalsy()
+
+    expect(updatedPost.comments).toHaveLength(selectedPostDomainModel.comments.length + 1)
+    const expectedCommentFields = ['id', 'body', 'owner', 'userIsOwner', 'createdAt', 'updatedAt'].sort()
+    updatedPost.comments.forEach(comment => {
+      expect(Object.keys(comment).sort()).toEqual(expectedCommentFields)
+    })
+    const originalCommentsIds = selectedPostDomainModel.comments.map(({ id }) => id.toString())
+    const newPersistedComment = updatedPost.comments.find(({ id }) => !originalCommentsIds.includes(id!))
+
+    expect(newPersistedComment?.body).toBe(commentBody)
+    expect(newPersistedComment?.owner).toStrictEqual(owner)
+    expect(newPersistedComment?.userIsOwner).toBeTruthy()
+
+    expect(updatedPost.likes).toStrictEqual(selectedPostDomainModel.likes)
+
+    expect(updatedPost.createdAt).toBe(selectedPostDomainModel.createdAt)
+    expect(updatedPost.updatedAt).not.toBe(selectedPostDomainModel.updatedAt)
 
     done()
   })
@@ -66,7 +117,7 @@ describe('[SERVICES] Post - createPostComment', () => {
   it('must throw an INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
     jest.spyOn(postDataSource, 'createPostComment').mockImplementation(() => Promise.resolve(null))
 
-    const { id: postId } = originalPost
+    const postId = selectedPostDomainModelId
     const newPostComment = lorem.paragraph()
     const message = 'Post comment insertion process initiated but completed with NULL result'
     const expectedError = new CreatingPostCommentError(`Error creating post '${postId}' commment by user '${newPostCommentOwner.id}'. ${message}`)
@@ -83,7 +134,7 @@ describe('[SERVICES] Post - createPostComment', () => {
       throw new Error(errorMessage)
     })
 
-    const { id: postId } = originalPost
+    const postId = selectedPostDomainModelId
     const newPostComment = lorem.paragraph()
     const expectedError = new CreatingPostCommentError(`Error creating post '${postId}' commment by user '${newPostCommentOwner.id}'. ${errorMessage}`)
 
