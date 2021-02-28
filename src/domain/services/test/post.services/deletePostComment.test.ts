@@ -6,7 +6,6 @@ import {
   testingDomainModelFreeUsers,
   cleanPostsCollectionFixture,
   savePostsFixture,
-  getPostByIdFixture,
   testingNonValidPostId
 } from '@testingFixtures'
 
@@ -40,55 +39,20 @@ describe('[SERVICES] Post - deletePostComment', () => {
     await disconnect()
   })
 
-  it('must delete the selected post comment', async (done) => {
+  it('deletes the selected post comment successfully', async (done) => {
     const postId = selectedPost.id
     const commentId = selectedComment.id
     const commentOwnerId = selectedComment.owner.id
 
-    await deletePostComment(postId, commentId, commentOwnerId)
-
-    const { comments: updatedDtoComments } = (await getPostByIdFixture(postId))!
+    const { comments: updatedDtoComments } = await deletePostComment(postId, commentId, commentOwnerId)
 
     expect(updatedDtoComments).toHaveLength(selectedPost.comments.length - 1)
-    expect(updatedDtoComments.map(({ _id }) => _id).includes(commentId)).toBeFalsy()
+    expect(updatedDtoComments.map(({ id }) => id).includes(commentId)).toBeFalsy()
 
     done()
   })
 
-  it('must throw NOT_FOUND (404) when the provided post does not exist', async (done) => {
-    const postId = testingNonValidPostId
-    const commentId = selectedComment.id
-    const commentOwnerId = selectedComment.owner.id
-    const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
-
-    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
-
-    done()
-  })
-
-  it('must throw NOT_FOUND (404) when we select a post which does not contain the provided comment', async (done) => {
-    const postId = mockedNonValidPostId
-    const commentId = selectedComment.id
-    const commentOwnerId = selectedComment.owner.id
-    const expectedError = new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`)
-
-    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
-
-    done()
-  })
-
-  it('must throw NOT_FOUND (404) when provide a comment which is not contained into the selected post', async (done) => {
-    const postId = selectedPost.id
-    const commentId = mockedNonValidCommentId
-    const commentOwnerId = selectedComment.owner.id
-    const expectedError = new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`)
-
-    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
-
-    done()
-  })
-
-  it('must throw UNAUTHORIZED (401) when the action is performed by an user who is not the owner of the comment', async (done) => {
+  it('throws UNAUTHORIZED (401) when the action is performed by an user who is not the owner of the comment', async (done) => {
     const postId = selectedPost.id
     const commentId = selectedComment.id
     const commentOwnerId = unauthorizedUserId
@@ -99,7 +63,40 @@ describe('[SERVICES] Post - deletePostComment', () => {
     done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the retrieving post comment datasource throws an unexpected error', async (done) => {
+  it('throws NOT_FOUND (404) when the provided post does not exist', async (done) => {
+    const postId = testingNonValidPostId
+    const commentId = selectedComment.id
+    const commentOwnerId = selectedComment.owner.id
+    const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
+
+    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
+
+    done()
+  })
+
+  it('throws NOT_FOUND (404) when we select a post which does not contain the provided comment', async (done) => {
+    const postId = mockedNonValidPostId
+    const commentId = selectedComment.id
+    const commentOwnerId = selectedComment.owner.id
+    const expectedError = new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`)
+
+    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
+
+    done()
+  })
+
+  it('throws NOT_FOUND (404) when provide a comment which is not contained into the selected post', async (done) => {
+    const postId = selectedPost.id
+    const commentId = mockedNonValidCommentId
+    const commentOwnerId = selectedComment.owner.id
+    const expectedError = new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`)
+
+    await expect(deletePostComment(postId, commentId, commentOwnerId)).rejects.toThrowError(expectedError)
+
+    done()
+  })
+
+  it('throws INTERNAL_SERVER_ERROR (500) when the retrieving post comment datasource throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'getPostComment').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -122,7 +119,7 @@ describe('[SERVICES] Post - deletePostComment', () => {
     done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the deleting process datasource throws an unexpected error', async (done) => {
+  it('throws INTERNAL_SERVER_ERROR (500) when the deleting process datasource throws an unexpected error', async (done) => {
     jest.spyOn(postDataSource, 'deletePostComment').mockImplementation(() => {
       throw new Error(errorMessage)
     })

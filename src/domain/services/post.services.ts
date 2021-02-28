@@ -106,24 +106,23 @@ export const createPostComment = async (postId: string, commentBody: string, own
   }
 }
 
-export const deletePostComment = async (postId: string, commentId: string, commentOwnerId: string): Promise<void> => {
+export const deletePostComment = async (postId: string, commentId: string, commentOwnerId: string): Promise<ExtendedPostDomainModel> => {
   const selectedComment = await getPostComment(postId, commentId)
 
   try {
-    if (!selectedComment) { throw new Error('deletePostComment_not_found') }
+    if (!selectedComment) { throw new Error('deletePostComment_comment_not_found') }
     if (selectedComment.owner.id !== commentOwnerId) { throw new Error('deletePostComment_unauthorized') }
-    await postDataSource.deletePostComment(postId, commentId)
-  } catch (error) {
-    if (error instanceof Error) {
-      const { message } = error
-      const possibleErrors: Record<string, ApiError> = {
-        deletePostComment_not_found: new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`),
-        deletePostComment_unauthorized: new UnauthorizedPostCommentDeletingError(`User '${commentOwnerId}' is not the owner of the comment '${commentId}', from post '${postId}', which is trying to delete.`),
-        default: new DeletingPostCommentError(`Error deleting comment '${commentId}', from post '${postId}', by user '${commentOwnerId}'. ${message}`)
-      }
 
-      throw possibleErrors[message] || possibleErrors.default
+    const uncommentedPost = await postDataSource.deletePostComment(postId, commentId)
+    return extendSinglePost(commentOwnerId, uncommentedPost)
+  } catch ({ message }) {
+    const possibleErrors: Record<string, ApiError> = {
+      deletePostComment_comment_not_found: new PostCommentNotFoundError(`Comment '${commentId}' from post '${postId}' not found`),
+      deletePostComment_unauthorized: new UnauthorizedPostCommentDeletingError(`User '${commentOwnerId}' is not the owner of the comment '${commentId}', from post '${postId}', which is trying to delete.`),
+      default: new DeletingPostCommentError(`Error deleting comment '${commentId}', from post '${postId}', by user '${commentOwnerId}'. ${message}`)
     }
+
+    throw possibleErrors[message] || possibleErrors.default
   }
 }
 
