@@ -48,9 +48,8 @@ describe('[SERVICES] User - getUserByUsername', () => {
     const username = newUserData.username
     const retrievedUser = (await getUserByUsername(username))!
 
-    const expectedFields = ['id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt']
-    const retrievedUserFields = Object.keys(retrievedUser).sort()
-    expect(retrievedUserFields.sort()).toEqual(expectedFields.sort())
+    const expectedFields = ['id', 'username', 'password', 'email', 'name', 'surname', 'avatar', 'token', 'enabled', 'deleted', 'lastLoginAt', 'createdAt', 'updatedAt'].sort()
+    expect(Object.keys(retrievedUser).sort()).toEqual(expectedFields)
 
     expect(retrievedUser.id).not.toBeNull()
     expect(retrievedUser.username).toBe(mockedUserData.username)
