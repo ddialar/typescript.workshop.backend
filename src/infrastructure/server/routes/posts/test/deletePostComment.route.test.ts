@@ -14,10 +14,10 @@ import {
   cleanPostsCollectionFixture,
   saveUsersFixture,
   savePostsFixture,
-  getPostByIdFixture,
   testingExpiredJwtToken,
   testingValidJwtTokenForNonPersistedUser
 } from '@testingFixtures'
+import { ExtendedPostDomainModel } from '@domainModels'
 
 const POSTS_COMMENT_PATH = '/posts/comment'
 
@@ -94,11 +94,11 @@ describe('[API] - Posts endpoints', () => {
         .set('Authorization', token)
         .send({ postId, commentId })
         .expect(OK)
-        .then(async () => {
-          const { comments: updatedDtoComments } = (await getPostByIdFixture(postId))!
+        .then(({ body }) => {
+          const { comments: updatedDtoComments }: ExtendedPostDomainModel = body
 
           expect(updatedDtoComments).toHaveLength(selectedPostDtoComments.length - 1)
-          expect(updatedDtoComments.map(({ _id }) => _id).includes(commentId)).toBeFalsy()
+          expect(updatedDtoComments.map(({ id }) => id).includes(commentId)).toBeFalsy()
         })
 
       done()
