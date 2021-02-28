@@ -1,3 +1,4 @@
+import { saveUsersFixture } from './../../../../../test/fixtures/mongodb/users'
 import supertest, { SuperTest, Test } from 'supertest'
 import { lorem } from 'faker'
 
@@ -5,9 +6,9 @@ import { server } from '@infrastructure/server'
 import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, FORBIDDEN, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND } from '@errors'
-import { PostDomainModel } from '@domainModels'
+import { ExtendedPostDomainModel, PostCommentOwnerDomainModel } from '@domainModels'
 import { postDataSource } from '@infrastructure/dataSources'
-import { UserDto, UserProfileDto } from '@infrastructure/dtos'
+import { UserProfileDto } from '@infrastructure/dtos'
 
 import {
   testingLikedAndCommentedPersistedDtoPosts,
@@ -17,7 +18,6 @@ import {
   testingValidJwtTokenForNonPersistedUser,
   testingExpiredJwtToken,
   cleanUsersCollectionFixture,
-  saveUserFixture,
   cleanPostsCollectionFixture,
   savePostsFixture,
   testingNonValidPostId
@@ -35,23 +35,52 @@ describe('[API] - Posts endpoints', () => {
 
     const { connect, disconnect } = mongodb
 
-    const mockedPosts = testingLikedAndCommentedPersistedDomainModelPosts
-    const [originalPost] = mockedPosts
-    const nonValidPostId = testingNonValidPostId
-    const [testingFreeUser] = testingDomainModelFreeUsers
-    const { id, username, password, email, avatar, name, surname, token: validToken } = testingUsers.find(({ id }) => id === testingFreeUser.id)!
+    const [selectedPostDto] = testingLikedAndCommentedPersistedDtoPosts
+    const { _id: selectedPostId, owner: selectedPostOwnerDto } = selectedPostDto
 
-    const mockedUserDataToBePersisted: TestingProfileDto = {
-      _id: id,
-      username,
-      password,
-      email,
-      avatar,
-      name,
-      surname,
+    const [selectedPostDomainModel] = testingLikedAndCommentedPersistedDomainModelPosts
+
+    const {
+      username: postOwnerUsername,
+      password: postOwnerPassword,
+      email: postOwnerEmail,
+      name: postOwnerName,
+      surname: postOwnerSurname,
+      avatar: postOwnerAvatar,
+      token: validToken
+    } = testingUsers.find(({ id }) => id === selectedPostOwnerDto.userId)!
+    const selectedPostOwnerDtoToBePersisted: TestingProfileDto = {
+      _id: selectedPostOwnerDto.userId,
+      username: postOwnerUsername,
+      password: postOwnerPassword,
+      email: postOwnerEmail,
+      name: postOwnerName,
+      surname: postOwnerSurname,
+      avatar: postOwnerAvatar,
       token: validToken
     }
-    let persistedUser: UserDto
+
+    const {
+      id: freeUserId,
+      username: freeUserUsername,
+      password: freeUserPassword,
+      email: freeUserEmail,
+      avatar: freeUserAvatar,
+      name: freeUserName,
+      surname: freeUserSurname,
+      token: freeUserToken
+    } = testingUsers.find(({ id }) => id === testingDomainModelFreeUsers[0].id)!
+    const freeUserDataToBePersisted: TestingProfileDto = {
+      _id: freeUserId,
+      username: freeUserUsername,
+      password: freeUserPassword,
+      email: freeUserEmail,
+      avatar: freeUserAvatar,
+      name: freeUserName,
+      surname: freeUserSurname,
+      token: freeUserToken
+    }
+    const nonValidPostId = testingNonValidPostId
 
     let request: SuperTest<Test>
 
@@ -59,12 +88,12 @@ describe('[API] - Posts endpoints', () => {
       request = supertest(server)
       await connect()
       await cleanUsersCollectionFixture()
-      persistedUser = await saveUserFixture(mockedUserDataToBePersisted)
+      await saveUsersFixture([selectedPostOwnerDtoToBePersisted, freeUserDataToBePersisted])
     })
 
     beforeEach(async () => {
       await cleanPostsCollectionFixture()
-      await savePostsFixture(testingLikedAndCommentedPersistedDtoPosts)
+      await savePostsFixture([selectedPostDto])
     })
 
     afterAll(async () => {
@@ -73,9 +102,9 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
-    it('returns OK (200) and the updated post with the new comment', async (done) => {
+    it('returns OK (200) and the selected post commented successfully, when the user is the post owner', async (done) => {
       const token = `bearer ${validToken}`
-      const { id: postId } = originalPost
+      const postId = selectedPostId
       const commentBody = lorem.paragraph()
 
       await request
@@ -84,35 +113,91 @@ describe('[API] - Posts endpoints', () => {
         .send({ postId, commentBody })
         .expect(OK)
         .then(async ({ body }) => {
-          const updatedPost: PostDomainModel = body
+          const updatedPost: ExtendedPostDomainModel = body
 
-          const expectedPostFields = ['id', 'body', 'owner', 'comments', 'likes', 'createdAt', 'updatedAt']
-          const updatedPostFields = Object.keys(updatedPost).sort()
-          expect(updatedPostFields.sort()).toEqual(expectedPostFields.sort())
+          const expectedPostFields = ['id', 'body', 'owner', 'comments', 'userIsOwner', 'userHasLiked', 'likes', 'createdAt', 'updatedAt'].sort()
+          expect(Object.keys(updatedPost).sort()).toEqual(expectedPostFields)
 
-          expect(updatedPost.id).toBe(originalPost.id)
-          expect(updatedPost.body).toBe(originalPost.body)
+          expect(updatedPost.id).toBe(selectedPostDomainModel.id)
+          expect(updatedPost.body).toBe(selectedPostDomainModel.body)
 
-          const expectedPostOwnerFields = ['id', 'name', 'surname', 'avatar']
-          const createPostCommentdOwnerPostFields = Object.keys(updatedPost.owner).sort()
-          expect(createPostCommentdOwnerPostFields.sort()).toEqual(expectedPostOwnerFields.sort())
-          expect(updatedPost.owner).toStrictEqual(originalPost.owner)
+          const expectedPostOwnerFields = ['id', 'name', 'surname', 'avatar'].sort()
+          expect(Object.keys(updatedPost.owner).sort()).toEqual(expectedPostOwnerFields)
+          expect(updatedPost.owner).toStrictEqual(selectedPostDomainModel.owner)
 
-          expect(updatedPost.comments).toHaveLength(originalPost.comments.length + 1)
-          const originalCommentsIds = originalPost.comments.map(({ id }) => id.toString())
-          const updatedCommentsIds = updatedPost.comments.map(({ id }) => id?.toString())
-          const newPostId = updatedCommentsIds.find((updatedId) => !originalCommentsIds.includes(updatedId!))
-          const newPersistedComment = updatedPost.comments.find((comment) => comment.id === newPostId)!
-          expect(newPersistedComment.body).toBe(commentBody)
-          expect(newPersistedComment.owner.id).toBe(persistedUser._id.toString())
-          expect(newPersistedComment.owner.name).toBe(persistedUser.name)
-          expect(newPersistedComment.owner.surname).toBe(persistedUser.surname)
-          expect(newPersistedComment.owner.avatar).toBe(persistedUser.avatar)
+          expect(updatedPost.userIsOwner).toBeTruthy()
+          expect(updatedPost.userHasLiked).toBeFalsy()
 
-          expect(updatedPost.likes).toStrictEqual(originalPost.likes)
+          expect(updatedPost.comments).toHaveLength(selectedPostDomainModel.comments.length + 1)
+          const expectedCommentFields = ['id', 'body', 'owner', 'userIsOwner', 'createdAt', 'updatedAt'].sort()
+          updatedPost.comments.forEach(comment => {
+            expect(Object.keys(comment).sort()).toEqual(expectedCommentFields)
+          })
+          const originalCommentsIds = selectedPostDomainModel.comments.map(({ id }) => id.toString())
+          const newPersistedComment = updatedPost.comments.find(({ id }) => !originalCommentsIds.includes(id!))
 
-          expect(updatedPost.createdAt).toBe(originalPost.createdAt)
-          expect(updatedPost.updatedAt).not.toBe(originalPost.updatedAt)
+          expect(newPersistedComment?.body).toBe(commentBody)
+          expect(newPersistedComment?.owner).toStrictEqual(selectedPostDomainModel.owner)
+          expect(newPersistedComment?.userIsOwner).toBeTruthy()
+
+          expect(updatedPost.likes).toStrictEqual(selectedPostDomainModel.likes)
+
+          expect(updatedPost.createdAt).toBe(selectedPostDomainModel.createdAt)
+          expect(updatedPost.updatedAt).not.toBe(selectedPostDomainModel.updatedAt)
+        })
+
+      done()
+    })
+
+    it('returns OK (200) and the selected post commented successfully, when the user is not the post owner', async (done) => {
+      const token = `bearer ${freeUserToken}`
+      const postId = selectedPostId
+      const commentBody = lorem.paragraph()
+
+      const freeCommentOwnerDomainModel: PostCommentOwnerDomainModel = {
+        id: freeUserId,
+        avatar: freeUserAvatar,
+        name: freeUserName,
+        surname: freeUserSurname
+      }
+
+      await request
+        .post(POSTS_COMMENT_PATH)
+        .set('Authorization', token)
+        .send({ postId, commentBody })
+        .expect(OK)
+        .then(async ({ body }) => {
+          const updatedPost: ExtendedPostDomainModel = body
+
+          const expectedPostFields = ['id', 'body', 'owner', 'comments', 'userIsOwner', 'userHasLiked', 'likes', 'createdAt', 'updatedAt'].sort()
+          expect(Object.keys(updatedPost).sort()).toEqual(expectedPostFields)
+
+          expect(updatedPost.id).toBe(selectedPostDomainModel.id)
+          expect(updatedPost.body).toBe(selectedPostDomainModel.body)
+
+          const expectedPostOwnerFields = ['id', 'name', 'surname', 'avatar'].sort()
+          expect(Object.keys(updatedPost.owner).sort()).toEqual(expectedPostOwnerFields)
+          expect(updatedPost.owner).toStrictEqual(selectedPostDomainModel.owner)
+
+          expect(updatedPost.userIsOwner).toBeFalsy()
+          expect(updatedPost.userHasLiked).toBeFalsy()
+
+          expect(updatedPost.comments).toHaveLength(selectedPostDomainModel.comments.length + 1)
+          const expectedCommentFields = ['id', 'body', 'owner', 'userIsOwner', 'createdAt', 'updatedAt'].sort()
+          updatedPost.comments.forEach(comment => {
+            expect(Object.keys(comment).sort()).toEqual(expectedCommentFields)
+          })
+          const originalCommentsIds = selectedPostDomainModel.comments.map(({ id }) => id.toString())
+          const newPersistedComment = updatedPost.comments.find(({ id }) => !originalCommentsIds.includes(id!))
+
+          expect(newPersistedComment?.body).toBe(commentBody)
+          expect(newPersistedComment?.owner).toStrictEqual(freeCommentOwnerDomainModel)
+          expect(newPersistedComment?.userIsOwner).toBeTruthy()
+
+          expect(updatedPost.likes).toStrictEqual(selectedPostDomainModel.likes)
+
+          expect(updatedPost.createdAt).toBe(selectedPostDomainModel.createdAt)
+          expect(updatedPost.updatedAt).not.toBe(selectedPostDomainModel.updatedAt)
         })
 
       done()
@@ -120,7 +205,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
       const token = `bearer ${''}$`
-      const { id: postId } = originalPost
+      const postId = selectedPostId
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'Wrong token format'
 
@@ -138,7 +223,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
       const token = `bearer ${validToken}$`
-      const { id: postId } = originalPost
+      const postId = selectedPostId
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'Wrong token format'
 
@@ -156,7 +241,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
       const token = `bearer ${validToken.split('.').shift()}`
-      const { id: postId } = originalPost
+      const postId = selectedPostId
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'Wrong token format'
 
@@ -174,7 +259,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('returns BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async (done) => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
-      const { id: postId } = originalPost
+      const postId = selectedPostId
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'User does not exist'
 
@@ -227,8 +312,8 @@ describe('[API] - Posts endpoints', () => {
 
     it('returns BAD_REQUEST (400) error when postId has more characters than allowed ones', async (done) => {
       const token = `bearer ${validToken}`
-      const { id: originalPostId } = originalPost
-      const postId = originalPostId.concat('abcde')
+      const { id: selectedPostDomainModelId } = selectedPostDomainModel
+      const postId = selectedPostDomainModelId.concat('abcde')
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'New post comment data error.'
 
@@ -246,8 +331,8 @@ describe('[API] - Posts endpoints', () => {
 
     it('returns BAD_REQUEST (400) error when postId has less characters than required ones', async (done) => {
       const token = `bearer ${validToken}`
-      const { id: originalPostId } = originalPost
-      const postId = originalPostId.substring(1)
+      const { id: selectedPostDomainModelId } = selectedPostDomainModel
+      const postId = selectedPostDomainModelId.substring(1)
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'New post comment data error.'
 
@@ -265,8 +350,8 @@ describe('[API] - Posts endpoints', () => {
 
     it('returns BAD_REQUEST (400) error when postId has non allowed characters', async (done) => {
       const token = `bearer ${validToken}`
-      const { id: originalPostId } = originalPost
-      const postId = originalPostId.substring(3).concat('$%#')
+      const { id: selectedPostDomainModelId } = selectedPostDomainModel
+      const postId = selectedPostDomainModelId.substring(3).concat('$%#')
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'New post comment data error.'
 
@@ -284,7 +369,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('returns BAD_REQUEST (400) error when commentBody is not provided', async (done) => {
       const token = `bearer ${validToken}`
-      const { id: postId } = originalPost
+      const postId = selectedPostId
       const expectedErrorMessage = 'New post comment data error.'
 
       await request
@@ -318,7 +403,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('returns UNAUTHORIZED (401) error when we send an expired token', async (done) => {
       const token = `bearer ${testingExpiredJwtToken}`
-      const { id: postId } = originalPost
+      const postId = selectedPostId
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'Token expired'
 
@@ -336,7 +421,7 @@ describe('[API] - Posts endpoints', () => {
 
     it('returns FORBIDDEN (403) when we send an empty token', async (done) => {
       const token = ''
-      const { id: postId } = originalPost
+      const postId = selectedPostId
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'Required token was not provided'
 
@@ -387,7 +472,7 @@ describe('[API] - Posts endpoints', () => {
       jest.spyOn(postDataSource, 'createPostComment').mockImplementation(() => Promise.resolve(null))
 
       const token = `bearer ${validToken}`
-      const { id: postId } = originalPost
+      const postId = selectedPostId
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'Internal Server Error'
 
@@ -411,7 +496,7 @@ describe('[API] - Posts endpoints', () => {
       })
 
       const token = `bearer ${validToken}`
-      const { id: postId } = originalPost
+      const postId = selectedPostId
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'Internal Server Error'
 
