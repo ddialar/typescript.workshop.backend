@@ -1,7 +1,7 @@
 import { createServer } from 'http'
 import express from 'express'
 import helmet from 'helmet'
-import bodyParser from 'body-parser'
+import { urlencoded, json } from 'body-parser'
 
 import { serve as swaggerServe, setup as swaggerSetup } from 'swagger-ui-express'
 import { swaggerDocument, swaggerOptions } from './apidoc'
@@ -17,8 +17,8 @@ const port = parseInt(process.env.SERVER_PORT ?? '3000', 10)
 
 app.use(helmet())
 
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(bodyParser.json())
+app.use(urlencoded({ extended: true }))
+app.use(json())
 
 app.use('/__/apidoc', swaggerServe, swaggerSetup(swaggerDocument, swaggerOptions))
 
