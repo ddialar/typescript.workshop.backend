@@ -31,7 +31,7 @@ export const login = async (username: string, password: string): Promise<Authent
   if (!validPassword) {
     throw new WrongPasswordError(`Password missmatches for username '${username}' in login process.`)
   }
-  const token = await getToken(persistedUser.id, username)
+  const token = getToken(persistedUser.id, username)
   await updateUserLoginData(persistedUser.id, token)
 
   return {
