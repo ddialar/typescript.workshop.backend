@@ -133,30 +133,30 @@ This repository is implemented following the most basic Layered Architecture, it
 The full folders structure is next:
 
 ```
-src/
- +- common/
- |   +- errors/
- |   +- logger/
- |   +- utils/
- +- domain/
- |   +- models/
- |   +- services/
- +- infrastructure/
- |   +- authentication/
- |   |   +- token/
- |   +- dataSources/
- |   +- dtos/
- |   +- mappers/
- |   +- orm/
- |   |   +- mongoose/
- |   +- server/
- |   |   +- apidoc/
- |   |   +- middlewares/
- |   |   +- routes/
- |   |   +- serverDtos/
- |   +- types/
- +- test
-     +- fixtures
+📂 src/
+    📂 common/
+    |   📂 errors/
+    |   📂 logger/
+    |   📂 utils/
+    📂 domain/
+    |   📂 models/
+    |   📂 services/
+    📂 infrastructure/
+    |   📂 authentication/
+    |   |   📂 token/
+    |   📂 dataSources/
+    |   📂 dtos/
+    |   📂 mappers/
+    |   📂 orm/
+    |   |   📂 mongoose/
+    |   📂 server/
+    |   |   📂 apidoc/
+    |   |   📂 middlewares/
+    |   |   📂 routes/
+    |   |   📂 serverDtos/
+    |   📂 types/
+    📂 test
+        📂 fixtures
 ```
 
 #### <a id="repository-overview-architecture-common"></a>🔄 common
