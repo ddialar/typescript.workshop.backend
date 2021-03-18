@@ -1,14 +1,21 @@
 load('/docker-entrypoint-initdb.d/usersDataToBePersisted.js')
 load('/docker-entrypoint-initdb.d/postsDataToBePersisted.js')
 
+const DATABASE_NAME = 'ts-course-dev';
+
 const apiDatabases = [
   {
-    dbName: 'ts-course-dev',
+    dbName: DATABASE_NAME,
     dbUsers: [
       {
         username: 'tsdev',
         password: 'tsdev',
-        roles: ['readWrite', 'dbAdmin']
+        roles: [
+          {
+            role: 'readWrite',
+            db: DATABASE_NAME,
+          }
+        ]
       }
     ],
     dbData: [
@@ -30,26 +37,16 @@ const collections = {
 }
 
 const createDatabaseUsers = (db, dbName, users) => {
-  users.map((dbUserData) => {
-    print(`[TRACE] Creating new user '${dbUserData.username}' into the '${dbName}' database...`)
-
-    const roles = dbUserData.roles.reduce((previousValue, role) => {
-      const roleDefinition = {
-        role,
-        db: dbName
-      }
-
-      previousValue.push(roleDefinition)
-      return previousValue
-    }, [])
+  users.map(({ username, password, roles }) => {
+    print(`[TRACE] Creating new user '${username}' into the '${dbName}' database...`)
 
     db.createUser({
-      user: dbUserData.username,
-      pwd: dbUserData.password,
+      user: username,
+      pwd: password,
       roles
     })
 
-    print(`[INFO ] The user '${dbUserData.username}' has been created successfully.`)
+    print(`[INFO ] The user '${username}' has been created successfully.`)
   })
 }
 
@@ -63,9 +60,7 @@ const populateDatabase = (db, data) => {
 }
 
 try {
-  apiDatabases.map((database) => {
-    const { dbName, dbUsers, dbData } = database
-
+  apiDatabases.map(({ dbName, dbUsers, dbData }) => {
     db = db.getSiblingDB(dbName)
 
     print(`[TRACE] Switching to '${dbName}' database...`)

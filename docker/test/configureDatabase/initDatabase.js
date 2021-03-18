@@ -1,11 +1,18 @@
+const DATABASE_NAME = 'ts-course-test';
+
 const apiDatabases = [
   {
-    dbName: 'ts-course-test',
+    dbName: DATABASE_NAME,
     dbUsers: [
       {
         username: 'tstest',
         password: 'tstest',
-        roles: ['readWrite', 'dbAdmin']
+        roles: [
+          {
+            role: 'readWrite',
+            db: DATABASE_NAME,
+          }
+        ]
       }
     ],
     dbData: []
@@ -13,33 +20,21 @@ const apiDatabases = [
 ]
 
 const createDatabaseUsers = (db, dbName, users) => {
-  users.map((dbUserData) => {
-    print(`[TRACE] Creating new user '${dbUserData.username}' into the '${dbName}' database...`)
-
-    const roles = dbUserData.roles.reduce((previousValue, role) => {
-      const roleDefinition = {
-        role,
-        db: dbName
-      }
-
-      previousValue.push(roleDefinition)
-      return previousValue
-    }, [])
+  users.map(({ username, password, roles }) => {
+    print(`[TRACE] Creating new user '${username}' into the '${dbName}' database...`)
 
     db.createUser({
-      user: dbUserData.username,
-      pwd: dbUserData.password,
+      user: username,
+      pwd: password,
       roles
     })
 
-    print(`[INFO ] The user '${dbUserData.username}' has been created successfully.`)
+    print(`[INFO ] The user '${username}' has been created successfully.`)
   })
 }
 
 try {
-  apiDatabases.map((database) => {
-    const { dbName, dbUsers } = database
-
+  apiDatabases.map(({ dbName, dbUsers }) => {
     db = db.getSiblingDB(dbName)
 
     print(`[TRACE] Switching to '${dbName}' database...`)
