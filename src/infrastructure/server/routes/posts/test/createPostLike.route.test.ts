@@ -5,7 +5,6 @@ import { mongodb } from '@infrastructure/orm'
 
 import { BAD_REQUEST, OK, UNAUTHORIZED, INTERNAL_SERVER_ERROR, NOT_FOUND, FORBIDDEN } from '@errors'
 import { postDataSource } from '@infrastructure/dataSources'
-import { UserProfileDto } from '@infrastructure/dtos'
 
 import {
   testingLikedAndCommentedPersistedDtoPosts,
@@ -26,21 +25,24 @@ const POSTS_LIKE_PATH = '/posts/like'
 
 describe('[API] - Posts endpoints', () => {
   describe(`[POST] ${POSTS_LIKE_PATH}`, () => {
-    interface TestingProfileDto extends UserProfileDto {
-      _id: string
-      password: string
-      token: string
-    }
-
     const { connect, disconnect } = mongodb
 
     const [selectedPostDto] = testingLikedAndCommentedPersistedDtoPosts
     const [selectedPostDomainModel] = testingLikedAndCommentedPersistedDomainModelPosts
     const nonValidPostId = testingNonValidPostId
     const [{ id: testingFreeUserId }] = testingDomainModelFreeUsers
-    const { id, username, password, email, avatar, name, surname, token: validToken } = testingUsers.find(({ id }) => id === testingFreeUserId)!
+    const {
+      id,
+      username,
+      password,
+      email,
+      avatar,
+      name,
+      surname,
+      token: validToken
+    } = testingUsers.find(({ id }) => id === testingFreeUserId)!
 
-    const mockedUserDataToBePersisted: TestingProfileDto = {
+    const mockedUserDataToBePersisted = {
       _id: id,
       username,
       password,
