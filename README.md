@@ -26,6 +26,7 @@
 -   [Credits and thanks](https://github.com/ddialar/typescript.workshop.backend#credits-and-thanks)
 -   [TODO list](https://github.com/ddialar/typescript.workshop.backend#todo-list)
 -   [Researching list](https://github.com/ddialar/typescript.workshop.backend#research-list)
+-   [Technical debt](https://github.com/ddialar/typescript.workshop.backend#tech-debt)
 
 ## <a id="description"></a>🔍 Description
 
@@ -350,15 +351,17 @@ Thanks a lot for a so incredible support to:
 
 ## <a id="todo-list"></a>📝 TODO list
 
+-   Replace [Husky v5](https://github.com/typicode/husky) by [simple-git-hooks](https://github.com/toplenboren/simple-git-hooks).
 -   Include production configuration to compile and generate Docker container ready to deploy.
 -   Include Postman requests to test the API.
 -   Include Insomnia requests to test the API.
 -   Include the `manifest.json` file.
--   ✅ Include [Joi](https://joi.dev/).
--   ✅ Include [Husky v5](https://github.com/typicode/husky).
--   ✅ Include [Helmet](https://github.com/helmetjs/helmet).
 
 ## <a id="research-list"></a>🔬 Researching list
 
 -   Investigate the use of [esbuild-loader](https://github.com/privatenumber/esbuild-loader).
 -   Investigate the profits of using [Estrella](https://github.com/rsms/estrella) as building tool.
+
+## <a id="tech-debt"></a>🤔 Technical debt
+
+Please, check the [TECH-DEBT.md](https://github.com/ddialar/typescript.workshop.backend/blob/master/TECH-DEBT.md) file in this repository in order to keep up-to-date about this repository technical debt.

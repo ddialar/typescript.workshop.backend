@@ -26,6 +26,7 @@
 -   [Reconocimientos y agradecimientos](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#credits-and-thanks)
 -   [TODO list](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#todo-list)
 -   [Elementos a investigar](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#research-list)
+-   [Deuda técnica](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#tech-debt)
 
 ## <a id="description"></a>🔍 Descripción
 
@@ -350,15 +351,17 @@ Muchísimas gracias por el incalculable apoyo prestado por:
 
 ## <a id="todo-list"></a>📝 TODO list
 
+-   Reemplazar [Husky v5](https://github.com/typicode/husky) por [simple-git-hooks](https://github.com/toplenboren/simple-git-hooks).
 -   Incluir la configuración para 'producción' para compilar y generar el conenedor de Docker listo para ser desplegado.
 -   Incluir peticiones de testing a la API basadas en Postman.
 -   Incluir peticiones de testing a la API basadas en Insomnia.
 -   Incluir el archivo `manifest.json`.
--   ✅ Incluir [Joi](https://joi.dev/).
--   ✅ Incluir [Husky v5](https://github.com/typicode/husky).
--   ✅ Incluir [Helmet](https://github.com/helmetjs/helmet).
 
 ## <a id="research-list"></a>🔬 Elementos a investigar
 
 -   Investigar el uso de [esbuild-loader](https://github.com/privatenumber/esbuild-loader).
 -   Investigar los beneficios de usar [Estrella](https://github.com/rsms/estrella) como herramienta de compilación.
+
+## <a id="tech-debt"></a>🤔 Deuda técnica
+
+Por favor, comprueba el archivo [TECH-DEBT.md](https://github.com/ddialar/typescript.workshop.backend/blob/master/TECH-DEBT.md) para estar al día de la deuda técnica de este repositorio.
