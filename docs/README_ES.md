@@ -351,7 +351,6 @@ Muchísimas gracias por el incalculable apoyo prestado por:
 
 ## <a id="todo-list"></a>📝 TODO list
 
--   Reemplazar [Husky v5](https://github.com/typicode/husky) por [simple-git-hooks](https://github.com/toplenboren/simple-git-hooks).
 -   Incluir la configuración para 'producción' para compilar y generar el conenedor de Docker listo para ser desplegado.
 -   Incluir peticiones de testing a la API basadas en Postman.
 -   Incluir peticiones de testing a la API basadas en Insomnia.
@@ -364,4 +363,4 @@ Muchísimas gracias por el incalculable apoyo prestado por:
 
 ## <a id="tech-debt"></a>🤔 Deuda técnica
 
-Por favor, comprueba el archivo [TECH-DEBT.md](https://github.com/ddialar/typescript.workshop.backend/blob/master/TECH-DEBT.md) para estar al día de la deuda técnica de este repositorio.
+Por favor, comprueba el archivo [TECH-DEBT](https://github.com/ddialar/typescript.workshop.backend/blob/master/TECH-DEBT.md) del repositorio para estar al día de este tema.
