@@ -3,12 +3,13 @@ import { sign, SignOptions, Algorithm } from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 import { config } from 'dotenv'
 import { AuthenticationFixture, JwtFixtureParams, PrePopulatedJwt } from './../types'
+import { testingValidPlainPassword, testingWrongPlainPassword } from '../authentication.fixtures'
 
 config({ path: path.join(__dirname, '../../../../env/.env.test') })
 
 const bcryptSalt = parseInt(process.env.BCRYPT_SALT!, 10)
-const plainPassword = process.env.PLAIN_PASSWORD!
-const wrongPlainPassword = process.env.WRONG_PASSWORD!
+const plainPassword = testingValidPlainPassword
+const wrongPlainPassword = testingWrongPlainPassword
 
 const passwordMockedData: AuthenticationFixture = {
   validHashedPassword: {
