@@ -12,10 +12,10 @@ config({ path: path.join(__dirname, '../../../../env/.env.test') })
 const saveFile = async (fileName: string, data: string) => {
   const filePath = path.join(__dirname, '../assets', fileName)
 
-  console.log(`[DEBUG] Creating '${fileName}' file...`)
+  console.log(`[\x1b[36mDEBUG\x1b[37m] - [mocker] - Creating '${fileName}' file...`)
   fs.writeFile(filePath, data, (error) => {
-    if (error) { console.error(`[ERROR] Creating '${fileName}' file. ${error.message}`) }
-    console.log(`[INFO ] '${fileName}' file succesfully created.`)
+    if (error) { console.log(`[\x1b[31mERROR\x1b[37m] - [mocker] - Creating '${fileName}' file. ${error.message}`) }
+    console.log(`[ \x1b[32mINFO\x1b[37m] - [mocker] - '${fileName}' file succesfully created.`)
   })
 }
 
