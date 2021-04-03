@@ -3,6 +3,22 @@
     "version": "1.0.1",
     "description": "TypeScript training course - Backend",
     "main": "src/app.ts",
+    "engines": {
+        "node": ">=14.16.0"
+    },
+    "author": "Dailos Rafael Díaz Lara <https://github.com/ddialar>",
+    "license": "CC-BY-NC-4.0",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ddialar/typescript.workshop.backend.git"
+    },
+    "keywords": [
+        "backend",
+        "expressjs",
+        "typescript",
+        "jest",
+        "openapi"
+    ],
     "scripts": {
         "start": "npm run build:pro && node dist/server.js",
         "lint": "npx eslint .",
@@ -22,20 +38,12 @@
         "test_infra:up": "docker-compose --env-file docker/test/.docker.env -f docker/docker-compose.yml up -d",
         "test_infra:down": "docker-compose --env-file docker/test/.docker.env -f docker/docker-compose.yml down -v",
         "test_mock:data": "npx ts-node src/test/fixtures/mockers/runMockers.ts",
-        "prepare": "husky install"
+        "manifest": "npx make-manifest",
+        "postinstall": "npx husky install"
     },
     "lint-staged": {
         "*.ts": "npm run lint:fix"
     },
-    "keywords": [
-        "backend",
-        "expressjs",
-        "typescript",
-        "jest",
-        "openapi"
-    ],
-    "author": "Dailos Rafael Díaz Lara <https://github.com/ddialar>",
-    "license": "See licence file",
     "devDependencies": {
         "@types/bcrypt": "^3.0.0",
         "@types/bluebird": "^3.5.33",
@@ -62,6 +70,7 @@
         "jest": "^26.6.3",
         "lint-staged": "^10.5.4",
         "lockfile-lint": "^4.3.7",
+        "make-manifest": "^1.0.4",
         "nodemon-webpack-plugin": "^4.3.2",
         "supertest": "^6.0.1",
         "ts-jest": "^26.4.4",

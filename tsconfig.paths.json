@@ -20,6 +20,9 @@
       "@logger": [
         "src/common/logger"
       ],
+      "@manifest": [
+        "manifest.json"
+      ],
       "@testingFixtures": [
         "src/test/fixtures"
       ]

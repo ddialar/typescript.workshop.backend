@@ -6,7 +6,7 @@ import { urlencoded, json } from 'body-parser'
 import { serve as swaggerServe, setup as swaggerSetup } from 'swagger-ui-express'
 import { swaggerDocument, swaggerOptions } from './apidoc'
 
-import { authenticationRoutes, userRoutes, postRoutes } from './routes'
+import { authenticationRoutes, userRoutes, postRoutes, manifestRoutes } from './routes'
 
 import { handleHttpError } from './middlewares'
 
@@ -25,6 +25,7 @@ app.use('/__/apidoc', swaggerServe, swaggerSetup(swaggerDocument, swaggerOptions
 app.use(authenticationRoutes)
 app.use(userRoutes)
 app.use(postRoutes)
+app.use(manifestRoutes)
 
 app.use(handleHttpError)
 
