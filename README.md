@@ -381,6 +381,9 @@ Thanks a lot for a so incredible support to:
 -   [Iván B. Trujillo](https://www.linkedin.com/in/ivanbtrujillo/)
 -   [Adrián Ferrera](https://www.linkedin.com/in/afergon/)
 -   [Iru Hernández](https://www.linkedin.com/in/iru-hernandez/)
+-   [Goyo Regalado](https://www.linkedin.com/in/goyoregalado/)
+-   [Eduardo González](https://www.linkedin.com/in/eduardo-gh/)
+-   [Jonatan Ramos](https://www.linkedin.com/in/jonatanramosbonilla/)
 
 ## <a id="todo-list"></a>📝 TODO list
 
