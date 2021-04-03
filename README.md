@@ -20,7 +20,8 @@
     -   [Switch Node version](https://github.com/ddialar/typescript.workshop.backend#commands-switch-node)
     -   [Modules installation process](https://github.com/ddialar/typescript.workshop.backend#commands-installation)
     -   [Run tests](https://github.com/ddialar/typescript.workshop.backend#commands-tests)
-    -   [Run development mode](https://github.com/ddialar/typescript.workshop.backend#commands-dev-mode)
+    -   [Run application in development mode](https://github.com/ddialar/typescript.workshop.backend#commands-dev-mode)
+    -   [Generate the manifest file](https://github.com/ddialar/typescript.workshop.backend#commands-manifest)
     -   [Build application](https://github.com/ddialar/typescript.workshop.backend#commands-pro-mode)
 -   [API REST documentation](https://github.com/ddialar/typescript.workshop.backend#apidoc)
 -   [Credits and thanks](https://github.com/ddialar/typescript.workshop.backend#credits-and-thanks)
@@ -53,6 +54,7 @@ Some tools used on this repository are next:
 -   🐶 `Husky` for managing the Git Hooks.
 -   🐳 `Docker` for container image management.
 -   🌱 `MongoDB` as database engine.
+-   📜 `manifest.json` file in order to retrieve information about the running service.
 
 Therefore this repository is defined to work with `NodeJS 14.15.0 LTS`.
 
@@ -317,6 +319,37 @@ npm run test:coverage
 npm run build:dev
 ```
 
+### <a id="commands-manifest"></a>📜 Generate the manifest file
+
+This feature is focused on provide us information about the application, service or microservice, when we deploy it via Docker container or in any other running situation.
+
+Once we have intalled all the modules (`npm i`), we can run the next command which will create the `manifest.json` file in the root of our project.
+
+```sh
+npm run manifest
+```
+
+The structure of this generated file is that:
+
+```json
+{
+    "name": "project name that matches with this key in the package.json file",
+    "version": "project version that matches with this key in the package.json file",
+    "timestamp": "file creation timestamp in ISO format, it means AAAA-MM-DDTHH:MM:SS.sssZ",
+    "scm": {
+        "remote": "repository remote path that matches with the remote.origin.url key in the project's GIT configuration",
+        "branch": "GIT branch seleted when the file was created",
+        "commit": "head GIT commit ID when the file was created"
+    }
+}
+```
+
+This way when we request to the endpoint `/__/manifest` of our service, we will receive this information.
+
+It's relevant for two reasons: if we receive that data, we know that our service is up and in addition, we get information about what the service contains.
+
+For production purposes don't worry about creating the manifest file before to bundle the code because this command is included in the `build:pro` script. So you can be sure about when you create the bundle, the most up-to-date information about the service will be available into it.
+
 ### <a id="commands-pro-mode"></a>🚀 Build application
 
 **Required files:**
@@ -354,7 +387,6 @@ Thanks a lot for a so incredible support to:
 -   Include production configuration to compile and generate Docker container ready to deploy.
 -   Include Postman requests to test the API.
 -   Include Insomnia requests to test the API.
--   Include the `manifest.json` file.
 
 ## <a id="research-list"></a>🔬 Researching list
 

@@ -21,6 +21,7 @@
     -   [Proceso de instalación de módulos](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands-installation)
     -   [Ejecución de los tests](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands-tests)
     -   [Ejecución de la aplicación en modo desarrollo](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands-dev-mode)
+    -   [Generar el archivo manifest](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands-manifest)
     -   [Compilación de la aplicación](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#commands-pro-mode)
 -   [Documentación de la API REST](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#apidoc)
 -   [Reconocimientos y agradecimientos](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md#credits-and-thanks)
@@ -53,6 +54,7 @@ Algunas de las herramientas usadas en este repositorio son las siguientes:
 -   🐶 `Husky` para la gestión de los Git Hooks.
 -   🐳 `Docker` para la gestión de imágenes de contenedores.
 -   🌱 `MongoDB` como motor de base de datos.
+-   📜 `manifest.json` para recibir información del proceso en ejecución.
 
 Además este repositorio está diseñado para trabajar con `NodeJS 14.15.0 LTS`.
 
@@ -317,6 +319,37 @@ npm run test:coverage
 npm run build:dev
 ```
 
+### <a id="commands-manifest"></a>📜 Generar el archivo manifest
+
+Esta funcionalidad está enfocada a proporcinarnos información sobre la aplicación, servicio o microservicio, cuando lo desplegamos mediante un contenedor de Docker o en cualquier otra situación de ejecución.
+
+Una vez hemos instalado todos los módulos (`npm i`), podemos ejecutar el siguiente comando el cual, creará el archivo `manifest.json` en la raíz de nuestro proyecto.
+
+```sh
+npm run manifest
+```
+
+La estructura de este archivo que acabamos de generar es esta:
+
+```json
+{
+    "name": "nombre del proyecto que coincide con la clave 'name' en el archivo package.json",
+    "version": "versión del proyecto que coincide con la clave 'version' en el archivo package.json",
+    "timestamp": "marca de tiempo, en formato ISO, es decir AAAA-MM-DDTHH:MM:SS.sssZ, de cuándo se creó el archivo",
+    "scm": {
+        "remote": "ruta remota del repositorio que coincide con la clave 'remote.origin.url' en la configuración GIT del proyecto",
+        "branch": "rama de GIT que estaba seleccionada cuando se creó el archivo",
+        "commit": "ID del commit de cabecera GIT en el que el archivo fue creado"
+    }
+}
+```
+
+De este modo, cuando solicitamos el endpoint `/__/manifest` de nuestro servicio, recibiremos esta información.
+
+Esto es interesante por dos razones: si recibimos estos datos, sabemos que nuestro servicio está funcionando y además, obtenemos información sobre qué contiene el servicio.
+
+Para su uso en Producción no tienes que preocuparte por generar el archivo `manifest` antes de empaquetar el código, porque este comando está incluido en el script `build:pro`. De este modo puedes asegurarte de que cuando crees el bundle, la información más actualizada sobre el servicio estará disponible.
+
 ### <a id="commands-pro-mode"></a>🚀 Compilación de la aplicación
 
 **Archivos requeridos:**
@@ -354,7 +387,6 @@ Muchísimas gracias por el incalculable apoyo prestado por:
 -   Incluir la configuración para 'producción' para compilar y generar el conenedor de Docker listo para ser desplegado.
 -   Incluir peticiones de testing a la API basadas en Postman.
 -   Incluir peticiones de testing a la API basadas en Insomnia.
--   Incluir el archivo `manifest.json`.
 
 ## <a id="research-list"></a>🔬 Elementos a investigar
 
