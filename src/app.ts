@@ -34,4 +34,10 @@ checkStartup(requiredEnvVariables)
 process.on('SIGINT', async () => closeApplication())
 process.on('SIGTERM', async () => closeApplication())
 
-if (process.env.NODE_ENV !== 'test') { startApplication() }
+if (process.env.NODE_ENV !== 'test') {
+  try {
+    startApplication()
+  } catch (error) {
+    closeApplication()
+  }
+}

@@ -9,5 +9,6 @@ export const connect = async () => {
     }
   } catch ({ message }) {
     mongooseLogger('error', `DDBB connection error. ${message}`)
+    throw new Error()
   }
 }
