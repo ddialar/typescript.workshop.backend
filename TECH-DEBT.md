@@ -7,6 +7,10 @@
 -   Impact (_if this tech debt affected your work somehow, add a +1 here with a date and optionally a note_):
     -   +1 Jane Doe 2021, March 26 (_this is an example of +1_)
 
+### Updates
+
+2021, April 3 - Issue checked and the same behavior observed, despite of there was an upted of the `@types/faker` module five days ago.
+
 ### Problem
 
 During a rutinary modules updating process, the [Faker.js](https://github.com/Marak/Faker.js) module was updated from the [v5.1.0](https://github.com/Marak/faker.js/releases/tag/v5.1.0) to [v5.5.0](https://github.com/Marak/faker.js/releases/tag/v5.5.0).
