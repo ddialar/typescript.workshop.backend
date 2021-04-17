@@ -1,13 +1,13 @@
 /*
- * For a detailed explanation regarding each configuration property, visit:
+ * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/en/configuration.html
  */
 
-const { pathsToModuleNameMapper } = require('ts-jest/utils')
-const { compilerOptions } = require('./tsconfig.paths')
+import { pathsToModuleNameMapper } from 'ts-jest/utils'
+import { compilerOptions } from './tsconfig.paths.json'
 const moduleNameMapper = pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' })
 
-module.exports = {
+export default {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -35,7 +35,7 @@ module.exports = {
   // ],
 
   // Indicates which provider should be used to instrument code for coverage
-  // coverageProvider: "babel",
+  coverageProvider: 'v8',
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
@@ -58,7 +58,7 @@ module.exports = {
   // forceCoverageMatch: [],
 
   // A path to a module which exports an async function that is triggered once before all test suites
-  globalSetup: '<rootDir>/env/dotenv-test.js',
+  globalSetup: '<rootDir>/env/dotenv-test.ts',
 
   // A path to a module which exports an async function that is triggered once after all test suites
   // globalTeardown: undefined,
@@ -162,11 +162,6 @@ module.exports = {
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
   testRegex: ['^.*\\.(test|spec)\\.ts$'],
-  // testRegex: ['post.routes/comment.route.test.ts'],
-  // testRegex: ['like.route.test.ts'],
-  // testRegex: ['dislikePost.test.ts'],
-  // testRegex: ['post.requests/dislike.test.ts'],
-  // testRegex: ['mappers/.*\\.test\\.ts$'],
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: undefined,
