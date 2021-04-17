@@ -5,8 +5,12 @@ import { runOrm, stopOrm } from '@infrastructure/orm'
 import { checkStartup } from './preset'
 
 const startApplication = async () => {
-  await runOrm()
-  runServer()
+  try {
+    await runOrm()
+    runServer()
+  } catch ({ message }) {
+    appLogger('error', 'Application stating error')
+  }
 }
 
 const closeApplication = async () => {
@@ -34,10 +38,4 @@ checkStartup(requiredEnvVariables)
 process.on('SIGINT', async () => closeApplication())
 process.on('SIGTERM', async () => closeApplication())
 
-if (process.env.NODE_ENV !== 'test') {
-  try {
-    startApplication()
-  } catch (error) {
-    closeApplication()
-  }
-}
+if (process.env.NODE_ENV !== 'test') { startApplication() }

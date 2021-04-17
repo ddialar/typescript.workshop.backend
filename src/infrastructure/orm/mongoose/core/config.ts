@@ -14,7 +14,7 @@ mongoose.connection.on('disconnected', () => {
 })
 
 mongoose.connection.on('error', ({ message }) => {
-  mongooseLogger('error', `Initialization error. ${message}`)
+  mongooseLogger('error', `DDBB error. ${message}`)
 })
 
 const MONGO_USER = process.env.MONGO_USER
