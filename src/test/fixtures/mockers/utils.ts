@@ -1,3 +1,3 @@
-import { random } from 'faker'
+import { datatype } from 'faker'
 
-export const generateMockedMongoDbId = () => random.uuid().split('-').join('').slice(0, 24)
+export const generateMockedMongoDbId = () => datatype.uuid().split('-').join('').slice(0, 24)
