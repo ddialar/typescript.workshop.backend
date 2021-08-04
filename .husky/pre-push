@@ -2,3 +2,7 @@
 . "$(dirname "$0")/_/husky.sh"
 
 npm test
+
+npm --no-git-tag-version version patch
+git add package.json package-lock.json
+git commit -m "package version $(node -pe "require('./package.json').version")"
