@@ -34,7 +34,7 @@ describe('[SERVICES] Post - createPostComment', () => {
     await disconnect()
   })
 
-  it('must persist the new comment into the selected post, when the user is the post owner', async (done) => {
+  it('must persist the new comment into the selected post, when the user is the post owner', async () => {
     const postId = selectedPostDomainModelId
     const commentBody = lorem.paragraph()
     const owner = selectedPostDomainModelOwner
@@ -70,11 +70,9 @@ describe('[SERVICES] Post - createPostComment', () => {
 
     expect(updatedPost.createdAt).toBe(selectedPostDomainModel.createdAt)
     expect(updatedPost.updatedAt).not.toBe(selectedPostDomainModel.updatedAt)
-
-    done()
   })
 
-  it('must persist the new comment into the selected post, when the user is not the post owner', async (done) => {
+  it('must persist the new comment into the selected post, when the user is not the post owner', async () => {
     const postId = selectedPostDomainModelId
     const commentBody = lorem.paragraph()
     const owner = newPostCommentOwner
@@ -110,11 +108,9 @@ describe('[SERVICES] Post - createPostComment', () => {
 
     expect(updatedPost.createdAt).toBe(selectedPostDomainModel.createdAt)
     expect(updatedPost.updatedAt).not.toBe(selectedPostDomainModel.updatedAt)
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async () => {
     jest.spyOn(postDataSource, 'createPostComment').mockImplementation(() => Promise.resolve(null))
 
     const postId = selectedPostDomainModelId
@@ -125,11 +121,9 @@ describe('[SERVICES] Post - createPostComment', () => {
     await expect(createPostComment(postId, newPostComment, newPostCommentOwner)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'createPostComment').mockRestore()
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async () => {
     jest.spyOn(postDataSource, 'createPostComment').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -147,7 +141,5 @@ describe('[SERVICES] Post - createPostComment', () => {
     }
 
     jest.spyOn(postDataSource, 'createPostComment').mockRestore()
-
-    done()
   })
 })

@@ -25,7 +25,7 @@ describe('[SERVICES] Post - createPost', () => {
     await disconnect()
   })
 
-  it('must create the post and return the final result', async (done) => {
+  it('must create the post and return the final result', async () => {
     const persistedPost = await createPost(owner, postBody)
 
     const expectedPostFields = ['id', 'body', 'owner', 'userIsOwner', 'userHasLiked', 'comments', 'likes', 'createdAt', 'updatedAt'].sort()
@@ -43,11 +43,9 @@ describe('[SERVICES] Post - createPost', () => {
 
     expect(persistedPost.comments).toHaveLength(0)
     expect(persistedPost.likes).toHaveLength(0)
-
-    done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async () => {
     jest.spyOn(postDataSource, 'createPost').mockImplementation(() => Promise.resolve(null))
 
     const message = 'Post creation process initiated but completed with NULL result'
@@ -56,11 +54,9 @@ describe('[SERVICES] Post - createPost', () => {
     await expect(createPost(owner, postBody)).rejects.toThrowError(expectedError)
 
     jest.spyOn(postDataSource, 'createPost').mockRestore()
-
-    done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async () => {
     jest.spyOn(postDataSource, 'createPost').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -76,7 +72,5 @@ describe('[SERVICES] Post - createPost', () => {
     }
 
     jest.spyOn(postDataSource, 'createPost').mockRestore()
-
-    done()
   })
 })

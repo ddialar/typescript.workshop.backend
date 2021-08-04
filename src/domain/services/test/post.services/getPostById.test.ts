@@ -31,26 +31,22 @@ describe('[SERVICES] Post - getPostById', () => {
     await disconnect()
   })
 
-  it('must retrieve the persisted posts based on the provided ID', async (done) => {
+  it('must retrieve the persisted posts based on the provided ID', async () => {
     const postId = selectedPostId
 
     const persistedPost = await getPostById(postId)
 
     expect(persistedPost).toStrictEqual<PostDomainModel>(selectedPost)
-
-    done()
   })
 
-  it('must throw an NOT_FOUND (404) when the selected post does not exist', async (done) => {
+  it('must throw an NOT_FOUND (404) when the selected post does not exist', async () => {
     const postId = nonValidPostId
     const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
 
     await expect(getPostById(postId)).rejects.toThrowError(expectedError)
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -67,7 +63,5 @@ describe('[SERVICES] Post - getPostById', () => {
     }
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
-
-    done()
   })
 })

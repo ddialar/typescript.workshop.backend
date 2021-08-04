@@ -66,7 +66,7 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
     await disconnect()
   })
 
-  it('must retrieve the indicated post, not owned nor liked by the provided user because it is not bound with the post', async (done) => {
+  it('must retrieve the indicated post, not owned nor liked by the provided user because it is not bound with the post', async () => {
     await savePostsFixture([secondaryPostDto])
 
     const postId = secondaryPostDto._id
@@ -81,11 +81,9 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
       comments: secondaryPostDomainModel.comments.map(comment => ({ ...comment, userIsOwner: false }))
     }
     expect(retrievedPost).toStrictEqual(expectedOwnedPost)
-
-    done()
   })
 
-  it('must retrieve the indicated post, marked as owned by the provided user', async (done) => {
+  it('must retrieve the indicated post, marked as owned by the provided user', async () => {
     await savePostsFixture([selectedPostDto])
 
     const postId = selectedPostDto._id
@@ -100,11 +98,9 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
       comments: selectedPostDomainModel.comments.map(comment => ({ ...comment, userIsOwner: false }))
     }
     expect(retrievedPost).toStrictEqual(expectedOwnedPost)
-
-    done()
   })
 
-  it('must retrieve the indicated post, marked as owned and liked by the provided user', async (done) => {
+  it('must retrieve the indicated post, marked as owned and liked by the provided user', async () => {
     const postLikedByItsOwner = { ...selectedPostDto, likes: [...selectedPostDto.likes, postOwnerLikeDto] }
 
     await savePostsFixture([postLikedByItsOwner])
@@ -122,11 +118,9 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
       likes: [...selectedPostDomainModel.likes, { id: userId, name, surname, avatar }]
     }
     expect(retrievedPost).toStrictEqual(expectedOwnedPost)
-
-    done()
   })
 
-  it('must retrieve the indicated post, marked as owned by the provided user and with a comment created by itself', async (done) => {
+  it('must retrieve the indicated post, marked as owned by the provided user and with a comment created by itself', async () => {
     const postCommentedByItsOwner = { ...selectedPostDto, comments: [...selectedPostDto.comments, postOwnerCommentDto] }
 
     await savePostsFixture([postCommentedByItsOwner])
@@ -143,11 +137,9 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
       comments: [...selectedPostDomainModel.comments, postOwnerCommentDomainModel].map(comment => ({ ...comment, userIsOwner: comment.owner.id === userId }))
     }
     expect(retrievedPost).toStrictEqual(expectedOwnedPost)
-
-    done()
   })
 
-  it('must retrieve the indicated post, where the provided user is not its owner but who has liked it', async (done) => {
+  it('must retrieve the indicated post, where the provided user is not its owner but who has liked it', async () => {
     const anotherUserPostLiked = { ...secondaryPostDto, likes: [...secondaryPostDto.likes, postOwnerLikeDto] }
 
     await savePostsFixture([anotherUserPostLiked])
@@ -165,11 +157,9 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
       likes: [...secondaryPostDomainModel.likes, { id: userId, name, surname, avatar }]
     }
     expect(retrievedPost).toStrictEqual(expectedNotOwnedPost)
-
-    done()
   })
 
-  it('must retrieve the indicated post, where the provided user is not its owner but who has commented it', async (done) => {
+  it('must retrieve the indicated post, where the provided user is not its owner but who has commented it', async () => {
     const anotherUserPostCommented = { ...secondaryPostDto, comments: [...secondaryPostDto.comments, postOwnerCommentDto] }
 
     await savePostsFixture([anotherUserPostCommented])
@@ -186,22 +176,18 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
       comments: [...secondaryPostDomainModel.comments, postOwnerCommentDomainModel].map(comment => ({ ...comment, userIsOwner: comment.owner.id === userId }))
     }
     expect(retrievedPost).toStrictEqual(expectedNotOwnedPost)
-
-    done()
   })
 
-  it('must throw an NOT_FOUND (404) when the selected post does not exist', async (done) => {
+  it('must throw an NOT_FOUND (404) when the selected post does not exist', async () => {
     const postId = testingNonValidPostOwnerId
     const userId = selectedPostDto.owner.userId
 
     const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
 
     await expect(getExtendedPostById(postId, userId)).rejects.toThrowError(expectedError)
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -219,7 +205,5 @@ describe('[SERVICES] Post - getExtendedPostById', () => {
     }
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
-
-    done()
   })
 })

@@ -64,13 +64,11 @@ describe('[SERVICES] Post - getExtendedPosts', () => {
     await disconnect()
   })
 
-  it('must retrieve an empty array when there are no recorded posts', async (done) => {
+  it('must retrieve an empty array when there are no recorded posts', async () => {
     await expect(getExtendedPosts(userId)).resolves.toHaveLength(0)
-
-    done()
   })
 
-  it('must retrieve the persisted posts and the owned one by the user, marked like that', async (done) => {
+  it('must retrieve the persisted posts and the owned one by the user, marked like that', async () => {
     await savePostsFixture([selectedPostDto, secondaryPost])
 
     const persistedPosts = await getExtendedPosts(userId)
@@ -92,11 +90,9 @@ describe('[SERVICES] Post - getExtendedPosts', () => {
       comments: secondaryPostDomainModel.comments.map(comment => ({ ...comment, userIsOwner: false }))
     }
     expect(notOwnedPost).toStrictEqual(expectedNotOwnedPost)
-
-    done()
   })
 
-  it('must retrieve the persisted posts and the owned one by the user, marked as liked by itself', async (done) => {
+  it('must retrieve the persisted posts and the owned one by the user, marked as liked by itself', async () => {
     const postLikedByItsOwner = { ...selectedPostDto, likes: [...selectedPostDto.likes, postOwnerLikeDto] }
 
     await savePostsFixture([postLikedByItsOwner, secondaryPost])
@@ -121,11 +117,9 @@ describe('[SERVICES] Post - getExtendedPosts', () => {
       comments: secondaryPostDomainModel.comments.map(comment => ({ ...comment, userIsOwner: false }))
     }
     expect(notOwnedPost).toStrictEqual(expectedNotOwnedPost)
-
-    done()
   })
 
-  it('must retrieve the persisted posts and the owned one by the user, commented by itself', async (done) => {
+  it('must retrieve the persisted posts and the owned one by the user, commented by itself', async () => {
     const postCommentedByItsOwner = { ...selectedPostDto, comments: [...selectedPostDto.comments, postOwnerCommentDto] }
 
     await savePostsFixture([postCommentedByItsOwner, secondaryPost])
@@ -149,11 +143,9 @@ describe('[SERVICES] Post - getExtendedPosts', () => {
       comments: secondaryPostDomainModel.comments.map(comment => ({ ...comment, userIsOwner: false }))
     }
     expect(notOwnedPost).toStrictEqual(expectedNotOwnedPost)
-
-    done()
   })
 
-  it('must retrieve the persisted posts and the another user one, liked by the selected user', async (done) => {
+  it('must retrieve the persisted posts and the another user one, liked by the selected user', async () => {
     const anotherUserPostLiked = { ...secondaryPost, likes: [...secondaryPost.likes, postOwnerLikeDto] }
 
     await savePostsFixture([selectedPostDto, anotherUserPostLiked])
@@ -178,11 +170,9 @@ describe('[SERVICES] Post - getExtendedPosts', () => {
       likes: [...secondaryPostDomainModel.likes, { id: userId, name, surname, avatar }]
     }
     expect(notOwnedPost).toStrictEqual(expectedNotOwnedPost)
-
-    done()
   })
 
-  it('must retrieve the persisted posts and the another user one, commented by the selected user', async (done) => {
+  it('must retrieve the persisted posts and the another user one, commented by the selected user', async () => {
     const anotherUserPostCommented = { ...secondaryPost, comments: [...secondaryPost.comments, postOwnerCommentDto] }
 
     await savePostsFixture([selectedPostDto, anotherUserPostCommented])
@@ -206,11 +196,9 @@ describe('[SERVICES] Post - getExtendedPosts', () => {
       comments: [...secondaryPostDomainModel.comments, postOwnerCommentDomainModel].map(comment => ({ ...comment, userIsOwner: comment.owner.id === userId }))
     }
     expect(notOwnedPost).toStrictEqual(expectedNotOwnedPost)
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(postDataSource, 'getPosts').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -226,7 +214,5 @@ describe('[SERVICES] Post - getExtendedPosts', () => {
     }
 
     jest.spyOn(postDataSource, 'getPosts').mockRestore()
-
-    done()
   })
 })

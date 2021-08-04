@@ -25,13 +25,11 @@ describe('[SERVICES] Post - getPosts', () => {
     await disconnect()
   })
 
-  it('must retrieve an empty array when there are no posts', async (done) => {
+  it('must retrieve an empty array when there are no posts', async () => {
     await expect(getPosts()).resolves.toHaveLength(0)
-
-    done()
   })
 
-  it('must retrieve the whole persisted posts', async (done) => {
+  it('must retrieve the whole persisted posts', async () => {
     await savePostsFixture(mockedPosts)
 
     const persistedPosts = await getPosts()
@@ -46,11 +44,9 @@ describe('[SERVICES] Post - getPosts', () => {
 
       expect(post).toStrictEqual(expectedPost)
     })
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(postDataSource, 'getPosts').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -66,7 +62,5 @@ describe('[SERVICES] Post - getPosts', () => {
     }
 
     jest.spyOn(postDataSource, 'getPosts').mockRestore()
-
-    done()
   })
 })

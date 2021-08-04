@@ -36,7 +36,7 @@ describe('[SERVICES] Post - deletePost', () => {
     await disconnect()
   })
 
-  it('must delete the selected post', async (done) => {
+  it('must delete the selected post', async () => {
     const postId = selectedPost.id
     const postOwnerId = selectedPostOwnerId
 
@@ -45,31 +45,25 @@ describe('[SERVICES] Post - deletePost', () => {
     const retrievedPost = await getPostByIdFixture(postId)
 
     expect(retrievedPost).toBeNull()
-
-    done()
   })
 
-  it('must throw NOT_FOUND (404) when we select a post which does not exist', async (done) => {
+  it('must throw NOT_FOUND (404) when we select a post which does not exist', async () => {
     const postId = mockedNonValidPostId
     const postOwnerId = selectedPostOwnerId
     const expectedError = new PostNotFoundError(`Post with id '${postId}' was not found to be deleted by user with id '${postOwnerId}'.`)
 
     await expect(deletePost(postId, postOwnerId)).rejects.toThrowError(expectedError)
-
-    done()
   })
 
-  it('must throw UNAUTHORIZED (401) when the action is performed by an user who is not the owner of the post', async (done) => {
+  it('must throw UNAUTHORIZED (401) when the action is performed by an user who is not the owner of the post', async () => {
     const postId = selectedPost.id
     const postOwnerId = unauthorizedUserId
     const expectedError = new UnauthorizedPostDeletingError(`User '${postOwnerId}' is not the owner of the post '${postId}', which is trying to delete.`)
 
     await expect(deletePost(postId, postOwnerId)).rejects.toThrowError(expectedError)
-
-    done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error retrieving the post', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error retrieving the post', async () => {
     jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -87,11 +81,9 @@ describe('[SERVICES] Post - deletePost', () => {
     }
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
-
-    done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the deleting process throws an unexpected error', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the deleting process throws an unexpected error', async () => {
     jest.spyOn(postDataSource, 'deletePost').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -109,7 +101,5 @@ describe('[SERVICES] Post - deletePost', () => {
     }
 
     jest.spyOn(postDataSource, 'deletePost').mockRestore()
-
-    done()
   })
 })

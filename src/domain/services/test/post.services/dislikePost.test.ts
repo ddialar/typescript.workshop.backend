@@ -40,7 +40,7 @@ describe('[SERVICES] Post - dislikePost', () => {
     await disconnect()
   })
 
-  it('dislikes the selected post, deleting this like from the post', async (done) => {
+  it('dislikes the selected post, deleting this like from the post', async () => {
     const postId = selectedPost.id
     const likeOwnerId = selectedLikeOwnerId
 
@@ -49,11 +49,9 @@ describe('[SERVICES] Post - dislikePost', () => {
     expect(userHasLiked).toBeFalsy()
     expect(updatedDtoLikes).toHaveLength(selectedPost.likes.length - 1)
     expect(updatedDtoLikes.map(({ id }) => id).includes(likeOwnerId)).toBeFalsy()
-
-    done()
   })
 
-  it('throws BAD_REQUEST (400) when the provided user has not liked the post', async (done) => {
+  it('throws BAD_REQUEST (400) when the provided user has not liked the post', async () => {
     const postId = selectedPost.id
     const likeOwnerId = mockedNonValidLikeOwnerId
 
@@ -66,13 +64,9 @@ describe('[SERVICES] Post - dislikePost', () => {
       expect(error.message).toBe(expectedError.message)
       expect(error.description).toBe(expectedError.description)
     }
-
-    done()
-
-    done()
   })
 
-  it('throws NOT_FOUND (404) when the provided post ID does not exist', async (done) => {
+  it('throws NOT_FOUND (404) when the provided post ID does not exist', async () => {
     const postId = mockedNonValidPostId
     const likeOwnerId = selectedLikeOwnerId
     const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
@@ -84,11 +78,9 @@ describe('[SERVICES] Post - dislikePost', () => {
       expect(error.message).toBe(expectedError.message)
       expect(error.description).toBe(expectedError.description)
     }
-
-    done()
   })
 
-  it('throws INTERNAL_SERVER_ERROR (500) when the datasource retrieving post by ID process throws an unexpected error', async (done) => {
+  it('throws INTERNAL_SERVER_ERROR (500) when the datasource retrieving post by ID process throws an unexpected error', async () => {
     jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -106,11 +98,9 @@ describe('[SERVICES] Post - dislikePost', () => {
     }
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
-
-    done()
   })
 
-  it('throws INTERNAL_SERVER_ERROR (500) when the datasource disliking process throws an unexpected error', async (done) => {
+  it('throws INTERNAL_SERVER_ERROR (500) when the datasource disliking process throws an unexpected error', async () => {
     jest.spyOn(postDataSource, 'dislikePost').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -128,7 +118,5 @@ describe('[SERVICES] Post - dislikePost', () => {
     }
 
     jest.spyOn(postDataSource, 'dislikePost').mockRestore()
-
-    done()
   })
 })

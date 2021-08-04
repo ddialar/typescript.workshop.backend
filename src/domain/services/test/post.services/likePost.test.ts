@@ -28,7 +28,7 @@ describe('[SERVICES] Post - likePost', () => {
     await disconnect()
   })
 
-  it('must like the selected post and return the new updated document, liked by the indicated user', async (done) => {
+  it('must like the selected post and return the new updated document, liked by the indicated user', async () => {
     const postId = originalPost.id
     const [likeOwner] = testingDomainModelFreeUsers
 
@@ -54,20 +54,16 @@ describe('[SERVICES] Post - likePost', () => {
 
     expect(updatedPost.createdAt).toBe(originalPost.createdAt)
     expect(updatedPost.updatedAt).not.toBe(originalPost.updatedAt)
-
-    done()
   })
 
-  it('must throw NOT_FOUND (404) when the provided post ID does not exist', async (done) => {
+  it('must throw NOT_FOUND (404) when the provided post ID does not exist', async () => {
     const postId = nonValidPostId
     const [likeOwner] = testingDomainModelFreeUsers
 
     await expect(likePost(postId, likeOwner)).rejects.toThrowError(new PostNotFoundError(`Post '${postId}' not found`))
-
-    done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the retrieving post process throws an error', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the retrieving post process throws an error', async () => {
     jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -85,11 +81,9 @@ describe('[SERVICES] Post - likePost', () => {
     }
 
     jest.spyOn(postDataSource, 'getPostById').mockRestore()
-
-    done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the liking process throws an exception', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the liking process throws an exception', async () => {
     jest.spyOn(postDataSource, 'likePost').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -107,7 +101,5 @@ describe('[SERVICES] Post - likePost', () => {
     }
 
     jest.spyOn(postDataSource, 'likePost').mockRestore()
-
-    done()
   })
 })

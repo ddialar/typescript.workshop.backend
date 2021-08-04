@@ -27,7 +27,7 @@ describe('[SERVICES] Post - getPostComment', () => {
     await disconnect()
   })
 
-  it('must retrieve the selected post comment', async (done) => {
+  it('must retrieve the selected post comment', async () => {
     const postId = selectedPost.id
     const commentId = selectedComment.id
 
@@ -37,39 +37,31 @@ describe('[SERVICES] Post - getPostComment', () => {
     expect(Object.keys(persistedComment).sort()).toEqual(expectedFields)
 
     expect(persistedComment).toStrictEqual<PostCommentDomainModel>(selectedComment)
-
-    done()
   })
 
-  it('must return NULL when select a post which doesn\'t contain the provided comment', async (done) => {
+  it('must return NULL when select a post which doesn\'t contain the provided comment', async () => {
     const postId = mockedNonValidPostId
     const commentId = selectedComment.id
 
     await expect(getPostComment(postId, commentId)).resolves.toBeNull()
-
-    done()
   })
 
-  it('must return NULL when provide a comment which is not contained into the selected post', async (done) => {
+  it('must return NULL when provide a comment which is not contained into the selected post', async () => {
     const postId = selectedPost.id
     const commentId = mockedNonValidCommentId
 
     await expect(getPostComment(postId, commentId)).resolves.toBeNull()
-
-    done()
   })
 
-  it('must throw a NOT_FOUND (404) when the provided post does not exist', async (done) => {
+  it('must throw a NOT_FOUND (404) when the provided post does not exist', async () => {
     const postId = testingNonValidPostId
     const commentId = selectedComment.id
     const expectedError = new PostNotFoundError(`Post with id '${postId}' doesn't exist.`)
 
     await expect(getPostComment(postId, commentId)).rejects.toThrowError(expectedError)
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(postDataSource, 'getPostComment').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -87,7 +79,5 @@ describe('[SERVICES] Post - getPostComment', () => {
     }
 
     jest.spyOn(postDataSource, 'getPostComment').mockRestore()
-
-    done()
   })
 })
