@@ -16,8 +16,8 @@ describe('[MAPPERS] User mapper - mapUserFromDtoToDomainModel', () => {
     const originData: UserDto = {
       _id: id,
       ...otherUserFields,
-      createdAt: (new Date()).toISOString(),
-      updatedAt: (new Date()).toISOString()
+      createdAt: (new Date()).toISOString().replace(/\dZ/, '0Z'),
+      updatedAt: (new Date()).toISOString().replace(/\dZ/, '0Z')
     }
     const expectedData: UserDomainModel = {
       id,

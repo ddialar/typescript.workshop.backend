@@ -42,8 +42,8 @@ const testingUserFactory = (usersAmount: number): UserDomainModel[] => {
       enabled: true,
       deleted: false,
       lastLoginAt: '',
-      createdAt: (new Date()).toISOString(),
-      updatedAt: (new Date()).toISOString()
+      createdAt: (new Date()).toISOString().replace(/\dZ/, '0Z'),
+      updatedAt: (new Date()).toISOString().replace(/\dZ/, '0Z')
     }
   })
 }

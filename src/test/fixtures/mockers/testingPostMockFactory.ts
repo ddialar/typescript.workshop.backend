@@ -38,16 +38,16 @@ const postDtoFactory = (owner: UserDomainModel): PostDtoFixture => ({
   owner: dtoOwnerFactory(owner),
   comments: [],
   likes: [],
-  createdAt: (new Date()).toISOString(),
-  updatedAt: (new Date()).toISOString()
+  createdAt: (new Date()).toISOString().replace(/\dZ/, '0Z'),
+  updatedAt: (new Date()).toISOString().replace(/\dZ/, '0Z')
 })
 
 const commentDtoFactory = (owner: UserDomainModel): CommentDtoFixture => ({
   _id: generateMockedMongoDbId(),
   body: lorem.paragraph(),
   owner: dtoOwnerFactory(owner),
-  createdAt: (new Date()).toISOString(),
-  updatedAt: (new Date()).toISOString()
+  createdAt: (new Date()).toISOString().replace(/\dZ/, '0Z'),
+  updatedAt: (new Date()).toISOString().replace(/\dZ/, '0Z')
 })
 
 const likeDtoFactory = (owner: UserDomainModel): OwnerDtoFixture => dtoOwnerFactory(owner)

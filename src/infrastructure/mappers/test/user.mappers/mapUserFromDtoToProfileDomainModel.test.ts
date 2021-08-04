@@ -21,8 +21,8 @@ describe('[MAPPERS] User mapper - mapUserFromDtoToProfileDomainModel', () => {
       surname,
       avatar,
       ...otherUserFields,
-      createdAt: (new Date()).toISOString(),
-      updatedAt: (new Date()).toISOString()
+      createdAt: (new Date()).toISOString().replace(/\dZ/, '0Z'),
+      updatedAt: (new Date()).toISOString().replace(/\dZ/, '0Z')
     }
     const expectedData: UserProfileDomainModel = {
       username,

@@ -11,8 +11,8 @@ describe('[MAPPERS] Post mapper - mapOwnerFromDtoToDomainModel', () => {
     const originalOwner: PostOwnerDto = {
       ...testingPostCommentOwner,
       _id: userId,
-      createdAt: (new Date()).toISOString(),
-      updatedAt: (new Date()).toISOString()
+      createdAt: (new Date()).toISOString().replace(/\dZ/, '0Z'),
+      updatedAt: (new Date()).toISOString().replace(/\dZ/, '0Z')
     }
     const expectedOwner: PostOwnerDomainModel = {
       id: userId,

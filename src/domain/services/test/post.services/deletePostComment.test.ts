@@ -31,8 +31,8 @@ describe('[SERVICES] Post - deletePostComment', () => {
     _id: generateMockedMongoDbId(),
     body: lorem.paragraph(),
     owner: selectedPostDto.owner,
-    createdAt: (new Date()).toISOString(),
-    updatedAt: (new Date()).toISOString()
+    createdAt: (new Date()).toISOString().replace(/\dZ/, '0Z'),
+    updatedAt: (new Date()).toISOString().replace(/\dZ/, '0Z')
   }
   const selectedPostDtoToBePersisted = { ...selectedPostDto, comments: [...selectedPostDto.comments, postOwnerCommentDto] }
 

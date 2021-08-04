@@ -39,7 +39,7 @@ describe('[API] - Authentication endpoints', () => {
       await disconnect()
     })
 
-    it('returns OK (200) and the token field must be set to NULL in the user record', async (done) => {
+    it('returns OK (200) and the token field must be set to NULL in the user record', async () => {
       const token = `bearer ${validToken}`
 
       await request
@@ -53,11 +53,9 @@ describe('[API] - Authentication endpoints', () => {
 
           expect(editedUser.token).toBe('')
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async () => {
       const token = `bearer ${''}$`
       const expectedErrorMessage = 'Wrong token format'
 
@@ -68,11 +66,9 @@ describe('[API] - Authentication endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async () => {
       const token = `bearer ${validToken}$`
       const expectedErrorMessage = 'Wrong token format'
 
@@ -83,11 +79,9 @@ describe('[API] - Authentication endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async () => {
       const token = `bearer ${validToken.split('.').shift()}`
       const expectedErrorMessage = 'Wrong token format'
 
@@ -98,11 +92,9 @@ describe('[API] - Authentication endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async () => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const expectedErrorMessage = 'User does not exist'
 
@@ -113,11 +105,9 @@ describe('[API] - Authentication endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+    it('returns UNAUTHORIZED (401) error when we send an expired token', async () => {
       const token = `bearer ${testingExpiredJwtToken}`
       const expectedErrorMessage = 'Token expired'
 
@@ -128,11 +118,9 @@ describe('[API] - Authentication endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns FORBIDDEN (403) error when we do not provide any token', async (done) => {
+    it('returns FORBIDDEN (403) error when we do not provide any token', async () => {
       const token = ''
       const expectedErrorMessage = 'Required token was not provided'
 
@@ -143,11 +131,9 @@ describe('[API] - Authentication endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async () => {
       const expectedErrorMessage = 'Required token was not provided'
 
       await request
@@ -156,11 +142,9 @@ describe('[API] - Authentication endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns INTERNAL_SERVER_ERROR (500) when the updating logout user data process fails', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the updating logout user data process fails', async () => {
       jest.spyOn(userDataSource, 'updateUserById').mockImplementation(() => {
         throw new Error('Testing Error')
       })
@@ -177,8 +161,6 @@ describe('[API] - Authentication endpoints', () => {
         })
 
       jest.spyOn(userDataSource, 'updateUserById').mockRestore()
-
-      done()
     })
   })
 })

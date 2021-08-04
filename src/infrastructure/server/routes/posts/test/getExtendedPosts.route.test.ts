@@ -45,8 +45,8 @@ const postOwnerCommentDto: PostCommentDto = {
   _id: generateMockedMongoDbId(),
   body: 'Testing post owner comment',
   owner: postOwnerDtoObject,
-  createdAt: (new Date()).toISOString(),
-  updatedAt: (new Date()).toISOString()
+  createdAt: (new Date()).toISOString().replace(/\dZ/, '0Z'),
+  updatedAt: (new Date()).toISOString().replace(/\dZ/, '0Z')
 }
 const postOwnerCommentDomainModel: PostCommentDomainModel = {
   id: postOwnerCommentDto._id,
@@ -57,8 +57,8 @@ const postOwnerCommentDomainModel: PostCommentDomainModel = {
     surname,
     avatar
   },
-  createdAt: (new Date()).toISOString(),
-  updatedAt: (new Date()).toISOString()
+  createdAt: (new Date()).toISOString().replace(/\dZ/, '0Z'),
+  updatedAt: (new Date()).toISOString().replace(/\dZ/, '0Z')
 }
 const postOwnerLikeDto: PostLikeDto = postOwnerDtoObject
 
