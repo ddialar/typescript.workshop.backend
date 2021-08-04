@@ -1,6 +1,6 @@
 # TypeScript training course - Backend
 
-<img src="https://img.shields.io/badge/Version-1.0.0-yellow" /> <img src="https://img.shields.io/badge/TypeScript-4.1.2-blue" /> <img src="https://img.shields.io/badge/Webpack-5.6.0-blue" /> <img src="https://img.shields.io/badge/Jest-26.6.3-green" /> <img src="https://img.shields.io/badge/openApi-4.1.5-green" /> <img src="https://img.shields.io/badge/Docker-20.10.2-blue" />
+<img src="https://img.shields.io/badge/Version-1.0.2-yellow" /> <img src="https://img.shields.io/badge/TypeScript-4.1.2-blue" /> <img src="https://img.shields.io/badge/Webpack-5.6.0-blue" /> <img src="https://img.shields.io/badge/Jest-27.0.6-green" /> <img src="https://img.shields.io/badge/openApi-4.1.5-green" /> <img src="https://img.shields.io/badge/Docker-20.10.2-blue" />
 
 [🇪🇸 Version](https://github.com/ddialar/typescript.workshop.backend/blob/master/docs/README_ES.md)
 
