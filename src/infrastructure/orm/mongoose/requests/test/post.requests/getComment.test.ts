@@ -27,7 +27,7 @@ describe('[ORM] MongoDB - Posts - getComment', () => {
     await disconnect()
   })
 
-  it('must retrieve the selected post comment', async (done) => {
+  it('must retrieve the selected post comment', async () => {
     const postId = selectedPostId!
     const commentId = selectedCommentId!
 
@@ -39,34 +39,26 @@ describe('[ORM] MongoDB - Posts - getComment', () => {
 
     // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
     expect(JSON.parse(JSON.stringify(persistedComment))).toStrictEqual<PostCommentDto>(selectedComment)
-
-    done()
   })
 
-  it('must return NULL when the selected post doesn\'t exist', async (done) => {
+  it('must return NULL when the selected post doesn\'t exist', async () => {
     const postId = mockedNonValidPostId
     const commentId = selectedCommentId!
 
     await expect(getComment(postId, commentId)).resolves.toBeNull()
-
-    done()
   })
 
-  it('must return NULL when select a post which doesn\'t contain the provided comment', async (done) => {
+  it('must return NULL when select a post which doesn\'t contain the provided comment', async () => {
     const postId = noCommentsPostId!
     const commentId = selectedCommentId!
 
     await expect(getComment(postId, commentId)).resolves.toBeNull()
-
-    done()
   })
 
-  it('must return NULL when provide a comment which is not contained into the selected post', async (done) => {
+  it('must return NULL when provide a comment which is not contained into the selected post', async () => {
     const postId = selectedPostId!
     const commentId = mockedNonValidCommentId
 
     await expect(getComment(postId, commentId)).resolves.toBeNull()
-
-    done()
   })
 })

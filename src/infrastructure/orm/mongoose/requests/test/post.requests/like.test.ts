@@ -16,7 +16,7 @@ describe('[ORM] MongoDB - Posts - like', () => {
     await disconnect()
   })
 
-  it('must persist the new like into the selected post', async (done) => {
+  it('must persist the new like into the selected post', async () => {
     const { _id: postId } = selectedPost
     const [likeOwner] = testingDtoFreeUsers
 
@@ -44,7 +44,5 @@ describe('[ORM] MongoDB - Posts - like', () => {
 
     expect((new Date(updatedPost.createdAt!)).toISOString()).toBe(selectedPost.createdAt)
     expect((new Date(updatedPost.updatedAt!)).toISOString()).not.toBe(selectedPost.updatedAt)
-
-    done()
   })
 })

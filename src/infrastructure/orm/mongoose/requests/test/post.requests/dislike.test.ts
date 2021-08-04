@@ -17,7 +17,7 @@ describe('[ORM] MongoDB - Posts - dislike', () => {
     await disconnect()
   })
 
-  it('must delete the selected post like', async (done) => {
+  it('must delete the selected post like', async () => {
     const postId = selectedPost._id
     const userId = selectedLike.userId
 
@@ -25,7 +25,5 @@ describe('[ORM] MongoDB - Posts - dislike', () => {
 
     expect(updatedLikes).toHaveLength(selectedPost.likes.length - 1)
     expect(updatedLikes.map(({ userId: updatedUserId }) => updatedUserId).includes(userId)).toBeFalsy()
-
-    done()
   })
 })

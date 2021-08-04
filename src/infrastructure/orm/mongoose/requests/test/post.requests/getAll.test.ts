@@ -17,7 +17,7 @@ describe('[ORM] MongoDB - Posts - getAll', () => {
     await disconnect()
   })
 
-  it('must retrieve the whole persisted posts', async (done) => {
+  it('must retrieve the whole persisted posts', async () => {
     const persistedPosts = (await getAll())!
 
     expect(persistedPosts).toHaveLength(persistedPosts.length)
@@ -32,7 +32,5 @@ describe('[ORM] MongoDB - Posts - getAll', () => {
       // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
       expect(JSON.parse(JSON.stringify(post))).toStrictEqual<PostDto>(expectedPost)
     })
-
-    done()
   })
 })

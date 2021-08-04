@@ -16,7 +16,7 @@ describe('[ORM] MongoDB - Posts - deletePost', () => {
     await disconnect()
   })
 
-  it('must delete the selected post', async (done) => {
+  it('must delete the selected post', async () => {
     const postId = selectedPost._id
 
     await deletePost(postId)
@@ -24,7 +24,5 @@ describe('[ORM] MongoDB - Posts - deletePost', () => {
     const retrievedPost = await getPostByIdFixture(postId)
 
     expect(retrievedPost).toBeNull()
-
-    done()
   })
 })

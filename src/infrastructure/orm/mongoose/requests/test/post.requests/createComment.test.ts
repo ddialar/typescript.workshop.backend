@@ -18,7 +18,7 @@ describe('[ORM] MongoDB - Posts - createComment', () => {
     await disconnect()
   })
 
-  it.only('must persist the new comment into the selected post', async (done) => {
+  it.only('must persist the new comment into the selected post', async () => {
     const [originalPost] = mockedPosts
     const { _id: postId } = originalPost
     const postComment: PostCommentDto = {
@@ -53,7 +53,5 @@ describe('[ORM] MongoDB - Posts - createComment', () => {
 
     expect((new Date(updatedPost.createdAt!)).toISOString()).toBe(originalPost.createdAt)
     expect((new Date(updatedPost.updatedAt!)).toISOString()).not.toBe(originalPost.updatedAt)
-
-    done()
   })
 })

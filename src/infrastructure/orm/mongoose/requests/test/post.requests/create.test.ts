@@ -19,7 +19,7 @@ describe('[ORM] MongoDB - Posts - create', () => {
     await disconnect()
   })
 
-  it('must persist the new user successfully', async (done) => {
+  it('must persist the new user successfully', async () => {
     const body = lorem.paragraph()
     const [owner] = testingDtoPostOwners
     const basicPost = { body, owner, comments: [], likes: [] }
@@ -44,7 +44,5 @@ describe('[ORM] MongoDB - Posts - create', () => {
     expect(createdPost.likes).toStrictEqual(basicPost.likes)
     expect(createdPost.createdAt).not.toBeNull()
     expect(createdPost.updatedAt).not.toBeNull()
-
-    done()
   })
 })

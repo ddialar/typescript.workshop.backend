@@ -18,7 +18,7 @@ describe('[ORM] MongoDB - Posts - deleteComment', () => {
     await disconnect()
   })
 
-  it('must delete the selected post comment', async (done) => {
+  it('must delete the selected post comment', async () => {
     const postId = selectedPost._id
     const commentId = selectedComment._id
 
@@ -26,7 +26,5 @@ describe('[ORM] MongoDB - Posts - deleteComment', () => {
 
     expect(updatedComments).toHaveLength(selectedPost.comments.length - 1)
     expect(updatedComments.map(({ _id }) => _id).includes(commentId)).toBeFalsy()
-
-    done()
   })
 })

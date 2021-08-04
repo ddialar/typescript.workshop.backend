@@ -23,22 +23,18 @@ describe('[ORM] MongoDB - Posts - getById', () => {
     await disconnect()
   })
 
-  it('must retrieve the selected post', async (done) => {
+  it('must retrieve the selected post', async () => {
     const postId = selectedPost._id
 
     const persistedPost = (await getById(postId))!
 
     // NOTE The fiels 'createdAt' and 'updatedAt' are retrived as 'object' from the database and not as 'string'.
     expect(JSON.parse(JSON.stringify(persistedPost))).toStrictEqual<PostDto>(selectedPost)
-
-    done()
   })
 
-  it('must return NULL when the provided post ID doesn\'t exist', async (done) => {
+  it('must return NULL when the provided post ID doesn\'t exist', async () => {
     const postId = nonValidPostId
 
     await expect(getById(postId)).resolves.toBeNull()
-
-    done()
   })
 })
