@@ -53,7 +53,7 @@ describe('[API] - User endpoints', () => {
       await cleanUsersCollectionFixture()
     })
 
-    it('must return a 200 (OK) and the user\'s profile data', async (done) => {
+    it('must return a 200 (OK) and the user\'s profile data', async () => {
       const token = `bearer ${validToken}`
 
       await request
@@ -73,11 +73,9 @@ describe('[API] - User endpoints', () => {
           expect(userProfile.surname).toBe(mockedUserData.surname)
           expect(userProfile.avatar).toBe(mockedUserData.avatar)
         })
-
-      done()
     })
 
-    it('must return a FORBIDDEN (403) error when we send an empty token', async (done) => {
+    it('must return a FORBIDDEN (403) error when we send an empty token', async () => {
       const token = ''
       const expectedErrorMessage = 'Required token was not provided'
 
@@ -88,11 +86,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async () => {
       const expectedErrorMessage = 'Required token was not provided'
 
       await request
@@ -101,11 +97,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+    it('must return an UNAUTHORIZED (401) error when we send an expired token', async () => {
       const token = `bearer ${testingExpiredJwtToken}`
       const expectedErrorMessage = 'Token expired'
 
@@ -116,11 +110,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an BAD_REQUEST (400) error when we send an expired token', async (done) => {
+    it('must return an BAD_REQUEST (400) error when we send an expired token', async () => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const expectedErrorMessage = 'User does not exist'
 
@@ -131,11 +123,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an INTERNAL_SERVER_ERROR (500) when the updating logout user data process fails', async (done) => {
+    it('must return an INTERNAL_SERVER_ERROR (500) when the updating logout user data process fails', async () => {
       jest.spyOn(userDataSource, 'getUserProfileById').mockImplementation(() => {
         throw new Error('Testing Error')
       })
@@ -152,8 +142,6 @@ describe('[API] - User endpoints', () => {
         })
 
       jest.spyOn(userDataSource, 'getUserProfileById').mockRestore()
-
-      done()
     })
   })
 })

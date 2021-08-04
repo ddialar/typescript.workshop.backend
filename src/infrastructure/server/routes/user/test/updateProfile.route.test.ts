@@ -53,7 +53,7 @@ describe('[API] - User endpoints', () => {
       await cleanUsersCollectionFixture()
     })
 
-    it('must return a OK (200) and the user\'s profile updated data when the whole allowed fields are provided', async (done) => {
+    it('must return a OK (200) and the user\'s profile updated data when the whole allowed fields are provided', async () => {
       const originalUser = (await getUserByUsernameFixture(username))!
       const token = `bearer ${validToken}`
       const payload = { ...profileData }
@@ -77,11 +77,9 @@ describe('[API] - User endpoints', () => {
           expect(userProfile.surname).toBe(payload.surname)
           expect(userProfile.avatar).toBe(payload.avatar)
         })
-
-      done()
     })
 
-    it('must return a OK (200) and the user\'s profile updated data when only the name field is updated', async (done) => {
+    it('must return a OK (200) and the user\'s profile updated data when only the name field is updated', async () => {
       const originalUser = (await getUserByUsernameFixture(username))!
       const token = `bearer ${validToken}`
       const payload = { name: profileData.name }
@@ -105,11 +103,9 @@ describe('[API] - User endpoints', () => {
 
           expect(userProfile.name).toBe(payload.name)
         })
-
-      done()
     })
 
-    it('must return a OK (200) and the user\'s profile updated data when only the surname field is updated', async (done) => {
+    it('must return a OK (200) and the user\'s profile updated data when only the surname field is updated', async () => {
       const originalUser = (await getUserByUsernameFixture(username))!
       const token = `bearer ${validToken}`
       const payload = { surname: profileData.surname }
@@ -133,11 +129,9 @@ describe('[API] - User endpoints', () => {
 
           expect(userProfile.surname).toBe(payload.surname)
         })
-
-      done()
     })
 
-    it('must return a OK (200) and the user\'s profile updated data when only the avatar field is updated', async (done) => {
+    it('must return a OK (200) and the user\'s profile updated data when only the avatar field is updated', async () => {
       const originalUser = (await getUserByUsernameFixture(username))!
       const token = `bearer ${validToken}`
       const payload = { avatar: profileData.avatar }
@@ -161,11 +155,9 @@ describe('[API] - User endpoints', () => {
 
           expect(userProfile.avatar).toBe(payload.avatar)
         })
-
-      done()
     })
 
-    it('must return a FORBIDDEN (403) error when we send an expired token', async (done) => {
+    it('must return a FORBIDDEN (403) error when we send an expired token', async () => {
       const token = ''
       const payload = { ...profileData }
       const expectedErrorMessage = 'Required token was not provided'
@@ -178,11 +170,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+    it('must return a FORBIDDEN (403) error when we do not provide the authorization header', async () => {
       const payload = { ...profileData }
       const expectedErrorMessage = 'Required token was not provided'
 
@@ -193,11 +183,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+    it('must return an UNAUTHORIZED (401) error when we send an expired token', async () => {
       const token = `bearer ${testingExpiredJwtToken}`
       const payload = { ...profileData }
       const expectedErrorMessage = 'Token expired'
@@ -210,11 +198,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an BAD_REQUEST (400) error when we send a token that belongs to a non recorded user', async (done) => {
+    it('must return an BAD_REQUEST (400) error when we send a token that belongs to a non recorded user', async () => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const payload = { ...profileData }
       const expectedErrorMessage = 'User does not exist'
@@ -227,11 +213,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an BAD_REQUEST (400) error when we send nothing as profile data', async (done) => {
+    it('must return an BAD_REQUEST (400) error when we send nothing as profile data', async () => {
       const token = `bearer ${validToken}`
       const expectedErrorMessage = 'Empty profile data not allowed'
 
@@ -242,11 +226,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an BAD_REQUEST (400) error when the provided name has not the minimum amount of characters', async (done) => {
+    it('must return an BAD_REQUEST (400) error when the provided name has not the minimum amount of characters', async () => {
       const token = `bearer ${validToken}`
       const payload = { ...profileData }
       const expectedErrorMessage = 'Profile data error'
@@ -261,11 +243,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an BAD_REQUEST (400) error when the provided surname has not the minimum amount of characters', async (done) => {
+    it('must return an BAD_REQUEST (400) error when the provided surname has not the minimum amount of characters', async () => {
       const token = `bearer ${validToken}`
       const payload = { ...profileData }
       const expectedErrorMessage = 'Profile data error'
@@ -280,11 +260,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an BAD_REQUEST (400) error when the provided avatar is an empty string', async (done) => {
+    it('must return an BAD_REQUEST (400) error when the provided avatar is an empty string', async () => {
       const token = `bearer ${validToken}`
       const payload = { ...profileData }
       const expectedErrorMessage = 'Profile data error'
@@ -299,11 +277,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an BAD_REQUEST (400) error when the provided avatar has a schema different to http or https', async (done) => {
+    it('must return an BAD_REQUEST (400) error when the provided avatar has a schema different to http or https', async () => {
       const token = `bearer ${validToken}`
       const payload = { ...profileData }
       const expectedErrorMessage = 'Profile data error'
@@ -318,11 +294,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an BAD_REQUEST (400) error when the provided avatar has less than two domains', async (done) => {
+    it('must return an BAD_REQUEST (400) error when the provided avatar has less than two domains', async () => {
       const token = `bearer ${validToken}`
       const payload = { ...profileData }
       const expectedErrorMessage = 'Profile data error'
@@ -337,11 +311,9 @@ describe('[API] - User endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('must return an INTERNAL_SERVER_ERROR (500) when the updating process fails', async (done) => {
+    it('must return an INTERNAL_SERVER_ERROR (500) when the updating process fails', async () => {
       jest.spyOn(userDataSource, 'updateUserProfileById').mockImplementation(() => {
         throw new Error('Testing Error')
       })
@@ -360,8 +332,6 @@ describe('[API] - User endpoints', () => {
         })
 
       jest.spyOn(userDataSource, 'updateUserProfileById').mockRestore()
-
-      done()
     })
   })
 })
