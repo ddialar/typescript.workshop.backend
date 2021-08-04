@@ -7,23 +7,19 @@ import { CheckingPasswordError } from '@errors'
 describe('[SERVICES] Hash - checkPassword', () => {
   const hashedPassword = testingValidHashedPassword
 
-  it('must return TRUE if the provided password and the hashed one are equivalent', async (done) => {
+  it('must return TRUE if the provided password and the hashed one are equivalent', async () => {
     const plainPassword = testingValidPlainPassword
 
     expect((await checkPassword(plainPassword, hashedPassword))).toBeTruthy()
-
-    done()
   })
 
-  it('must return FALSE if the provided password and the hashed one are NOT equivalent', async (done) => {
+  it('must return FALSE if the provided password and the hashed one are NOT equivalent', async () => {
     const plainPassword = testingWrongPlainPassword
 
     expect((await checkPassword(plainPassword, hashedPassword))).toBeFalsy()
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the bcrypt lib fails', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the bcrypt lib fails', async () => {
     jest.mock('bcrypt')
 
     const plainPassword = testingValidPlainPassword
@@ -35,7 +31,5 @@ describe('[SERVICES] Hash - checkPassword', () => {
     await expect(checkPassword(plainPassword, hashedPassword)).rejects.toThrowError(expectedError)
 
     jest.mock('bcrypt').resetAllMocks()
-
-    done()
   })
 })
