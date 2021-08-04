@@ -32,7 +32,7 @@ describe('[SERVICES] User - updateUserLoginData', () => {
     await disconnect()
   })
 
-  it('must update several allowed fields successfully', async (done) => {
+  it('must update several allowed fields successfully', async () => {
     const newUserData: NewUserDatabaseDto = { ...mockedUserData }
     await saveUserFixture(newUserData)
 
@@ -81,11 +81,9 @@ describe('[SERVICES] User - updateUserLoginData', () => {
     expect(updatedUser.enabled).toBeTruthy()
     expect(updatedUser.deleted).toBeFalsy()
     expect(updatedUser.updatedAt).not.toBe(originalUser.updatedAt)
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(userDataSource, 'updateUserById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -105,7 +103,5 @@ describe('[SERVICES] User - updateUserLoginData', () => {
     }
 
     jest.spyOn(userDataSource, 'updateUserById').mockRestore()
-
-    done()
   })
 })

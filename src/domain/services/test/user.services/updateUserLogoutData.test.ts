@@ -30,7 +30,7 @@ describe('[SERVICES] User - updateUserLogoutData', () => {
     await disconnect()
   })
 
-  it('must update the user record setting the token field content to NULL', async (done) => {
+  it('must update the user record setting the token field content to NULL', async () => {
     const { _id: userId, token } = (await getUserByUsernameFixture(username))!
 
     expect(token).toBe(mockedUserData.token)
@@ -40,11 +40,9 @@ describe('[SERVICES] User - updateUserLogoutData', () => {
     const updatedUser = (await getUserByUsernameFixture(username))!
 
     expect(updatedUser.token).toBe('')
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(userDataSource, 'updateUserById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -61,7 +59,5 @@ describe('[SERVICES] User - updateUserLogoutData', () => {
     }
 
     jest.spyOn(userDataSource, 'updateUserById').mockRestore()
-
-    done()
   })
 })

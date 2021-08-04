@@ -34,15 +34,13 @@ describe('[SERVICES] User - getUserProfile', () => {
     await disconnect()
   })
 
-  it('must not retrieve any provile using a non-existent user id', async (done) => {
+  it('must not retrieve any provile using a non-existent user id', async () => {
     const userId = testingNonValidUserId
     const retrievedUserProfile = await getUserProfile(userId)
     expect(retrievedUserProfile).toBeNull()
-
-    done()
   })
 
-  it('must retrieve selected user\'s profile', async (done) => {
+  it('must retrieve selected user\'s profile', async () => {
     const { _id: userId } = (await getUserByUsernameFixture(username))!
     const retrievedUserProfile = (await getUserProfile(userId))!
 
@@ -55,11 +53,9 @@ describe('[SERVICES] User - getUserProfile', () => {
     expect(retrievedUserProfile.name).toBe(mockedUserData.name)
     expect(retrievedUserProfile.surname).toBe(mockedUserData.surname)
     expect(retrievedUserProfile.avatar).toBe(mockedUserData.avatar)
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(userDataSource, 'getUserProfileById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -76,7 +72,5 @@ describe('[SERVICES] User - getUserProfile', () => {
     }
 
     jest.spyOn(userDataSource, 'getUserProfileById').mockRestore()
-
-    done()
   })
 })

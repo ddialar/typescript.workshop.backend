@@ -35,7 +35,7 @@ describe('[SERVICES] User - updateUserProfile', () => {
     await disconnect()
   })
 
-  it('must update the user\'s profile and return the final result', async (done) => {
+  it('must update the user\'s profile and return the final result', async () => {
     const originalUser = (await getUserByUsernameFixture(username))!
 
     expect(originalUser.name).toBe(mockedUserData.name)
@@ -57,11 +57,9 @@ describe('[SERVICES] User - updateUserProfile', () => {
     expect(updatedProfile.name).toBe(newProfileData.name)
     expect(updatedProfile.surname).toBe(newProfileData.surname)
     expect(updatedProfile.avatar).toBe(newProfileData.avatar)
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(userDataSource, 'updateUserProfileById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -83,7 +81,5 @@ describe('[SERVICES] User - updateUserProfile', () => {
     }
 
     jest.spyOn(userDataSource, 'updateUserProfileById').mockRestore()
-
-    done()
   })
 })

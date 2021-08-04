@@ -33,7 +33,7 @@ describe('[SERVICES] User - createUser', () => {
     await disconnect()
   })
 
-  it('must persist the user successfully', async (done) => {
+  it('must persist the user successfully', async () => {
     const newUserData: NewUserDomainModel = { ...mockedUserData }
 
     const registeredUser = await createUser(newUserData)
@@ -67,11 +67,9 @@ describe('[SERVICES] User - createUser', () => {
 
     expect(persistedUser.token).toBe('')
     expect(persistedUser.lastLoginAt).toBe('')
-
-    done()
   })
 
-  it('must throw BAD_REQUEST (400) error when we try to persist the same username', async (done) => {
+  it('must throw BAD_REQUEST (400) error when we try to persist the same username', async () => {
     const newUserData = { ...mockedUserData }
     const expectedError = new NewUserAlreadyExistsError(`User with username '${newUserData.username}' already exists.`)
 
@@ -83,11 +81,9 @@ describe('[SERVICES] User - createUser', () => {
       expect(error.message).toBe(expectedError.message)
       expect(error.description).toBe(expectedError.description)
     }
-
-    done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the hashing password process throws an unexpected error', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the hashing password process throws an unexpected error', async () => {
     jest.mock('bcrypt')
 
     bcrypt.hash = jest.fn().mockImplementationOnce(() => { throw expectedError })
@@ -104,11 +100,9 @@ describe('[SERVICES] User - createUser', () => {
     }
 
     jest.mock('bcrypt').resetAllMocks()
-
-    done()
   })
 
-  it('must throw INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(userDataSource, 'createUser').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -125,7 +119,5 @@ describe('[SERVICES] User - createUser', () => {
     }
 
     jest.spyOn(userDataSource, 'createUser').mockRestore()
-
-    done()
   })
 })

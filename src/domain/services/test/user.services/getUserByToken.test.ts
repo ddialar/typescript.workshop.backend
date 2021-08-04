@@ -32,15 +32,13 @@ describe('[SERVICES] User - getUserByToken', () => {
     await disconnect()
   })
 
-  it('must not retrieve any user when we provide a non persisted token', async (done) => {
+  it('must not retrieve any user when we provide a non persisted token', async () => {
     const token = testingValidJwtTokenForNonPersistedUser
     const retrievedUser = await getUserByToken(token)
     expect(retrievedUser).toBeNull()
-
-    done()
   })
 
-  it('must retrieve the persisted user when we provided a persisted user', async (done) => {
+  it('must retrieve the persisted user when we provided a persisted user', async () => {
     const newUserData = { ...mockedUserData }
 
     await saveUserFixture(newUserData)
@@ -65,11 +63,9 @@ describe('[SERVICES] User - getUserByToken', () => {
     expect(retrievedUser.updatedAt).not.toBeNull()
 
     expect(retrievedUser.lastLoginAt).toBe('')
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error', async () => {
     jest.spyOn(userDataSource, 'getUserByToken').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -86,7 +82,5 @@ describe('[SERVICES] User - getUserByToken', () => {
     }
 
     jest.spyOn(userDataSource, 'getUserByToken').mockRestore()
-
-    done()
   })
 })
