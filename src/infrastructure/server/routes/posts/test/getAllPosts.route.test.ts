@@ -31,7 +31,7 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
-    it('returns OK (200) and an empty array in the body when no posts have been found', async (done) => {
+    it('returns OK (200) and an empty array in the body when no posts have been found', async () => {
       jest.spyOn(postDataSource, 'getPosts').mockImplementation(() => Promise.resolve([]))
 
       await request
@@ -42,11 +42,9 @@ describe('[API] - Posts endpoints', () => {
         })
 
       jest.spyOn(postDataSource, 'getPosts').mockRestore()
-
-      done()
     })
 
-    it('returns OK (200) and the whole persisted post', async (done) => {
+    it('returns OK (200) and the whole persisted post', async () => {
       await request
         .get(POSTS_PATH)
         .expect(OK)
@@ -64,11 +62,9 @@ describe('[API] - Posts endpoints', () => {
             expect(post).toStrictEqual<PostDomainModel>(expectedPost!)
           })
         })
-
-      done()
     })
 
-    it('returns INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async () => {
       jest.spyOn(postDataSource, 'getPosts').mockImplementation(() => {
         throw new Error('Testing error')
       })
@@ -83,8 +79,6 @@ describe('[API] - Posts endpoints', () => {
         })
 
       jest.spyOn(postDataSource, 'getPosts').mockRestore()
-
-      done()
     })
   })
 })

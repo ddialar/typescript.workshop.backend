@@ -102,7 +102,7 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
-    it('returns OK (200) and the selected post commented successfully, when the user is the post owner', async (done) => {
+    it('returns OK (200) and the selected post commented successfully, when the user is the post owner', async () => {
       const token = `bearer ${validToken}`
       const postId = selectedPostId
       const commentBody = lorem.paragraph()
@@ -145,11 +145,9 @@ describe('[API] - Posts endpoints', () => {
           expect(updatedPost.createdAt).toBe(selectedPostDomainModel.createdAt)
           expect(updatedPost.updatedAt).not.toBe(selectedPostDomainModel.updatedAt)
         })
-
-      done()
     })
 
-    it('returns OK (200) and the selected post commented successfully, when the user is not the post owner', async (done) => {
+    it('returns OK (200) and the selected post commented successfully, when the user is not the post owner', async () => {
       const token = `bearer ${freeUserToken}`
       const postId = selectedPostId
       const commentBody = lorem.paragraph()
@@ -199,11 +197,9 @@ describe('[API] - Posts endpoints', () => {
           expect(updatedPost.createdAt).toBe(selectedPostDomainModel.createdAt)
           expect(updatedPost.updatedAt).not.toBe(selectedPostDomainModel.updatedAt)
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async () => {
       const token = `bearer ${''}$`
       const postId = selectedPostId
       const commentBody = lorem.paragraph()
@@ -217,11 +213,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async () => {
       const token = `bearer ${validToken}$`
       const postId = selectedPostId
       const commentBody = lorem.paragraph()
@@ -235,11 +229,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async () => {
       const token = `bearer ${validToken.split('.').shift()}`
       const postId = selectedPostId
       const commentBody = lorem.paragraph()
@@ -253,11 +245,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async () => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const postId = selectedPostId
       const commentBody = lorem.paragraph()
@@ -271,11 +261,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when postId is not provided', async (done) => {
+    it('returns BAD_REQUEST (400) error when postId is not provided', async () => {
       const token = `bearer ${validToken}`
       const commentBody = lorem.paragraph()
       const expectedErrorMessage = 'New post comment data error.'
@@ -288,11 +276,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when postId is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when postId is empty', async () => {
       const token = `bearer ${validToken}`
       const postId = ''
       const commentBody = lorem.paragraph()
@@ -306,11 +292,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when postId has more characters than allowed ones', async (done) => {
+    it('returns BAD_REQUEST (400) error when postId has more characters than allowed ones', async () => {
       const token = `bearer ${validToken}`
       const { id: selectedPostDomainModelId } = selectedPostDomainModel
       const postId = selectedPostDomainModelId.concat('abcde')
@@ -325,11 +309,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when postId has less characters than required ones', async (done) => {
+    it('returns BAD_REQUEST (400) error when postId has less characters than required ones', async () => {
       const token = `bearer ${validToken}`
       const { id: selectedPostDomainModelId } = selectedPostDomainModel
       const postId = selectedPostDomainModelId.substring(1)
@@ -344,11 +326,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when postId has non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) error when postId has non allowed characters', async () => {
       const token = `bearer ${validToken}`
       const { id: selectedPostDomainModelId } = selectedPostDomainModel
       const postId = selectedPostDomainModelId.substring(3).concat('$%#')
@@ -363,11 +343,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when commentBody is not provided', async (done) => {
+    it('returns BAD_REQUEST (400) error when commentBody is not provided', async () => {
       const token = `bearer ${validToken}`
       const postId = selectedPostId
       const expectedErrorMessage = 'New post comment data error.'
@@ -380,11 +358,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when commentBody is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when commentBody is empty', async () => {
       const token = `bearer ${validToken}`
       const postId = ''
       const expectedErrorMessage = 'New post comment data error.'
@@ -397,11 +373,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns UNAUTHORIZED (401) error when we send an expired token', async (done) => {
+    it('returns UNAUTHORIZED (401) error when we send an expired token', async () => {
       const token = `bearer ${testingExpiredJwtToken}`
       const postId = selectedPostId
       const commentBody = lorem.paragraph()
@@ -415,11 +389,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns FORBIDDEN (403) when we send an empty token', async (done) => {
+    it('returns FORBIDDEN (403) when we send an empty token', async () => {
       const token = ''
       const postId = selectedPostId
       const commentBody = lorem.paragraph()
@@ -433,11 +405,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async () => {
       const expectedErrorMessage = 'Required token was not provided'
 
       await request
@@ -446,11 +416,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns NOT_FOUND (404) when the provided post ID does nott exist', async (done) => {
+    it('returns NOT_FOUND (404) when the provided post ID does nott exist', async () => {
       const token = `bearer ${validToken}`
       const postId = nonValidPostId
       const commentBody = lorem.paragraph()
@@ -464,11 +432,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the persistance process returns a NULL value', async () => {
       jest.spyOn(postDataSource, 'createPostComment').mockImplementation(() => Promise.resolve(null))
 
       const token = `bearer ${validToken}`
@@ -486,11 +452,9 @@ describe('[API] - Posts endpoints', () => {
         })
 
       jest.spyOn(postDataSource, 'createPostComment').mockRestore()
-
-      done()
     })
 
-    it('returns INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the persistance throws an exception', async () => {
       jest.spyOn(postDataSource, 'createPostComment').mockImplementation(() => {
         throw new Error('Testing error')
       })
@@ -510,8 +474,6 @@ describe('[API] - Posts endpoints', () => {
         })
 
       jest.spyOn(postDataSource, 'createPostComment').mockRestore()
-
-      done()
     })
   })
 })

@@ -89,7 +89,7 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
-    it('returns OK (200) and the indicated post, not owned nor liked by the provided user because it is not bound with the post', async (done) => {
+    it('returns OK (200) and the indicated post, not owned nor liked by the provided user because it is not bound with the post', async () => {
       await savePostsFixture([secondaryPostDto])
 
       const token = `bearer ${postOwnerToken}`
@@ -109,11 +109,9 @@ describe('[API] - Posts endpoints', () => {
           expect(persistedPost).not.toBeNull()
           expect(persistedPost).toStrictEqual<ExtendedPostDomainModel>(expectedOwnedPost)
         })
-
-      done()
     })
 
-    it('returns OK (200) and the indicated post, marked as owned by the provided user', async (done) => {
+    it('returns OK (200) and the indicated post, marked as owned by the provided user', async () => {
       await savePostsFixture([selectedPostDto])
 
       const token = `bearer ${postOwnerToken}`
@@ -133,11 +131,9 @@ describe('[API] - Posts endpoints', () => {
           expect(persistedPost).not.toBeNull()
           expect(persistedPost).toStrictEqual<ExtendedPostDomainModel>(expectedOwnedPost)
         })
-
-      done()
     })
 
-    it('returns OK (200) and the indicated post, marked as owned and liked by the provided user', async (done) => {
+    it('returns OK (200) and the indicated post, marked as owned and liked by the provided user', async () => {
       const postLikedByItsOwner = { ...selectedPostDto, likes: [...selectedPostDto.likes, postOwnerLikeDto] }
 
       await savePostsFixture([postLikedByItsOwner])
@@ -160,11 +156,9 @@ describe('[API] - Posts endpoints', () => {
           expect(persistedPost).not.toBeNull()
           expect(persistedPost).toStrictEqual<ExtendedPostDomainModel>(expectedOwnedPost)
         })
-
-      done()
     })
 
-    it('returns OK (200) and the indicated post, marked as owned by the provided user and with a comment created by itself', async (done) => {
+    it('returns OK (200) and the indicated post, marked as owned by the provided user and with a comment created by itself', async () => {
       const postCommentedByItsOwner = { ...selectedPostDto, comments: [...selectedPostDto.comments, postOwnerCommentDto] }
 
       await savePostsFixture([postCommentedByItsOwner])
@@ -186,11 +180,9 @@ describe('[API] - Posts endpoints', () => {
           expect(persistedPost).not.toBeNull()
           expect(persistedPost).toStrictEqual<ExtendedPostDomainModel>(expectedOwnedPost)
         })
-
-      done()
     })
 
-    it('returns OK (200) and the indicated post, where the provided user is not its owner but who has liked it', async (done) => {
+    it('returns OK (200) and the indicated post, where the provided user is not its owner but who has liked it', async () => {
       const anotherUserPostLiked = { ...secondaryPostDto, likes: [...secondaryPostDto.likes, postOwnerLikeDto] }
 
       await savePostsFixture([anotherUserPostLiked])
@@ -213,11 +205,9 @@ describe('[API] - Posts endpoints', () => {
           expect(persistedPost).not.toBeNull()
           expect(persistedPost).toStrictEqual<ExtendedPostDomainModel>(expectedOwnedPost)
         })
-
-      done()
     })
 
-    it('returns OK (200) and the indicated post, where the provided user is not its owner but who has commented it', async (done) => {
+    it('returns OK (200) and the indicated post, where the provided user is not its owner but who has commented it', async () => {
       const anotherUserPostCommented = { ...secondaryPostDto, comments: [...secondaryPostDto.comments, postOwnerCommentDto] }
 
       await savePostsFixture([anotherUserPostCommented])
@@ -239,11 +229,9 @@ describe('[API] - Posts endpoints', () => {
           expect(persistedPost).not.toBeNull()
           expect(persistedPost).toStrictEqual<ExtendedPostDomainModel>(expectedOwnedPost)
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async () => {
       const token = `bearer ${''}$`
       const postId = selectedPostDto._id
       const expectedErrorMessage = 'Wrong token format'
@@ -255,11 +243,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async () => {
       const token = `bearer ${postOwnerToken}$`
       const postId = selectedPostDto._id
       const expectedErrorMessage = 'Wrong token format'
@@ -271,11 +257,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is incomplete', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is incomplete', async () => {
       const token = `bearer ${postOwnerToken.split('.').shift()}`
       const postId = selectedPostDto._id
       const expectedErrorMessage = 'Wrong token format'
@@ -287,11 +271,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when the action is performed by an user who is not recorded in the database', async (done) => {
+    it('returns BAD_REQUEST (400) when the action is performed by an user who is not recorded in the database', async () => {
       const token = `bearer ${unknownUserToken}`
       const postId = selectedPostDto._id
       const expectedErrorMessage = 'User does not exist'
@@ -303,11 +285,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has more characters than allowed ones', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has more characters than allowed ones', async () => {
       const token = `bearer ${postOwnerToken}`
       const postId = selectedPostDto._id.concat('abcde')
       const expectedErrorMessage = 'Post identification not valid'
@@ -319,11 +299,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has less characters than required ones', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has less characters than required ones', async () => {
       const token = `bearer ${postOwnerToken}`
       const postId = selectedPostDto._id.substring(1)
       const expectedErrorMessage = 'Post identification not valid'
@@ -335,11 +313,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has characters non allowed by the ID regex definition', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has characters non allowed by the ID regex definition', async () => {
       const token = `bearer ${postOwnerToken}`
       const postId = selectedPostDto._id.substring(2).concat('-_')
       const expectedErrorMessage = 'Post identification not valid'
@@ -351,11 +327,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has characters non allowed by Express', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has characters non allowed by Express', async () => {
       const token = `bearer ${postOwnerToken}`
       const postId = selectedPostDto._id.substring(2).concat('$%')
       const expectedErrorMessage = `Failed to decode param '${postId}'`
@@ -367,11 +341,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns UNAUTHORIZED (401) when the action is performed by an user with an expired token', async (done) => {
+    it('returns UNAUTHORIZED (401) when the action is performed by an user with an expired token', async () => {
       const token = `bearer ${expiredToken}`
       const postId = selectedPostDto._id
       const expectedErrorMessage = 'Token expired'
@@ -383,11 +355,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns FORBIDDEN (403) when the sent token is empty', async (done) => {
+    it('returns FORBIDDEN (403) when the sent token is empty', async () => {
       const token = ''
       const postId = selectedPostDto._id
       const expectedErrorMessage = 'Required token was not provided'
@@ -399,11 +369,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async () => {
       const postId = selectedPostDto._id
       const expectedErrorMessage = 'Required token was not provided'
 
@@ -413,11 +381,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns NOT_FOUND (404) when the selected post does not exist', async (done) => {
+    it('returns NOT_FOUND (404) when the selected post does not exist', async () => {
       const token = `bearer ${postOwnerToken}`
       const postId = nonValidPostId
       const expectedErrorMessage = 'Post not found'
@@ -429,11 +395,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns INTERNAL_SERVER_ERROR (500) when the retrieving process throws an exception', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the retrieving process throws an exception', async () => {
       jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
         throw new Error('Testing error')
       })
@@ -451,8 +415,6 @@ describe('[API] - Posts endpoints', () => {
         })
 
       jest.spyOn(postDataSource, 'getPostById').mockRestore()
-
-      done()
     })
   })
 })

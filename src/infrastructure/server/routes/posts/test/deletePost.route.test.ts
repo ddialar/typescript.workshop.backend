@@ -84,7 +84,7 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
-    it('returns OK (200) and delete the provided post', async (done) => {
+    it('returns OK (200) and delete the provided post', async () => {
       const token = `bearer ${validToken}`
       const postId = selectedPostValidId
 
@@ -100,11 +100,9 @@ describe('[API] - Posts endpoints', () => {
 
           expect(retrievedPost).toBeNull()
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because the JWT section is empty', async () => {
       const token = `bearer ${''}$`
       const postId = selectedPostValidId
       const expectedErrorMessage = 'Wrong token format'
@@ -117,11 +115,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it includes non allowed characters', async () => {
       const token = `bearer ${validToken}$`
       const postId = selectedPostValidId
       const expectedErrorMessage = 'Wrong token format'
@@ -134,11 +130,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a wrong formatted token because it is not complete', async () => {
       const token = `bearer ${validToken.split('.').shift()}`
       const postId = selectedPostValidId
       const expectedErrorMessage = 'Wrong token format'
@@ -151,11 +145,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async (done) => {
+    it('returns BAD_REQUEST (400) error when we send a token that belongs to a non registered user', async () => {
       const token = `bearer ${testingValidJwtTokenForNonPersistedUser}`
       const postId = selectedPostValidId
       const expectedErrorMessage = 'User does not exist'
@@ -168,11 +160,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId is not provided', async (done) => {
+    it('returns BAD_REQUEST (400) when postId is not provided', async () => {
       const token = `bearer ${validToken}`
       const expectedErrorMessage = 'Post identification not valid'
 
@@ -183,11 +173,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId is empty', async (done) => {
+    it('returns BAD_REQUEST (400) when postId is empty', async () => {
       const token = `bearer ${validToken}`
       const postId = ''
       const expectedErrorMessage = 'Post identification not valid'
@@ -200,11 +188,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has more characters than allowed ones', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has more characters than allowed ones', async () => {
       const token = `bearer ${validToken}`
       const postId = selectedPostValidId.concat('abcde')
       const expectedErrorMessage = 'Post identification not valid'
@@ -217,11 +203,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has less characters than required ones', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has less characters than required ones', async () => {
       const token = `bearer ${validToken}`
       const postId = selectedPostValidId.substring(1)
       const expectedErrorMessage = 'Post identification not valid'
@@ -234,11 +218,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has non allowed characters', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has non allowed characters', async () => {
       const token = `bearer ${validToken}`
       const postId = selectedPostValidId.substring(3).concat('$%#')
       const expectedErrorMessage = 'Post identification not valid'
@@ -251,11 +233,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when the action is performed by an user who is not recorded in the database', async (done) => {
+    it('returns BAD_REQUEST (400) when the action is performed by an user who is not recorded in the database', async () => {
       const token = `bearer ${unknownUserToken}`
       const postId = selectedPostValidId
       const expectedErrorMessage = 'User does not exist'
@@ -268,11 +248,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns UNAUTHORIZED (401) when the action is performed by an user with an expired token', async (done) => {
+    it('returns UNAUTHORIZED (401) when the action is performed by an user with an expired token', async () => {
       const token = `bearer ${expiredToken}`
       const postId = selectedPostValidId
       const expectedErrorMessage = 'Token expired'
@@ -285,11 +263,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns UNAUTHORIZED (401) when the action is performed by an user who is not the owner of the post', async (done) => {
+    it('returns UNAUTHORIZED (401) when the action is performed by an user who is not the owner of the post', async () => {
       const token = `bearer ${unauthorizedValidToken}`
       const postId = selectedPostValidId
       const expectedErrorMessage = 'User not authorized to delete this post'
@@ -302,11 +278,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns FORBIDDEN (403) when the sent token is empty', async (done) => {
+    it('returns FORBIDDEN (403) when the sent token is empty', async () => {
       const token = ''
       const postId = selectedPostValidId
       const expectedErrorMessage = 'Required token was not provided'
@@ -319,11 +293,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async (done) => {
+    it('returns FORBIDDEN (403) error when we do not provide the authorization header', async () => {
       const expectedErrorMessage = 'Required token was not provided'
 
       await request
@@ -332,11 +304,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns NOT_FOUND (404) when we select a post which does not exist', async (done) => {
+    it('returns NOT_FOUND (404) when we select a post which does not exist', async () => {
       const token = `bearer ${validToken}`
       const postId = nonValidPostId
       const expectedErrorMessage = 'Post not found'
@@ -349,11 +319,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error retrieving the post', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the datasource throws an unexpected error retrieving the post', async () => {
       jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
         throw new Error('Testing error')
       })
@@ -372,11 +340,9 @@ describe('[API] - Posts endpoints', () => {
         })
 
       jest.spyOn(postDataSource, 'getPostById').mockRestore()
-
-      done()
     })
 
-    it('returns INTERNAL_SERVER_ERROR (500) when the deleting process throws an unexpected error', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the deleting process throws an unexpected error', async () => {
       jest.spyOn(postDataSource, 'deletePost').mockImplementation(() => {
         throw new Error('Testing error')
       })
@@ -395,8 +361,6 @@ describe('[API] - Posts endpoints', () => {
         })
 
       jest.spyOn(postDataSource, 'deletePost').mockRestore()
-
-      done()
     })
   })
 })

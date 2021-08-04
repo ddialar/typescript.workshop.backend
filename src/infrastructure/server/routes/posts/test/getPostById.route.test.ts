@@ -39,7 +39,7 @@ describe('[API] - Posts endpoints', () => {
       await disconnect()
     })
 
-    it('returns OK (200) and the selected post data', async (done) => {
+    it('returns OK (200) and the selected post data', async () => {
       const postId = selectedPost.id
 
       await request
@@ -49,11 +49,9 @@ describe('[API] - Posts endpoints', () => {
           expect(persistedPost).not.toBeNull()
           expect(persistedPost).toStrictEqual<PostDomainModel>(selectedPost)
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has more characters than allowed ones', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has more characters than allowed ones', async () => {
       const postId = selectedPost.id.concat('abcde')
       const expectedErrorMessage = 'Post identification not valid'
 
@@ -63,11 +61,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has less characters than required ones', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has less characters than required ones', async () => {
       const postId = selectedPost.id.substring(1)
       const expectedErrorMessage = 'Post identification not valid'
 
@@ -77,11 +73,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has characters non allowed by the ID regex definition', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has characters non allowed by the ID regex definition', async () => {
       const postId = selectedPost.id.substring(2).concat('-_')
       const expectedErrorMessage = 'Post identification not valid'
 
@@ -91,11 +85,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns BAD_REQUEST (400) when postId has characters non allowed by Express', async (done) => {
+    it('returns BAD_REQUEST (400) when postId has characters non allowed by Express', async () => {
       const postId = selectedPost.id.substring(2).concat('$%')
       const expectedErrorMessage = `Failed to decode param '${postId}'`
 
@@ -105,11 +97,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns NOT_FOUND (404) when the selected post does not exist', async (done) => {
+    it('returns NOT_FOUND (404) when the selected post does not exist', async () => {
       const postId = nonValidPostId
       const expectedErrorMessage = 'Post not found'
 
@@ -119,11 +109,9 @@ describe('[API] - Posts endpoints', () => {
         .then(({ text }) => {
           expect(JSON.parse(text)).toEqual({ error: true, message: expectedErrorMessage })
         })
-
-      done()
     })
 
-    it('returns INTERNAL_SERVER_ERROR (500) when the retrieving process throws an exception', async (done) => {
+    it('returns INTERNAL_SERVER_ERROR (500) when the retrieving process throws an exception', async () => {
       jest.spyOn(postDataSource, 'getPostById').mockImplementation(() => {
         throw new Error('Testing error')
       })
@@ -139,8 +127,6 @@ describe('[API] - Posts endpoints', () => {
         })
 
       jest.spyOn(postDataSource, 'getPostById').mockRestore()
-
-      done()
     })
   })
 })
