@@ -26,13 +26,11 @@ describe('[SERVICES] Authentication - checkToken', () => {
     expect(() => checkToken(token)).toThrowError(expectedError)
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the verification process fails', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the verification process fails', async () => {
     const token = testingMalformedJwtToken
     const errorMessage = 'invalid token'
     const expectedError = new CheckingTokenError(`Error ckecking token '${token}'. ${errorMessage}`)
 
     expect(() => checkToken(token)).toThrowError(expectedError)
-
-    done()
   })
 })

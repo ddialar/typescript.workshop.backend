@@ -41,7 +41,7 @@ describe('[SERVICES] Authentication - login', () => {
     await disconnect()
   })
 
-  it('must authenticate the user and return a valid identification object', async (done) => {
+  it('must authenticate the user and return a valid identification object', async () => {
     const { username } = mockedUserData
     const password = plainPassword
 
@@ -72,31 +72,25 @@ describe('[SERVICES] Authentication - login', () => {
     expect(verifiedToken.iat).toBeGreaterThan(0)
     expect(verifiedToken.sub).toBe(userId)
     expect(verifiedToken.username).toBe(username)
-
-    done()
   })
 
-  it('must throw an UNAUTHORIZED (401) error when we use a non persisted username', async (done) => {
+  it('must throw an UNAUTHORIZED (401) error when we use a non persisted username', async () => {
     const username = 'user@test.com'
     const password = plainPassword
     const expectedError = new WrongUsernameError(`User with username '${username}' doesn't exist in login process.`)
 
     await expect(login(username, password)).rejects.toThrowError(expectedError)
-
-    done()
   })
 
-  it('must throw an UNAUTHORIZED (401) error when we use a wrong password', async (done) => {
+  it('must throw an UNAUTHORIZED (401) error when we use a wrong password', async () => {
     const { username } = mockedUserData
     const password = 'wr0np4$$w0rd'
     const expectedError = new WrongPasswordError(`Password missmatches for username '${username}'.`)
 
     await expect(login(username, password)).rejects.toThrowError(expectedError)
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the retrieving user process fails', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the retrieving user process fails', async () => {
     jest.spyOn(userDataSource, 'getUserByUsername').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -114,11 +108,9 @@ describe('[SERVICES] Authentication - login', () => {
     }
 
     jest.spyOn(userDataSource, 'getUserByUsername').mockRestore()
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the checking password process fails', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the checking password process fails', async () => {
     const { username } = mockedUserData
     const password = plainPassword
     const expectedError = new CheckingPasswordError('Error checking password.')
@@ -136,11 +128,9 @@ describe('[SERVICES] Authentication - login', () => {
     }
 
     jest.spyOn(hashServices, 'checkPassword').mockRestore()
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the getting token process fails', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the getting token process fails', async () => {
     jest.spyOn(token, 'generateToken').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -158,11 +148,9 @@ describe('[SERVICES] Authentication - login', () => {
     }
 
     jest.spyOn(token, 'generateToken').mockRestore()
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the updating login user data process fails', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the updating login user data process fails', async () => {
     jest.spyOn(userDataSource, 'updateUserById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -181,7 +169,5 @@ describe('[SERVICES] Authentication - login', () => {
     }
 
     jest.spyOn(userDataSource, 'updateUserById').mockRestore()
-
-    done()
   })
 })

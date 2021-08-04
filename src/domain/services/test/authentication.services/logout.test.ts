@@ -34,7 +34,7 @@ describe('[SERVICES] Authentication - logout', () => {
     await disconnect()
   })
 
-  it('must logout the user and remove the persisted token', async (done) => {
+  it('must logout the user and remove the persisted token', async () => {
     const { username } = mockedUserData
     const authenticatedUser = (await getUserByUsernameFixture(username))!
     expect(authenticatedUser.token).toBe(token)
@@ -45,11 +45,9 @@ describe('[SERVICES] Authentication - logout', () => {
     const unauthenticatedUser = (await getUserByUsernameFixture(username))!
 
     expect(unauthenticatedUser.token).toBe('')
-
-    done()
   })
 
-  it('must throw an INTERNAL_SERVER_ERROR (500) when the updating logout user data process fails', async (done) => {
+  it('must throw an INTERNAL_SERVER_ERROR (500) when the updating logout user data process fails', async () => {
     jest.spyOn(userDataSource, 'updateUserById').mockImplementation(() => {
       throw new Error(errorMessage)
     })
@@ -67,7 +65,5 @@ describe('[SERVICES] Authentication - logout', () => {
     }
 
     jest.spyOn(userDataSource, 'updateUserById').mockRestore()
-
-    done()
   })
 })
