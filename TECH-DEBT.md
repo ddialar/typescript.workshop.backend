@@ -1,41 +1,33 @@
 # Technical debt
 
-## @types/faker outdated
+## @types/node outdated
 
 -   Recorded by: Dailos Rafael Díaz Lara
--   Observed at: 2021, March 26
+-   Observed at: 2021, August 4
 -   Impact (_if this tech debt affected your work somehow, add a +1 here with a date and optionally a note_):
     -   +1 Jane Doe 2021, March 26 (_this is an example of +1_)
 
 ### Updates
 
-2021, April 3 - Issue checked and the same behavior observed, despite of there was an upted of the `@types/faker` module five days ago.
+No updates.
 
 ### Problem
 
-During a rutinary modules updating process, the [Faker.js](https://github.com/Marak/Faker.js) module was updated from the [v5.1.0](https://github.com/Marak/faker.js/releases/tag/v5.1.0) to [v5.5.0](https://github.com/Marak/faker.js/releases/tag/v5.5.0).
+During a rutinary modules updating process, the [@types/node](https://www.npmjs.com/package/@types/node) module was updated to [v16.4.12](https://www.npmjs.com/package/@types/node/v/16.4.12).
 
-At the moment to run the testing suite in order to verify that there wasn't any issue, a deprecation warning message appeared in the console:
+After the update, several typing errors appeared in the Express server file, boud with the use of Helmet and several methods of the Body Parser module.
 
-```
-Deprecation Warning: faker.random.uuid is now located in faker.datatype.uuid
-```
+A research unveiled the issue was bound with this module and the quick solution was to downgrade to v14.14.45. This action removed the whole errors.
 
-After a try of applying the proposed change, it appeared an error reporting that the `datatype` namespace doesn't exist in the module.
-
-The `Faker.js` module was inspected and it was confirmed that the new `datatype` namespace is included, so the conclusion is that the [@types/faker](https://www.npmjs.com/package/@types/faker) is not updated to the new features defined in the module yet.
-
-In order to avoit this typing issue, it was executed a downgrading process, installing the [Faker.js v5.3.0](https://github.com/Marak/faker.js/releases/tag/v5.3.0).
-
-Once it was done, the testing suite was run again and the warning message disappeared.
+The issue open in the @types/node repository is this one: [Helmet + Express + Typescript = No overload matches this call error](https://github.com/helmetjs/helmet/issues/325).
 
 ### Why it was done this way?
 
-Due to this module is used only for development tasks and in addition, to fix an external dependency is not the goal of this project, it was decided to proceed this way.
+Due to it's a third party library issue and based on it's a development module, to downgrade it was the easier option.
 
 ### Why this way is problematic?
 
-Based on this situation only affects to a few development tasks, it don't really represent a threat to the project performance.
+Based on this situation only affects to development tasks, it doesn't really represent a threat to the project performance.
 
 ### What the solution might be?
 
