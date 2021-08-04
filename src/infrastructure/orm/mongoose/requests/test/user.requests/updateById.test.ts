@@ -30,7 +30,7 @@ describe('[ORM] MongoDB - updateById', () => {
     await disconnect()
   })
 
-  it('must update several allowed fields successfully', async (done) => {
+  it('must update several allowed fields successfully', async () => {
     const newUserData: NewUserDatabaseDto = { ...mockedUserData }
     await saveUserFixture(newUserData)
 
@@ -87,7 +87,5 @@ describe('[ORM] MongoDB - updateById', () => {
     expect(updatedUser.deleted).toBeTruthy()
     expect(updatedUser.updatedAt).not.toBe(originalUser.updatedAt)
     expect(updatedUser.lastLoginAt).toBe(payload.lastLoginAt)
-
-    done()
   })
 })

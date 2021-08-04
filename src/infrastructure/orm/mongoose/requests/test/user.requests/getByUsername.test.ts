@@ -29,15 +29,13 @@ describe('[ORM] MongoDB - getByUsername', () => {
     await disconnect()
   })
 
-  it('must not retrieve any user', async (done) => {
+  it('must not retrieve any user', async () => {
     const username = testingNonPersistedUsername
     const retrievedUser = await getByUsername(username)
     expect(retrievedUser).toBeNull()
-
-    done()
   })
 
-  it('must retrieve the persisted user', async (done) => {
+  it('must retrieve the persisted user', async () => {
     const newUserData: NewUserDatabaseDto = { ...mockedUserData }
     await saveUserFixture(newUserData)
 
@@ -62,7 +60,5 @@ describe('[ORM] MongoDB - getByUsername', () => {
 
     expect(retrievedUser.token).toBe('')
     expect(retrievedUser.lastLoginAt).toBe('')
-
-    done()
   })
 })

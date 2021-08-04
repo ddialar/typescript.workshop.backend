@@ -29,15 +29,13 @@ describe('[ORM] MongoDB - getByToken', () => {
     await disconnect()
   })
 
-  it('must not retrieve any user', async (done) => {
+  it('must not retrieve any user', async () => {
     const token = testingValidJwtTokenForNonPersistedUser
     const retrievedUser = await getByToken(token)
     expect(retrievedUser).toBeNull()
-
-    done()
   })
 
-  it('must retrieve the persisted user', async (done) => {
+  it('must retrieve the persisted user', async () => {
     const newUserData = { ...mockedUserData }
     await saveUserFixture(newUserData)
 
@@ -62,7 +60,5 @@ describe('[ORM] MongoDB - getByToken', () => {
     expect(retrievedUser.updatedAt).not.toBeNull()
 
     expect(retrievedUser.lastLoginAt).toBe('')
-
-    done()
   })
 })

@@ -31,15 +31,13 @@ describe('[ORM] MongoDB - getProfileById', () => {
     await disconnect()
   })
 
-  it('must not retrieve any provile using a non-existent user id', async (done) => {
+  it('must not retrieve any provile using a non-existent user id', async () => {
     const userId = testingNonValidUserId
     const retrievedUserProfile = await getProfileById(userId)
     expect(retrievedUserProfile).toBeNull()
-
-    done()
   })
 
-  it('must retrieve selected user\'s profile', async (done) => {
+  it('must retrieve selected user\'s profile', async () => {
     const { _id: userId } = (await getUserByUsernameFixture(username))!
     const retrievedUserProfile = (await getProfileById(userId))!
 
@@ -52,7 +50,5 @@ describe('[ORM] MongoDB - getProfileById', () => {
     expect(retrievedUserProfile.name).toBe(mockedUserData.name)
     expect(retrievedUserProfile.surname).toBe(mockedUserData.surname)
     expect(retrievedUserProfile.avatar).toBe(mockedUserData.avatar)
-
-    done()
   })
 })

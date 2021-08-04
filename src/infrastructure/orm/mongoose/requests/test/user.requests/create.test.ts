@@ -30,7 +30,7 @@ describe('[ORM] MongoDB - create', () => {
     await disconnect()
   })
 
-  it('must persist the new user successfully', async (done) => {
+  it('must persist the new user successfully', async () => {
     const newUserData = { ...mockedUserData }
     const registeredUser = await create(newUserData)
 
@@ -52,18 +52,14 @@ describe('[ORM] MongoDB - create', () => {
 
     expect(registeredUser.token).toBe('')
     expect(registeredUser.lastLoginAt).toBe('')
-
-    done()
   })
 
-  it('must throw an error when we try to persist the same username', async (done) => {
+  it('must throw an error when we try to persist the same username', async () => {
     const newUserData = { ...mockedUserData }
     await create(newUserData)
 
     // NOTE Information obtained when this error happens.
     // MongoError: E11000 duplicate key error collection: ts-course-test.users index: username_1 dup key: { username: "test@mail.com" }
     await expect(create(newUserData)).rejects.toThrow(/duplicate key error/)
-
-    done()
   })
 })
