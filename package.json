@@ -1,6 +1,6 @@
 {
   "name": "typescript.course.backend",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "TypeScript training course - Backend",
   "main": "src/app.ts",
   "engines": {
