@@ -30,7 +30,10 @@ module.exports = merge(common, {
       'process.env': JSON.stringify(dotenv.parsed)
     }),
     new NodemonPlugin({
-      watch: path.join(__dirname, '../dist'),
+      watch: [
+        path.join(__dirname, '../dist'),
+        path.join(__dirname, '../src/**/*.graphql')
+      ],
       verbose: true,
       ext: 'ts,js,graphql'
     })
