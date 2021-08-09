@@ -13,6 +13,11 @@ module.exports = merge(common, {
       {
         test: /\.ts$/,
         use: [{ loader: 'ts-loader' }]
+      },
+      {
+        test: /\.(graphql|gql)$/,
+        exclude: /node_modules/,
+        use: [{ loader: '@graphql-tools/webpack-loader' }]
       }
     ]
   },
@@ -27,7 +32,7 @@ module.exports = merge(common, {
     new NodemonPlugin({
       watch: path.join(__dirname, '../dist'),
       verbose: true,
-      ext: 'ts,js'
+      ext: 'ts,js,graphql'
     })
   ],
   watch: true
