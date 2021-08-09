@@ -30,8 +30,8 @@
     "build:dev_server": "webpack --config ./webpack/webpack.dev.js",
     "build:dev": "npm run dev_infra:up && webpack --config ./webpack/webpack.dev.js",
     "build:pro": "webpack --config ./webpack/webpack.prod.js",
-    "dev_infra:up": "docker-compose -f docker/docker-compose.yml --env-file dev/.docker.env up -d",
-    "dev_infra:down": "docker-compose -f docker/docker-compose.yml --env-file dev/.docker.env down -v",
+    "dev_infra:up": "docker-compose -f docker/docker-compose.yml --env-file docker/dev/.docker.env up -d",
+    "dev_infra:down": "docker-compose -f docker/docker-compose.yml --env-file docker/dev/.docker.env down -v",
     "test": "npm run test_infra:up && npm run test_mock:data && jest --runInBand --detectOpenHandles && npm run test_infra:down",
     "test:watch": "npm run test_infra:up && npm run test_mock:data && jest --watch --runInBand --detectOpenHandles --verbose && npm run test_infra:down",
     "test:coverage": "npm run test_infra:up && npm run test_mock:data && jest --runInBand --coverage && npm run test_infra:down",
@@ -47,6 +47,7 @@
     "*.ts": "npm run lint:fix"
   },
   "devDependencies": {
+    "@graphql-tools/webpack-loader": "^6.5.0",
     "@types/bcrypt": "^5.0.0",
     "@types/bluebird": "^3.5.33",
     "@types/body-parser": "^1.19.0",
@@ -86,10 +87,14 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
+    "@graphql-tools/graphql-file-loader": "^7.0.2",
+    "@graphql-tools/load": "^7.1.2",
+    "apollo-server": "^3.1.2",
     "bcrypt": "^5.0.0",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
+    "graphql": "^15.5.1",
     "helmet": "^4.6.0",
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
