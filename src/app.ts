@@ -1,6 +1,7 @@
 import { appLogger } from '@logger'
 
-import { runServer, stopServer } from '@infrastructure/server'
+// import { runServer, stopServer } from '@infrastructure/server'
+import { runServer, stopServer } from '@infrastructure/server/graphql'
 import { runOrm, stopOrm } from '@infrastructure/orm'
 import { checkStartup } from './preset'
 
