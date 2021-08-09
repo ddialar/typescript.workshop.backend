@@ -1,22 +1,14 @@
 import { AuthenticatedUserDomainModel } from '@domainModels'
 import { login } from '@domainServices'
+import { LoginInputParams } from '@infrastructure/types'
 
 import {
   ParentValue,
   Context
 } from '../../types'
 
-interface LoginArgs {
-  username: string
-  password: string
-}
-
-const AuthenticationMutations = {
-  login: async (parentValue: ParentValue, { username, password }: LoginArgs, context: Context): Promise<AuthenticatedUserDomainModel> => {
+export const AuthenticationMutations = {
+  login: async (parentValue: ParentValue, { username, password }: LoginInputParams, context: Context): Promise<AuthenticatedUserDomainModel> => {
     return await login(username, password)
   }
-}
-
-export {
-  AuthenticationMutations
 }

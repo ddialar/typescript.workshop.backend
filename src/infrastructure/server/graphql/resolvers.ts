@@ -1,17 +1,15 @@
-import TempResolvers from './models/tmp/tmp.resolvers'
-// import { AuthenticationMutations } from './models/authentication/authentication.resolvers'
-
-console.log({ TempResolvers })
+import { TempQueries } from './models/tmp/tmp.resolvers'
+import { AuthenticationMutations } from './models/authentication/authentication.resolvers'
 
 const Query = {
-  ...TempResolvers.Query
+  ...TempQueries
 }
 
-// const Mutation = {
-//   ...AuthenticationMutations
-// }
+const Mutation = {
+  ...AuthenticationMutations
+}
 
 export const resolvers = {
-  Query
-  // Mutation
+  Query,
+  Mutation
 }

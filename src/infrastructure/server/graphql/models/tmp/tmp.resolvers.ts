@@ -1,5 +1,3 @@
-export default {
-  Query: {
-    GetTemp: (): string => 'GraphQL is working!!!'
-  }
+export const TempQueries = {
+  GetTemp: (): string => 'GraphQL is working!!!'
 }
