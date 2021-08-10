@@ -1,4 +1,7 @@
 type AuthenticatedUser {
+  """
+  User authentication token based on JWT
+  """
   token: String
 }
 
