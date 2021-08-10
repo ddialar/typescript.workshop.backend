@@ -21,5 +21,23 @@
       "error",
       2
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "*.graphql"
+      ],
+      "parser": "@graphql-eslint/eslint-plugin",
+      "plugins": [
+        "@graphql-eslint"
+      ],
+      "parserOptions": {
+        "operations": [
+          "./src/**/*.graphql"
+        ],
+        "schema": "./src/infrastructure/server/graphql/schema.graphql"
+      },
+      "rules": {}
+    }
+  ]
 }

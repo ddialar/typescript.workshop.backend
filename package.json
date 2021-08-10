@@ -47,6 +47,7 @@
     "*.ts": "npm run lint:fix"
   },
   "devDependencies": {
+    "@graphql-eslint/eslint-plugin": "^2.0.1",
     "@graphql-tools/webpack-loader": "^6.5.0",
     "@types/bcrypt": "^5.0.0",
     "@types/bluebird": "^3.5.33",
