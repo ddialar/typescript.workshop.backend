@@ -6,5 +6,6 @@ type AuthenticatedUser {
 }
 
 type Mutation {
-    login(username: String, password: String): AuthenticatedUser!
+  login(username: String!, password: String!): AuthenticatedUser!
+  # logout: String!
 }
