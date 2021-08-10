@@ -1,0 +1,11 @@
+type Owner {
+  id: String!
+  name: String!
+  surname: String!
+  avatar: String
+}
+
+type PostComment {
+  body: String!
+  owner: PostOwner!
+}
