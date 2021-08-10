@@ -37,7 +37,161 @@
         ],
         "schema": "./src/infrastructure/server/graphql/schema.graphql"
       },
-      "rules": {}
+      "rules": {
+        "avoid-duplicate-fields": [
+          "error"
+        ],
+        "avoid-operation-name-prefix": [
+          "error"
+        ],
+        "avoid-typename-prefix": [
+          "error"
+        ],
+        "description-style": [
+          "error"
+        ],
+        "executable-definitions": [
+          "error"
+        ],
+        "fields-on-correct-type": [
+          "error"
+        ],
+        "fragments-on-composite-type": [
+          "error"
+        ],
+        "input-name": [
+          "error"
+        ],
+        "known-argument-names": [
+          "error"
+        ],
+        "known-directives": [
+          "error"
+        ],
+        "known-fragment-names": [
+          "error"
+        ],
+        "known-type-names": [
+          "error"
+        ],
+        "lone-anonymous-operation": [
+          "error"
+        ],
+        "lone-schema-definition": [
+          "error"
+        ],
+        "naming-convention": [
+          "error"
+        ],
+        "no-anonymous-operations": [
+          "error"
+        ],
+        "no-case-insensitive-enum-values-duplicates": [
+          "error"
+        ],
+        "no-deprecated": [
+          "error"
+        ],
+        "no-fragment-cycles": [
+          "error"
+        ],
+        "no-hashtag-description": [
+          "error"
+        ],
+        "no-operation-name-suffix": [
+          "error"
+        ],
+        "no-undefined-variables": [
+          "error"
+        ],
+        "no-unreachable-types": [
+          "error"
+        ],
+        "no-unused-fields": [
+          "error"
+        ],
+        "no-unused-fragments": [
+          "error"
+        ],
+        "no-unused-variables": [
+          "error"
+        ],
+        "one-field-subscriptions": [
+          "error"
+        ],
+        "overlapping-fields-can-be-merged": [
+          "error"
+        ],
+        "possible-fragment-spread": [
+          "error"
+        ],
+        "possible-type-extension": [
+          "error"
+        ],
+        "provided-required-arguments": [
+          "error"
+        ],
+        "require-deprecation-reason": [
+          "error"
+        ],
+        "require-description": [
+          "error"
+        ],
+        "require-id-when-available": [
+          "error"
+        ],
+        "scalar-leafs": [
+          "error"
+        ],
+        "selection-set-depth": [
+          "error"
+        ],
+        "strict-id-in-types": [
+          "error"
+        ],
+        "unique-argument-names": [
+          "error"
+        ],
+        "unique-directive-names": [
+          "error"
+        ],
+        "unique-directive-names-per-location": [
+          "error"
+        ],
+        "unique-enum-value-names": [
+          "error"
+        ],
+        "unique-field-definition-names": [
+          "error"
+        ],
+        "unique-fragment-name": [
+          "error"
+        ],
+        "unique-input-field-names": [
+          "error"
+        ],
+        "unique-operation-name": [
+          "error"
+        ],
+        "unique-operation-types": [
+          "error"
+        ],
+        "unique-type-names": [
+          "error"
+        ],
+        "unique-variable-names": [
+          "error"
+        ],
+        "value-literals-of-correct-type": [
+          "error"
+        ],
+        "variables-are-input-types": [
+          "error"
+        ],
+        "variables-in-allowed-position": [
+          "error"
+        ]
+      }
     }
   ]
 }

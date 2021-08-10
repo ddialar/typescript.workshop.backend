@@ -7,5 +7,5 @@ type Owner {
 
 type PostComment {
   body: String!
-  owner: PostOwner!
+  owner: PostOwner! # ❌ It whould fail
 }
