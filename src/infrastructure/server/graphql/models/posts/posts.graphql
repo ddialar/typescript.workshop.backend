@@ -7,6 +7,6 @@ type Owner {
 
 type PostComment {
   body: String!
-  owner: PostOwner! # ❌ It whould fail 'cos doesn't exist the type
-  owner: PostOwner! # ❌ It whould fail 'cos the field is duplicated
+  owner: PostOwner! # ❌ It would fail 'cos doesn't exist the type
+  owner: PostOwner! # ❌ It would fail 'cos the field is duplicated
 }
